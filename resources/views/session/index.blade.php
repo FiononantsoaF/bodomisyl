@@ -50,11 +50,17 @@
 
                                             <td>
                                                 <form action="" method="POST">
+                                                    {{-- <a class="btn btn-sm btn-primary " href="{{ route('service_session.show',$serviceSession->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('service_session.edit',$serviceSession->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
                                                     <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href=""><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                    --}}
+                                                    
+                                                    <a class="btn btn-sm btn-success" href="{{ route('sessiondb.edit',$session->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                                     @csrf
+                                                    {{-- 
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                    --}}
                                                 </form>
                                             </td>
                                         </tr>
@@ -64,7 +70,7 @@
                         </div>
                     </div>
                 </div>
-                {!! $sessions->links() !!}
+                {{ $sessions->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

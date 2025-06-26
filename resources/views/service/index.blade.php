@@ -36,7 +36,7 @@
                                     <tr>           
 										<th>Title</th>
 										<th>Description</th>
-										<th>Service Category/th>
+										<th>Service Category</th>
 										<th>Price</th>
 										<th>Duration Minutes</th>
 										<!--th>Image Url</th-->
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-                {!! $services->links() !!}
+                {{ $services->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

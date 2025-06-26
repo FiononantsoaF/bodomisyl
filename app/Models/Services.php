@@ -36,7 +36,7 @@ class Services extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'description', 'service_category_id', 'price', 'duration_minutes','validity_days', 'image_url'];
+    protected $fillable = ['title', 'description', 'service_category_id', 'price', 'duration_minutes','validity_days', 'image_url','validity_days'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
