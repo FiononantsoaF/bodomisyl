@@ -44,10 +44,10 @@
                                 Rendez-vous
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse @if(isset($activemenuappoint)) show @else @endif" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="{{ route('appointmentsdb') }}">Liste rendez-vous</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Liste file d'attente</a>
+                                    <!--a class="nav-link" href="layout-sidenav-light.html">Liste file d'attente</a-->
                                 </nav>
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseLayouts">
@@ -55,11 +55,12 @@
                                 Service et prestation
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse" id="collapseServices" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            
+                            <div class="collapse @if(isset($activemenuservices)) show @else @endif" id="collapseServices" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="{{ route('servicedb') }}">Liste Service</a>
                                     <a class="nav-link" href="{{ route('service-categorydb') }}">Liste Service Category</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Liste prestation</a>
+                                    
                                 </nav>
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePrestataire" aria-expanded="false" aria-controls="collapseLayouts">
@@ -74,13 +75,15 @@
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePrestatairesession" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Service
+                                Session / service
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse" id="collapsePrestatairesession" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            
+                            <div class="collapse @if(isset($activemenusession)) show @else @endif" id="collapsePrestatairesession" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="{{ route('sessiondb') }}">Liste session</a>
-                                    <a class="nav-link" href="{{ route('sessiondb') }}">Associer session au service</a>
+                                    <a class="nav-link" href="{{ route('service-session') }}">Liste service session</a>
+                                    <a class="nav-link" href="{{ route('service-session.create') }}">Associer session au service</a>
                                 </nav>
                             </div>
                             <!--a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">

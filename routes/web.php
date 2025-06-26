@@ -7,6 +7,7 @@ use App\Http\Controllers\AppointmentdbController;
 use App\Http\Controllers\SessiondbController;
 use App\Http\Controllers\ServicedbController;
 use App\Http\Controllers\ServiceCategorydbController;
+use App\Http\Controllers\ServiceSessiondbController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/session', [SessiondbController::class, 'index'])->name('sessiondb');
     Route::get('/session/create', [SessiondbController::class, 'create'])->name('sessiondb.create');
     Route::post('/session/store', [SessiondbController::class, 'store'])->name('sessiondb.store');
+    Route::get('/session/edit/{id}', [SessiondbController::class, 'edit'])->name('sessiondb.edit');
+    Route::patch('/session/update/{id}', [SessiondbController::class, 'update'])->name('sessiondb.update');
     Route::get('/services', [ServicedbController::class, 'index'])->name('servicedb');
     Route::get('/services/create', [ServicedbController::class, 'create'])->name('servicedb.create');
     Route::post('/services/store', [ServicedbController::class, 'store'])->name('servicedb.store');
@@ -43,4 +46,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/service-category/store', [ServiceCategorydbController::class, 'store'])->name('service-categorydb.store');
     Route::get('/service-category/edit/{id}', [ServiceCategorydbController::class, 'edit'])->name('service-categorydb.edit');
     Route::patch('/service-category/update', [ServiceCategorydbController::class, 'update'])->name('service-categorydb.update');
+    Route::get('/service-session', [ServiceSessiondbController::class, 'index'])->name('service-session');
+    Route::get('/service-session/create', [ServiceSessiondbController::class, 'create'])->name('service-session.create');
+    Route::post('/service-session/store', [ServiceSessiondbController::class, 'store'])->name('service-session.store');
+
 });

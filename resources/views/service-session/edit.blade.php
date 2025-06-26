@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ __('Update') }} Session
+    {{ __('Update') }} Service Session
 @endsection
 
 @section('content')
@@ -11,14 +11,14 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Session</span>
+                        <span class="card-title">{{ __('Update') }} Service Session</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('sessiondb.update', $session->id) }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('service_session', $serviceSession->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 
-                            @include('session.form')
+                            @include('service-session.form')
 
                         </form>
                     </div>

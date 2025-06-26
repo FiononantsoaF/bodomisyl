@@ -18,8 +18,8 @@ class ServiceCategorydbController extends Controller
     public function index()
     {
         $serviceCategories = ServiceCategory::paginate();
-
-        return view('service-category.index', compact('serviceCategories'))
+        $activemenuservices = 1;
+        return view('service-category.index', compact('serviceCategories','activemenuservices'))
             ->with('i', (request()->input('page', 1) - 1) * $serviceCategories->perPage());
     }
 
@@ -29,7 +29,8 @@ class ServiceCategorydbController extends Controller
     public function create()
     {
         $serviceCategory = new ServiceCategory();
-        return view('service-category.create', compact('serviceCategory'));
+        $activemenuservices = 1;
+        return view('service-category.create', compact('serviceCategory','activemenuservices'));
     }
 
     /**
@@ -40,7 +41,7 @@ class ServiceCategorydbController extends Controller
         ServiceCategory::create($request->validated());
 
         return redirect()->route('service-categorydb')
-            ->with('success', 'ServiceCategory created successfully.');
+            ->with('success', 'Création effectué avec succès.');
     }
 
     /**
@@ -49,8 +50,8 @@ class ServiceCategorydbController extends Controller
     public function show($id)
     {
         $serviceCategory = ServiceCategory::find($id);
-
-        return view('service-category.show', compact('serviceCategory'));
+        $activemenuservices = 1;
+        return view('service-category.show', compact('serviceCategory','activemenuservices'));
     }
 
     /**
@@ -59,8 +60,8 @@ class ServiceCategorydbController extends Controller
     public function edit($id)
     {
         $serviceCategory = ServiceCategory::find($id);
-
-        return view('service-category.edit', compact('serviceCategory'));
+        $activemenuservices = 1;
+        return view('service-category.edit', compact('serviceCategory','activemenuservices'));
     }
 
     /**
@@ -76,7 +77,7 @@ class ServiceCategorydbController extends Controller
         ServiceCategory::where('id', $alldata['id'])->first()->update(["name"=>$alldata['name'],"description"=>$alldata['description']]);
 
         return redirect()->route('service-categorydb')
-            ->with('success', 'ServiceCategory updated successfully');
+            ->with('success', 'Modification effectué avec succès');
     }
 
     public function destroy($id)

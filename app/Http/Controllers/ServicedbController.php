@@ -19,7 +19,8 @@ class ServicedbController extends Controller
     public function index()
     {
         $services = Services::paginate();
-        return view('service.index', compact('services'))
+        $activemenuservices = 1;
+        return view('service.index', compact('services','activemenuservices'))
             ->with('i', (request()->input('page', 1) - 1) * $services->perPage());
     }
 
@@ -30,18 +31,28 @@ class ServicedbController extends Controller
     {
         $service = new Services();
         $categories = ServiceCategory::all();
-        return view('service.create', compact('service','categories'));
+        $activemenuservices = 1;
+        return view('service.create', compact('service','categories','activemenuservices'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ServiceRequest $request)
+    public function store(Request $request)
     {
-        Services::create($request->validated());
-
+        $alldata = $request->all();
+//        dd($alldata);
+        Services::create([
+            "title"=>$alldata['title'],
+            "description"=>$alldata['description'],
+            "service_category_id"=>$alldata['service_category_id'],
+            "price"=>$alldata['price'],
+            "duration_minutes"=>$alldata['duration_minutes'],
+            "validity_days"=>$alldata['validity_days']
+        ]);
+        
         return redirect()->route('servicedb')
-            ->with('success', 'Service created successfully.');
+            ->with('success', 'Service créer avec success.');
     }
 
     /**
@@ -50,8 +61,8 @@ class ServicedbController extends Controller
     public function show($id)
     {
         $service = Services::find($id);
-       
-        return view('service.show', compact('service'));
+        $activemenuservices = 1;
+        return view('service.show', compact('service','activemenuservices'));
     }
 
     /**
@@ -61,7 +72,8 @@ class ServicedbController extends Controller
     {
         $service = Services::find($id);
          $categories = ServiceCategory::all();
-        return view('service.edit', compact('service','categories'));
+         $activemenuservices = 1;
+        return view('service.edit', compact('service','categories','activemenuservices'));
     }
 
     public function update(Request $request, Services $service)
@@ -78,7 +90,7 @@ class ServicedbController extends Controller
                                                     ]);
 
         return redirect()->route('servicedb')
-            ->with('success', 'Service updated successfully');
+            ->with('success', 'Service modifier avec succès');
     }
 
 

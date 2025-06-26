@@ -87,13 +87,13 @@ CREATE TABLE services (
 );
 
 CREATE TABLE service_session (
-    service_id INT,
+    services_id INT,
     session_id INT,
     total_session INT DEFAULT 0,
     session_per_period INT NULL DEFAULT 0, -- Séances autorisées par période
     period_type ENUM('week', 'month') NULL,  --par semaine ou par mois 
     FOREIGN KEY (session_id) REFERENCES sessions(id)
-    FOREIGN KEY (service_id) REFERENCES services(id),
+    FOREIGN KEY (services_id) REFERENCES services(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    Service Category
+    Service Session
 @endsection
 
 @section('content')
@@ -13,12 +13,12 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Service Category') }}
+                                {{ __('Service Session') }}
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('service-categorydb.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                <a href="{{ route('service-session.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                  Associer service / session
                                 </a>
                               </div>
                         </div>
@@ -34,30 +34,27 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <!-- <th>No</th> -->
+                                        <th>No</th>
                                         
-										<th>Name</th>
-										<th>Description</th>
+                                                <th>Services</th>
+                                                <th>Session</th>
+                                                <th>Session Per Period</th>
+                                                <!--th>Period Type</th-->
 
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($serviceCategories as $serviceCategory)
+                                    @foreach ($serviceSessions as $serviceSession)
                                         <tr>
-                                            <!-- <td>{{ ++$i }}</td> -->
+                                            <td>{{ ++$i }}</td>
                                             
-											<td>{{ $serviceCategory->name }}</td>
-											<td>{{ $serviceCategory->description }}</td>
+                                                <td>{{ $serviceSession->nomservice }}</td>
+                                                <td>{{ $serviceSession->total_session }} {{ $serviceSession->nomsession }}</td>
+                                                <td>{{ $serviceSession->session_per_period }}</td>
 
                                             <td>
-                                                <form action="" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('service-categorydb.edit',$serviceCategory->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
-                                                </form>
+                                                
                                             </td>
                                         </tr>
                                     @endforeach
@@ -66,7 +63,7 @@
                         </div>
                     </div>
                 </div>
-                {{ $serviceCategories->links('pagination::bootstrap-5') }}
+                {{ $serviceSessions->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

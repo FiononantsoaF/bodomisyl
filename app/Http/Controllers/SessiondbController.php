@@ -17,8 +17,8 @@ class SessiondbController extends Controller
     public function index()
     {
         $sessions = Session::paginate();
-
-        return view('session.index', compact('sessions'))
+        $activemenusession = 1;
+        return view('session.index', compact('sessions','activemenusession'))
             ->with('i', (request()->input('page', 1) - 1) * $sessions->perPage());
     }
 
@@ -38,8 +38,8 @@ class SessiondbController extends Controller
     {
         Session::create($request->validated());
 
-        return redirect()->route('sessiondb.index')
-            ->with('success', 'Session created successfully.');
+        return redirect()->route('sessiondb')
+            ->with('success', 'Session créer avec succès.');
     }
 
     /**
@@ -65,12 +65,13 @@ class SessiondbController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SessionRequest $request, Session $session)
+    public function update(SessionRequest $request, $id)
     {
+        $session = Session::find($id);
         $session->update($request->validated());
 
-        return redirect()->route('sessions.index')
-            ->with('success', 'Session updated successfully');
+        return redirect()->route('sessiondb')
+            ->with('success', 'Session modifié avec succès');
     }
 
     public function destroy($id)

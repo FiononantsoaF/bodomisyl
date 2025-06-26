@@ -50,7 +50,8 @@ class AppointmentdbController extends Controller
             $appointments->where(['c.email' => $email]);
         }
         // print_r($appointments->toSql());die();
-        return view('appointment.index', compact('appointments'))
+        $activemenuappoint = 1;
+        return view('appointment.index', compact('appointments','activemenuappoint'))
             ->with('i', (request()->input('page', 1) - 1) * $appointments->perPage());
     }
 
