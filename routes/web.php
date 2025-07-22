@@ -8,6 +8,20 @@ use App\Http\Controllers\SessiondbController;
 use App\Http\Controllers\ServicedbController;
 use App\Http\Controllers\ServiceCategorydbController;
 use App\Http\Controllers\ServiceSessiondbController;
+use App\Http\Controllers\SubscriptiondbController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategorydbController;
+use App\Http\Controllers\CreneaudbController;
+use App\Http\Controllers\GoogleCalendarController;
+use App\Http\Controllers\ClientdbController;
+use App\Http\Controllers\EmployeedbController;
+use App\Http\Controllers\Api\MvolaController;
+use App\Http\Controllers\PaymentdbController;
+use App\Http\Controllers\EmployeesCreneaudbController;
+use App\Http\Controllers\CurrencydbController;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -30,18 +44,44 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/changestate/{id}', [DashboardController::class, 'changestate'])->name('dashboard.changestate');
+
+    //appointment
     Route::get('/appointmentsdb', [AppointmentdbController::class, 'index'])->name('appointmentsdb');
+    Route::post('/appointmentsdb/changestate/{id}', [AppointmentdbController::class, 'changestate'])->name('appointmentsdb.changestate');
+    Route::post('/appointmentsdb/creation', [AppointmentdbController::class, 'creation'])->name('appointmentsdb.creation');
+    //session
     Route::get('/session', [SessiondbController::class, 'index'])->name('sessiondb');
     Route::get('/session/create', [SessiondbController::class, 'create'])->name('sessiondb.create');
     Route::post('/session/store', [SessiondbController::class, 'store'])->name('sessiondb.store');
     Route::get('/session/edit/{id}', [SessiondbController::class, 'edit'])->name('sessiondb.edit');
     Route::patch('/session/update/{id}', [SessiondbController::class, 'update'])->name('sessiondb.update');
+    //service
     Route::get('/services', [ServicedbController::class, 'index'])->name('servicedb');
     Route::get('/services/create', [ServicedbController::class, 'create'])->name('servicedb.create');
     Route::post('/services/store', [ServicedbController::class, 'store'])->name('servicedb.store');
     Route::get('/services/edit/{id}', [ServicedbController::class, 'edit'])->name('servicedb.edit');
     Route::patch('/services/update', [ServicedbController::class, 'update'])->name('servicedb.update');
+
+    // category session
+    Route::get('/category', [CategorydbController::class, 'index'])->name('categorydb');
+    Route::get('/category/create', [CategorydbController::class, 'create'])->name('categorydb.create');
+    Route::post('/category/store', [CategorydbController::class, 'store'])->name('categorydb.store');
     Route::get('/service-category', [ServiceCategorydbController::class, 'index'])->name('service-categorydb');
+
+    // creneau
+    Route::get('/creneau', [CreneaudbController::class, 'index'])->name('creneaudb');
+    Route::get('/creneau/create', [CreneaudbController::class, 'create'])->name('creneaudb.create');
+    Route::post('/creneau/store', [CreneaudbController::class, 'store'])->name('creneaudb.store');
+    Route::post('/creneau/upadtecrenau', [CreneaudbController::class, 'updatecreneau'])->name('creneaudb.updatecreneau');
+
+
+    
+    //subscription
+    Route::get('/subscriptiondb', [SubscriptiondbController::class, 'index'])->name('subscriptiondb');
+    Route::post('/subscription/appoint', [SubscriptiondbController::class, 'continue'])->name('subscriptiondb.appoint');
+    // destroy
+    Route::delete('/service-category/{id}', [ServiceCategorydbController::class, 'destroy'])->name('service-categorydb.destroy');
     Route::get('/service-category/create', [ServiceCategorydbController::class, 'create'])->name('service-categorydb.create');
     Route::post('/service-category/store', [ServiceCategorydbController::class, 'store'])->name('service-categorydb.store');
     Route::get('/service-category/edit/{id}', [ServiceCategorydbController::class, 'edit'])->name('service-categorydb.edit');
@@ -49,5 +89,71 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/service-session', [ServiceSessiondbController::class, 'index'])->name('service-session');
     Route::get('/service-session/create', [ServiceSessiondbController::class, 'create'])->name('service-session.create');
     Route::post('/service-session/store', [ServiceSessiondbController::class, 'store'])->name('service-session.store');
+    Route::get('/user/index', [UserController::class, 'index'])->name('userdb');
+
+
+    // userdb.create
+    Route::get('/user/create', [UserController::class, 'create'])->name('userdb.create');
+    Route::post('/user/store', [UserController::class, 'store'])->name('userdb.store');
+    Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('userdb.edit');
+    Route::patch('/user/update/{id}', [UserController::class, 'update'])->name('userdb.update');
+    // userdb.edit
+
+    // calendar
+    Route::get('/calendar', [GoogleCalendarController::class, 'index'])->name('calendar.index');
+    Route::post('/calendar', [GoogleCalendarController::class, 'store'])->name('calendar.store');
+    Route::put('/calendar/{id}', [GoogleCalendarController::class, 'update'])->name('calendar.update');
+    Route::delete('/calendar/{id}', [GoogleCalendarController::class, 'destroy'])->name('calendar.destroy');
+    Route::post('/calendar/sync', [GoogleCalendarController::class, 'syncEvents'])->name('calendar.sync');
+
+    //client
+    Route::get('/client', [ClientdbController::class, 'index'])->name('clientdb');
+    Route::get('/client/create', [ClientdbController::class, 'create'])->name('clientdb.create');
+    Route::post('/client/store', [ClientdbController::class, 'store'])->name('clientdb.store');
+    Route::post('/client/changepassword', [ClientdbController::class, 'changepassword'])->name('clientdb.changepassowrd');
+
+    // employee
+    Route::get('/employee', [EmployeedbController::class, 'index'])->name('employeedb');
+    Route::get('/employee/create', [EmployeedbController::class, 'create'])->name('employeedb.create');
+    Route::post('/employee/store', [EmployeedbController::class, 'store'])->name('employeedb.store');
+    Route::get('/employee/edit/{id}', [EmployeedbController::class, 'edit'])->name('employeedb.edit');
+    Route::patch('/employee/update/{id}', [EmployeedbController::class, 'update'])->name('employeedb.update');
+
+
+    // employee creneau
+    Route::get('/employees-creneau', [EmployeesCreneaudbController::class, 'index'])->name('employees-creneaudb');
+    Route::get('/employees-creneau/create', [EmployeesCreneaudbController::class, 'create'])->name('employees-creneaudb.create');
+    Route::post('/employees-creneau/store', [EmployeesCreneaudbController::class, 'store'])->name('employees-creneaudb.store');
+    Route::get('/employees-creneau/search', [EmployeesCreneaudbController::class, 'searchByName']);
+    Route::post('/employees-creneau/upadtecrenau', [EmployeesCreneaudbController::class, 'updatecreneau'])->name('employees-creneaudb.updatecreneau');
+
+    //fiche suivi client et paiement
+    Route::get('/fiche/{id}', [PaymentdbController::class, 'index'])->name('fichedb');
+    Route::post('/fiche-create', [PaymentdbController::class, 'createfiche'])->name('create-fichedb');
+    Route::get('/payment/payment', [PaymentdbController::class, 'payment'])->name('paymentdb');
+    
+    //currency
+    Route::get('/currency', [CurrencydbController::class, 'index'])->name('currencydb');
+    Route::get('/currency/create', [CurrencydbController::class, 'create'])->name('currencydb.create');
+    Route::post('/currency/store', [CurrencydbController::class, 'store'])->name('currencydb.store');
+    Route::get('/currency/edit/{id}', [CurrencydbController::class, 'edit'])->name('currencydb.edit');
+    Route::post('/currency/upadte', [CurrencydbController::class, 'update'])->name('currencydb.update');
+
+    // Route::get('/mvola-test-form', function () {
+    //     return view('mvola/index');
+    // });
+
+    Route::get('/success', function () {
+        return view('mvola/success');
+    });
+
+    // Route::prefix('mvola-test')->group(function () {
+    // Route::get('/env', [\App\Http\Controllers\MvolaTestController::class, 'checkEnv']);
+    // Route::get('/correlation-id', [\App\Http\Controllers\MvolaTestController::class, 'generateCorrelationId']);
+    // Route::get('/token', [\App\Http\Controllers\MvolaTestController::class, 'getToken']);
+    // Route::post('/pay', [\App\Http\Controllers\MvolaTestController::class, 'testPaiement']);
+    // });
+
 
 });
+

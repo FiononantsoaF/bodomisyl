@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Session;
+use App\Models\Category;
 use App\Http\Requests\SessionRequest;
-
+use Illuminate\Http\Request;
 /**
  * Class SessionController
  * @package App\Http\Controllers
@@ -28,15 +29,21 @@ class SessiondbController extends Controller
     public function create()
     {
         $session = new Session();
-        return view('session.create', compact('session'));
+        $category = Category::all();
+        return view('session.create', compact('session', 'category'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SessionRequest $request)
+    public function store(Request $request)
     {
-        Session::create($request->validated());
+        $alldata = $request->all();
+        // dd($alldata);
+        Session::create([
+            "title"=>$alldata['title'],
+            "category_id"=>$alldata['category_id']
+        ]);
 
         return redirect()->route('sessiondb')
             ->with('success', 'Session créer avec succès.');
@@ -58,21 +65,24 @@ class SessiondbController extends Controller
     public function edit($id)
     {
         $session = Session::find($id);
-
-        return view('session.edit', compact('session'));
+        $category = Category::all();
+        return view('session.edit', compact('session','category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(SessionRequest $request, $id)
+    public function update(Request $request, Session $session)
     {
-        $session = Session::find($id);
-        $session->update($request->validated());
-
+        $alldata = $request->all();
+        $session->where('id', $alldata['id'])->first()
+                                            ->update(["title"=>$alldata['title'],
+                                            "category_id"=>$alldata['category_id'],
+                                            ]);
         return redirect()->route('sessiondb')
-            ->with('success', 'Session modifié avec succès');
+            ->with('success', 'Session modifiée avec succès');
     }
+
 
     public function destroy($id)
     {

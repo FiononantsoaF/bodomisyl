@@ -2,10 +2,10 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '@fortawesome/fontawesome-free/js/all';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 
-// Attendre que le DOM soit chargé
 document.addEventListener('DOMContentLoaded', function() {
-    // Elements
     const sidebarToggle = document.getElementById('sidebarToggle');
     const mobileSidebar = document.getElementById('mobileSidebar');
     const body = document.body;
@@ -14,8 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gestion du toggle sidebar
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', function() {
-            if (window.innerWidth < 992) { // Breakpoint cohérent avec le CSS
-                // Version mobile - utiliser Offcanvas
+            if (window.innerWidth < 992) { 
                 const bsOffcanvas = new bootstrap.Offcanvas(mobileSidebar);
                 bsOffcanvas.show();
             } else {

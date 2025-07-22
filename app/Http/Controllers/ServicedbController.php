@@ -41,10 +41,12 @@ class ServicedbController extends Controller
     public function store(Request $request)
     {
         $alldata = $request->all();
-//        dd($alldata);
+//   dd($alldata);
         Services::create([
             "title"=>$alldata['title'],
             "description"=>$alldata['description'],
+            "detail"=>$alldata['detail'],
+            "remarque"=>$alldata['remarque'],
             "service_category_id"=>$alldata['service_category_id'],
             "price"=>$alldata['price'],
             "duration_minutes"=>$alldata['duration_minutes'],
@@ -79,10 +81,14 @@ class ServicedbController extends Controller
     public function update(Request $request, Services $service)
     {
         $alldata = $request->all();
+        // print_r($alldata['description']);die();
         // dd($alldata);
+        // die();
         Services::where('id', $alldata['id'])->first()
                                             ->update(["title"=>$alldata['title'],
                                                     "description"=>$alldata['description'],
+                                                    "detail"=>$alldata['detail'],
+                                                    "remarque"=>$alldata['remarque'],
                                                     "duration_minutes"=>$alldata['duration_minutes'],
                                                     "service_category_id"=>$alldata['service_category_id'],
                                                     "price"=>$alldata['price'],

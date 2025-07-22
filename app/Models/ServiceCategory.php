@@ -25,13 +25,20 @@ class ServiceCategory extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
             'name',
-            'description'
+            'description',
+            'image_url','remarque'
         ];
     use HasFactory;
     
     public function services()
     {
         return $this->hasMany(Services::class);
+    }
+    
+    public function changeactive()
+    {
+        $this->is_active = $this->is_active == 1 ? 0 : 1;
+        $this->save();
     }
 
 

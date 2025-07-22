@@ -27,7 +27,7 @@ class Session extends Model
      *
      * @var array
      */
-    protected $fillable = ['title'];
+    protected $fillable = ['title', 'category_id'];
     
     public function services()
     {
@@ -35,6 +35,15 @@ class Session extends Model
                     ->withPivot('total_session', 'session_per_period', 'period_type')
                     ->withTimestamps();
     }
+
+    public function rules(): array
+    {
+        return [
+            'title' => 'required|string|max:100',
+            'category_id' => 'required|exists:category,id', 
+        ];
+    }
+
 
     
 

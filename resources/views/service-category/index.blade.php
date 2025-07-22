@@ -11,14 +11,13 @@
                 <div class="card">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                            <span id="card_title">
-                                {{ __('Service Category') }}
-                            </span>
+                            <h5 id="card_title">
+                                {{ __('Formules') }}
+                            </h5>
 
                              <div class="float-right">
                                 <a href="{{ route('service-categorydb.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                  {{ __('Ajouter') }}
                                 </a>
                               </div>
                         </div>
@@ -28,37 +27,42 @@
                             <p>{{ $message }}</p>
                         </div>
                     @endif
-
                     <div class="card-body bg-white">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead class="thead">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
                                     <tr>
-                                        <!-- <th>No</th> -->
-                                        
 										<th>Name</th>
 										<th>Description</th>
-
+                                        <th>Statut</th>
+                                        <th>Image</th>
+                                        <th></th>
+                                        <th></th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($serviceCategories as $serviceCategory)
                                         <tr>
-                                            <!-- <td>{{ ++$i }}</td> -->
-                                            
 											<td>{{ $serviceCategory->name }}</td>
 											<td>{{ $serviceCategory->description }}</td>
-
+                                            <td>@if($serviceCategory->is_active)
+                                                    <span class="badge bg-success">Activé</span>
+                                                @else
+                                                    <span class="badge bg-danger">Désactivé</span>
+                                                @endif</td>
+                                            <td><img style="width: 10%;" src="{{ asset('imageformule') }}/{{ $serviceCategory->image_url }}" alt="tag"></td>
                                             <td>
-                                                <form action="" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('service-categorydb.edit',$serviceCategory->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
-                                                </form>
+                                        <form  method="POST" action="{{ route('service-categorydb.destroy',$serviceCategory->id) }}">
+                                            <td>
+                                                <a class="btn btn-sm btn-success" href="{{ route('service-categorydb.edit',$serviceCategory->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                             </td>
+                                            @csrf
+                                            @method('DELETE')
+                                            <td>
+                                                <button type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-s text-inline" style="font-size: 0.7rem">{{ __('Activer / Desactiver') }}</button>
+                                            </td>
+                                        </form>
                                         </tr>
                                     @endforeach
                                 </tbody>

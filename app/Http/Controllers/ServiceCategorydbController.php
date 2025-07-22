@@ -36,10 +36,27 @@ class ServiceCategorydbController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ServiceCategoryRequest $request)
+    public function store(Request $request)
     {
-        ServiceCategory::create($request->validated());
+        // print_r($request->all());die();
 
+        $alldata = $request->all();
+        
+        $scat = ServiceCategory::create([
+            "name"=>$alldata['name'],
+            "description"=>$alldata['description'],
+            "remarque"=>$alldata['remarque']
+            // remarque
+        ]);
+
+        if(isset($alldata['image_url'])){
+            $request->validate([
+                'image_url' => 'required|mimes:jpg,jpeg,png,bmp,tiff |max:4096',
+            ]);
+            $fileName = time().'.'.$alldata['image_url']->extension();  
+            $alldata['image_url']->move(public_path('imageformule'), $fileName);
+            $scat->update(["image_url"=>$fileName]);
+        }
         return redirect()->route('service-categorydb')
             ->with('success', 'Création effectué avec succès.');
     }
@@ -72,9 +89,21 @@ class ServiceCategorydbController extends Controller
         // $serviceCategory->update($request->validated());
         // $serviceCategory->update(["name"=>"test","description"=>"test"]);
         $alldata = $request->all();
+        if(isset($alldata['image_url'])){
+            $request->validate([
+                'image_url' => 'required|mimes:jpg,jpeg,png,bmp,tiff |max:4096',
+            ]);
+            $fileName = time().'.'.$alldata['image_url']->extension();  
+            $alldata['image_url']->move(public_path('imageformule'), $fileName);
+            ServiceCategory::where('id', $alldata['id'])->first()->update(["image_url"=>$fileName]);
+        }
 
+        ServiceCategory::where('id', $alldata['id'])->first()->update([
+            "name"=>$alldata['name'],
+            "description"=>$alldata['description'],
+            "remarque"=>$alldata['remarque']
+            ]);
 
-        ServiceCategory::where('id', $alldata['id'])->first()->update(["name"=>$alldata['name'],"description"=>$alldata['description']]);
 
         return redirect()->route('service-categorydb')
             ->with('success', 'Modification effectué avec succès');
@@ -82,9 +111,10 @@ class ServiceCategorydbController extends Controller
 
     public function destroy($id)
     {
-        ServiceCategory::find($id)->delete();
+        $serviceCategories =ServiceCategory::find($id);
+        $serviceCategories->changeactive();
 
-        return redirect()->route('service-categories.index')
-            ->with('success', 'ServiceCategory deleted successfully');
+        return redirect()->route('service-categorydb')
+            ->with('success', 'Action effectué avec succès');
     }
 }

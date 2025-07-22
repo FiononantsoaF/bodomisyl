@@ -7,6 +7,27 @@
 // Scripts
 // 
 
+
+$(document).ready(function(){
+      $('#custdescription').summernote({
+        height:300
+      });
+      $('#custdetail').summernote({
+        height:300
+      });
+      // $('#custobjectifs').summernote({
+      //   height:100
+      // });
+      // $('#custindications').summernote({
+      //   height:100
+      // });
+      // $('#custobservations').summernote({
+      //   height:100
+      // });
+
+      // custdetail
+});
+
 window.addEventListener('DOMContentLoaded', event => {
 
     // Toggle the side navigation

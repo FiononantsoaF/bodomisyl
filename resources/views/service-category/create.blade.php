@@ -11,16 +11,16 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Service Category</span>
+                        <h5 class="card-title">{{ __('Création Formule') }} </h5>
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('service-categorydb.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('service-category.form')
-
                         </form>
                     </div>
+                    
                 </div>
             </div>
         </div>

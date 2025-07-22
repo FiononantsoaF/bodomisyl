@@ -23,23 +23,44 @@ class ServiceCategoryController extends Controller
 
     public function index()
     {
-        $categories = ServiceCategory::with('services')->get();
+        $categories = ServiceCategory::with('services')
+                    ->where("is_active",1)
+                    ->get();
+                    
         $scat = new Employees();
-        $prestataires = $scat->all();
+        $prestataires = Employees::with(['creneaux' => function ($query) {
+            $query->wherePivot('is_active', 1)
+                ->orderByRaw("STR_TO_DATE(creneau, '%H:%i') asc");
+        }])->get();
+
+        $logo = asset('images/LOGODOMISYL_mobile.png');
+        $back = asset('images/BACKGROUND.png');
+        
         $result = $categories->map(function ($category) {
             return [
                 'title' => $category->name,
                 'description' => $category->description,
-                'image' => asset('images/' . str_replace(' ', '', $category->name) . '.png'),
+                'remarque' => $category->remarque,
+                'image' => asset('imageformule/'.$category->image_url),
                 'details' => [
-                    'services' => $category->services->map(function ($service) {
+                    'types' => $category->services->map(function ($service) {
                         return [
+                            'id' => $service->id,
                             'title' => $service->title,
                             'duration_minutes' => $service->duration_minutes,
                             'validity_days'=> $service->validity_days,
                             'price' => number_format($service->price, 0, '', ' ') . ' Ar',
                             'description' => $service->description,
-                            'session' => $service->sessions,
+                            'detail' => $service->detail,
+                            'remarque' => $service->remarque,
+                            'sessions' =>$service->sessions->map(function ($session) {
+                                return [
+                                    'title' => $session->title,
+                                    'total_session' => $session->pivot->total_session,
+                                    'session_per_period' => $session->pivot->session_per_period,
+                                    'period_type' => $session->pivot->period_type,
+                                ];
+                            }, $service->sessions ?? []),
                         ];
                     }),
                 ],
@@ -48,7 +69,9 @@ class ServiceCategoryController extends Controller
 
         return response()->json([
         'services' => $result,
-        'prestataires' => $prestataires
+        'prestataires' => $prestataires,
+        'logo'=> $logo,
+        'back'=> $back
     ]);
     }
 

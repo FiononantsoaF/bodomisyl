@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Domisyl-Connexion</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -121,8 +122,8 @@
             <div class="row g-0 bg-white rounded-4 overflow-hidden shadow">
                 <div class="col-lg-6 d-none d-lg-block illustration-col">
                     <div class="h-100 d-flex align-items-center justify-content-center p-2"> 
-                        <p class="illustration">Domisyl</p>
-                        <!-- <img src="https://illustrations.popsy.co/amber/login.svg" alt="Login Illustration" class="illustration"> -->
+                        <!-- <p class="illustration">Domisyl</p> -->
+                        <img src="{{ asset('images/LOGODOMISYL_mobile.png') }}" alt="Login Illustration" class="illustration">
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -144,12 +145,12 @@
                                 
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Adresse Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="fy@gmail.com" required autofocus>
+                                    <input type="email" class="form-control" id="email" name="email" value="" required autofocus>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Mot de passe</label>
-                                    <input type="password" class="form-control" id="password" name="password" value="123" required>
+                                    <input type="password" class="form-control" id="password" name="password" value="" required>
                                 </div>
                                 
                                 <div class="d-grid mb-3">
@@ -160,9 +161,9 @@
                             </form>
                         </div>
                         
-                        <div class="login-footer p-3">
+                        <!-- <div class="login-footer p-3">
                             Vous n'avez pas de compte ? <a href="">S'inscrire</a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
