@@ -14,7 +14,10 @@
                             <h5 class="mb-0" id="card_title">
                                 <i class="bi bi-card-checklist me-2"></i> {{ __('Abonnements') }}
                             </h5>
-
+                            <a href="{{ route('export.subscriptions') }}" class="btn btn-success btn-sm">
+                                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+                            </a>
+                           
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -35,7 +38,7 @@
 										<th>Reste Séances</th>
                                         <th >Prix</th>
 										<th>Période</th>
-                                        <th>Status</th>
+                                        <th>Statut</th>
                                         <th class="end-text">Action</th>
                                     </tr>
                                 </thead>
@@ -68,7 +71,7 @@
                                                     <form action="{{ route('subscriptiondb.appoint') }}" method="POST" class="d-inline">
                                                         @csrf
                                                         <input type="hidden" name="subscription_id" value="{{ $subscription->idab }}">
-                                                        <button type="submit" class="btn btn-sm btn-primary">
+                                                        <button  style="white-space: nowrap;"  type="submit" class="btn btn-sm btn-primary">
                                                             <i class="bi bi-calendar-plus me-1"></i> Créer RDV
                                                         </button>
                                                     </form>

@@ -105,14 +105,15 @@ class Subscription extends Model
     {
         if ($serviceId && $clientId) {
             return Subscription::where('services_id', $serviceId)
-                        ->where('client_id', $clientId)
-                        ->where('status', 'active')
-                        ->whereRaw('period_start', '<=', $date)
-                        ->whereRaw('period_end', '=>', $date)
-                        ->first();
+                ->where('client_id', $clientId)
+                ->where('status', 'active')
+                ->whereDate('period_start', '<=', $date)
+                ->whereDate('period_end', '>=', $date)
+                ->first();
         }
         return null;
     }
+
     public  static function getallsubscriptionsbyclient()
     {
         $sub = DB::table('subscriptions')

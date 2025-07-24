@@ -23,10 +23,12 @@ class ServiceCategoryController extends Controller
 
     public function index()
     {
-        $categories = ServiceCategory::with('services')
-                    ->where("is_active",1)
-                    ->get();
-                    
+        $categories = ServiceCategory::with(['services' => function($query) {
+            $query->where('is_active', 1);
+        }])
+        ->where('is_active', 1)
+        ->get();
+
         $scat = new Employees();
         $prestataires = Employees::with(['creneaux' => function ($query) {
             $query->wherePivot('is_active', 1)

@@ -99,12 +99,12 @@ class ServicedbController extends Controller
             ->with('success', 'Service modifier avec succès');
     }
 
-
     public function destroy($id)
     {
-        Services::find($id)->delete();
-
+        $service=Services::find($id);
+        $service->changeactive();
         return redirect()->route('servicedb')
-            ->with('success', 'Service deleted successfully');
+            ->with('success', 'Mise à jours effectuée');
     }
+
 }

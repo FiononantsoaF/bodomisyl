@@ -12,7 +12,6 @@ use DateTime;
 
 class appointments extends Model
 {
-    // appointments
     protected $table = 'appointments';
     protected $primaryKey = 'id';
     protected $perPage = 2;

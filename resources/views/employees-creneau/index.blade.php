@@ -9,30 +9,35 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card shadow">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex justify-content-between align-items-right">
                     <h5>Listes des employés</h5>
-                    <a href="{{ route('employees-creneaudb.create') }}" class="btn btn-primary btn-sm">
-                        {{ __('Ajouter créneau pour un employé') }}
-                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('employees-creneaudb.create') }}" class="btn btn-primary btn-sm">
+                            {{ __('Ajouter créneau pour un employé') }}
+                        </a>
+                        <a href="{{ route('export.employees') }}" class="btn btn-success btn-sm">
+                            <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-body bg-white">
-                    <form method="GET" class="mb-4">
+                    <form method="GET" class="mb-4 g-1">
                             <div class="row g-2 align-items-end"> 
                                 <div class="col-md-4 col-lg-3">
                                     <label for="employee_name" class="form-label">Nom de l'employé</label>
                                     <!-- INPUT dans ton formulaire -->
-                                    <input type="text" id="employee_name" name="employee_name" class="form-control small" placeholder="Rechercher un employé">
+                                    <input type="text" id="employee_name" name="employee_name" class="form-control form-control-small"" placeholder="Rechercher un employé">
                                 </div>
                                  
                                 <div class="col-md-3 col-lg-2">
                                     <label for="phone" class="form-label">Téléphone</label>
-                                    <input type="phone" id="phone" name="phone" value="" class="form-control " placeholder="Rechercher par téléphone">
+                                    <input type="phone" id="phone" name="phone" value="" class="form-control form-control-small"" placeholder="Rechercher par téléphone">
                                 </div>
                                 
                                 <div class="col-md-3 col-lg-2">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" id="email" name="email" value="" class="form-control" placeholder="Rechercher par email">
+                                    <label for="email" class="form-label ">Email</label>
+                                    <input type="email" id="email" name="email" value="" class="form-control form-control-small"" placeholder="Rechercher par email">
                                 </div>
                                 
                                 <div class="col-md-3 col-lg-5">

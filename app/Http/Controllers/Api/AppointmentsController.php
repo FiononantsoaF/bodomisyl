@@ -138,12 +138,20 @@ class AppointmentsController extends Controller
         ])->first();
 
         if ($existingAppointment) {
-            return $this->apiResponse(false, "Ce client a déjà un rendez-vous à cette date", null, 400);
+            return $this->apiResponse(false, "Vous avez déjà un rendez-vous à cette date.", null, 400);
         }
 
         $existingSubscription = Subscription::getExistSubscription($service->id, $existingClient->id, $param['start_times']);
         if ($existingSubscription) {
-            return $this->apiResponse(false, "Ce client a déjà un abonnement actif pour la prestation {$service->name}", null, 400);
+            $remainingSessions = $existingSubscription->total_session - $existingSubscription->used_session ;
+
+            $message = "Vous avez déjà un abonnement actif pour la prestation « {$service->title} »";
+            
+            if ($remainingSessions !== null) {
+                $message .= " — il vous reste {$remainingSessions} séance" . ($remainingSessions > 1 ? 's' : '') . " à effectuer.";
+            }
+
+            return $this->apiResponse(false, $message, null, 400);
         }
 
         $newSubscription = Subscription::createSubscription($param, $existingClient, $service);

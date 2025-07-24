@@ -19,8 +19,7 @@ use App\Http\Controllers\Api\MvolaController;
 use App\Http\Controllers\PaymentdbController;
 use App\Http\Controllers\EmployeesCreneaudbController;
 use App\Http\Controllers\CurrencydbController;
-
-
+use App\Http\Controllers\ExportController;
 
 
 /*
@@ -62,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/services/store', [ServicedbController::class, 'store'])->name('servicedb.store');
     Route::get('/services/edit/{id}', [ServicedbController::class, 'edit'])->name('servicedb.edit');
     Route::patch('/services/update', [ServicedbController::class, 'update'])->name('servicedb.update');
+    Route::delete('/services/{id}', [ServicedbController::class, 'destroy'])->name('servicedb.destroy');
 
     // category session
     Route::get('/category', [CategorydbController::class, 'index'])->name('categorydb');
@@ -75,8 +75,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/creneau/store', [CreneaudbController::class, 'store'])->name('creneaudb.store');
     Route::post('/creneau/upadtecrenau', [CreneaudbController::class, 'updatecreneau'])->name('creneaudb.updatecreneau');
 
-
-    
     //subscription
     Route::get('/subscriptiondb', [SubscriptiondbController::class, 'index'])->name('subscriptiondb');
     Route::post('/subscription/appoint', [SubscriptiondbController::class, 'continue'])->name('subscriptiondb.appoint');
@@ -138,6 +136,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/currency/store', [CurrencydbController::class, 'store'])->name('currencydb.store');
     Route::get('/currency/edit/{id}', [CurrencydbController::class, 'edit'])->name('currencydb.edit');
     Route::post('/currency/upadte', [CurrencydbController::class, 'update'])->name('currencydb.update');
+
+
+    // export
+    Route::get('/export-subscriptions', [ExportController::class, 'exportSubscriptions'])->name('export.subscriptions');
+    Route::get('/export-appointments', [ExportController::class, 'exportAppointments'])->name('export.appointments');
+    Route::get('/export-employees', [ExportController::class, 'exportEmployees'])->name('export.employees');
+
+
 
     // Route::get('/mvola-test-form', function () {
     //     return view('mvola/index');

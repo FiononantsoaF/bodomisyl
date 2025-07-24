@@ -38,25 +38,32 @@
 										<th>Formules</th>
 										<th>Prix</th>
 										<th>Durée/séance(min)</th>
-                                        <!-- <th>Validité(jours)</th> -->
+                                        <th>Statut</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody class="small">
                                     @foreach ($services as $service)
                                         <tr>
-											<td>{{ $service->title }}</td>
+											<td style="white-space: nowrap;" >{{ $service->title }}</td>
 						
-											<td><span class="badge bg-light text-dark">{{ $service->serviceCategory->name }}</span></td>
+											<td style="white-space: nowrap;" ><span class="badge bg-light text-dark">{{ $service->serviceCategory->name }}</span></td>
 											<td>{{ $service->price }} Ar</td>
                                             <td>{{ $service->duration_minutes ? $service->duration_minutes . ' min' : '-' }}</td>
+                                            <td>@if($service->is_active)
+                                                    <span class="badge bg-success">Activé</span>
+                                                @else
+                                                    <span class="badge bg-danger">Désactivé</span>
+                                                @endif</td>
                                             <td>
-                                                <form action="" method="POST">
+                                                <form action="{{ route('servicedb.destroy',$service->id) }}" method="POST">
                                                     <!-- <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a> -->
                                                     <a class="btn btn-sm btn-success" href="{{ route('servicedb.edit',$service->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <!-- <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button> -->
+                                                    <td>
+                                                        <button style="white-space: nowrap;"  type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-s text-inline" style="font-size: 0.7rem">{{ __('Activer / Desactiver') }}</button>
+                                                    </td>
                                                 </form>
                                             </td>
                                         </tr>

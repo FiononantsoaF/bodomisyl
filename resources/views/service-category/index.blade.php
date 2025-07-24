@@ -30,7 +30,7 @@
                     <div class="card-body bg-white">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
-                                <thead class="table-light">
+                                <thead class="table-light small">
                                     <tr>
 										<th>Name</th>
 										<th>Description</th>
@@ -41,10 +41,10 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="small">
                                     @foreach ($serviceCategories as $serviceCategory)
                                         <tr>
-											<td>{{ $serviceCategory->name }}</td>
+											<td style="white-space: nowrap;" >{{ $serviceCategory->name }}</td>
 											<td>{{ $serviceCategory->description }}</td>
                                             <td>@if($serviceCategory->is_active)
                                                     <span class="badge bg-success">Activé</span>
@@ -54,13 +54,13 @@
                                             <td><img style="width: 10%;" src="{{ asset('imageformule') }}/{{ $serviceCategory->image_url }}" alt="tag"></td>
                                             <td>
                                         <form  method="POST" action="{{ route('service-categorydb.destroy',$serviceCategory->id) }}">
-                                            <td>
+                                            <td style="white-space: nowrap;" >
                                                 <a class="btn btn-sm btn-success" href="{{ route('service-categorydb.edit',$serviceCategory->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                             </td>
                                             @csrf
                                             @method('DELETE')
                                             <td>
-                                                <button type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-s text-inline" style="font-size: 0.7rem">{{ __('Activer / Desactiver') }}</button>
+                                                <button style="white-space: nowrap;" type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-s text-inline" style="font-size: 0.7rem">{{ __('Activer / Desactiver') }}</button>
                                             </td>
                                         </form>
                                         </tr>

@@ -12,33 +12,37 @@
                             <h5 class="mb-0">
                                 <i class="fas fa-calendar-alt me-2"></i> Liste des rendez-vous
                             </h5>
+                            <a href="{{ route('export.appointments') }}" class="btn btn-success btn-sm">
+                                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+                            </a>
+                          
                         </div>
                     </div>
                     
                     <div class="card-body">
-                        <form method="GET" class="mb-4">
+                        <form method="GET" class="mb-4 g-1">
                             <div class="row g-4 align-items-end">  
                                 <div class="col-md-4 col-lg-3">
                                     <label for="name" class="form-label">Nom</label>
-                                    <input type="text" id="name" name="name" value="{{ $name }}" class="form-control" placeholder="nom">
+                                    <input type="text" id="name" name="name" value="{{ $name }}" class="form-control form-control-small" placeholder="nom">
                                 </div>
 
                                 <div class="col-md-4 col-lg-2">
                                     <label for="phone" class="form-label">Téléphone</label>
-                                    <input type="text" id="phone" name="phone" value="{{ $phone }}" class="form-control" placeholder="téléphone">
+                                    <input type="text" id="phone" name="phone" value="{{ $phone }}" class="form-control form-control-small"" placeholder="téléphone">
                                 </div>
 
                                 <div class="col-md-4 col-lg-3">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" id="email" name="email" value="{{ $email }}" class="form-control" placeholder="email">
+                                    <input type="email" id="email" name="email" value="{{ $email }}" class="form-control form-control-small"" placeholder="email">
                                 </div>
 
                                 <div class="col-md-12 col-lg-4">
                                     <div class="d-flex gap-2 mt-1">
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="submit" class="btn btn-primary bt-sm">
                                             <i class="fas fa-search me-1"></i> Rechercher
                                         </button>
-                                        <button type="submit" class="btn btn-outline-secondary" name="reset" value="1">
+                                        <button type="submit" class="btn btn-outline-secondary bt-sm" name="reset" value="1">
                                             <i class="fas fa-eraser me-1"></i> Effacer
                                         </button>
                                     </div>

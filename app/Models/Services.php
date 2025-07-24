@@ -54,4 +54,10 @@ class Services extends Model
     {
         return $this->hasMany(\App\Models\Appointment::class, 'id', 'service_id');
     }
+
+    public function changeactive()
+    {
+        $this->is_active = $this->is_active == 1 ? 0 : 1;
+        $this->save();
+    }
 }
