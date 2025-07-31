@@ -68,7 +68,7 @@
                                             </td>
                                             <td class="text-center">
                                                 @if (($subscription->total - $subscription->session_achevee) > 0)
-                                                    <form action="{{ route('subscriptiondb.appoint') }}" method="POST" class="d-inline">
+                                                    <form action="{{ route('subscriptiondb.appoint', ['id' => $subscription->idab]) }}" method="GET" class="d-inline">
                                                         @csrf
                                                         <input type="hidden" name="subscription_id" value="{{ $subscription->idab }}">
                                                         <button  style="white-space: nowrap;"  type="submit" class="btn btn-sm btn-primary">

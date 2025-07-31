@@ -3,7 +3,7 @@
         <input type="hidden" name="id" value="{{ $service->id }}" id="id">
         <div class="form-group mb-2 mb20">
             <label for="service_category_id" class="form-label">{{ __('Formule') }}</label>
-            <select name="service_category_id" id="service_category_id" class="form-control @error('service_category_id') is-invalid @enderror">
+            <select name="service_category_id" id="service_category_id" class="form-control @error('service_category_id') is-invalid @enderror" required>
                 <option value="">---Choisir formule---</option>
                 @foreach($categories as $cat)
                     <option value="{{ $cat->id }}" {{ old('service_category_id', $service->service_category_id ?? '') == $cat->id ? 'selected' : '' }}>
@@ -20,7 +20,7 @@
         </div>
         <div class="form-group mb-2 mb20">
             <label for="title" class="form-label">{{ __('Titre') }}</label>
-            <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $service?->title) }}" id="title" placeholder="Titre">
+            <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $service?->title) }}" id="title" placeholder="Titre" required>
             {!! $errors->first('title', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="form-group mb-2 mb20">
@@ -42,14 +42,14 @@
             {!! $errors->first('detail', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="form-group mb-2 mb20">
-            <label for="remarque" class="form-label">{{ __('remarque') }}</label>
+            <label for="remarque" class="form-label">{{ __('Remarque') }}</label>
             <input type="text" name="remarque" class="form-control @error('remarque') is-invalid @enderror" value="{{ old('remarque', $service?->remarque) }}" id="remarque" placeholder="remarque">
             {!! $errors->first('remarque', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
         <div class="form-group mb-2 mb20">
             <label for="price" class="form-label">{{ __('Prix') }}</label>
-            <input type="text" name="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price', $service?->price) }}" id="price" placeholder="Prix en Ar">
+            <input type="text" name="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price', $service?->price) }}" id="price" placeholder="Prix en Ar" required>
             {!! $errors->first('price', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="form-group mb-2 mb20">

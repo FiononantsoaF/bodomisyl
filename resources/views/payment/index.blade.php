@@ -5,36 +5,46 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
+    <div class="card shadow-xs mb-3 py-3 g-1 p-1 ">
         <div class="row">
             <div class="col-sm-12">
-                <div class="container-fluid p-0">
-                    <div class="row justify-content-center mb-3">
-                        <div class="col-auto">
-                            <h5 class="text-center">FICHE SUIVI CLIENT</h5>
+                <div class="container-fluid ">
+                    <div class="row align-items-center">
+                        <div class="col-md-10">
+                            <h5 class="mb-1" style="padding-left: 0.9rem;">FICHE SUIVI CLIENT</h5>
                         </div>
-                    </div>
-                    
-                    <div class="card mb-3">
-                        <div class="card-header bg-white">
-                            <div class="row align-items-center">
+                    </div>       
+                    <div class="card mb-3 border-0">
+                        <div class="card-header bg-white small">
+                            <div class="row">
                                 <div class="col-md-10">
-                                    <p class="mb-1"><strong>Nom :</strong> <span id="clientName">{{ $clients->name }}</span></p>
-                                    <p class="mb-1"><strong>Tel :</strong> <span id="clientPhone">{{ $clients->phone }}</span></p>
-                                    <p class="mb-0"><strong>Adresse :</strong> <span id="clientAddress">{{ $clients->adress }}</span></p>
-                                </div>
-                                <div class="col-md-2 text-end">
-                                    <span class="badge bg-white text-dark rounded-1 p-2 d-inline-block" style="border: 1px solid #000;">
-                                        *SUIVI RÈGLEMENTS
-                                    </span>
+                                    <table class="table table-borderless table-sm mb-0 small">
+                                        <tbody calss="small">
+                                            <tr>
+                                                <th style="width: 120px;">Nom </th>
+                                                <td>{{ $clients->name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email </th>
+                                                <td>{{ $clients->email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tel </th>
+                                                <td>{{ $clients->phone }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Adresse </th>
+                                                <td>{{ $clients->adress }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p class="mt-3 mb-0"><strong>*SUIVI RÈGLEMENTS</strong></p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
                     <div class="card mb-3">
-                        <div class="card-body bg-white">
-                            <h5>HISTORIQUE RENDEZ VOUS</h5>
+                        <div class="card-body bg-white small">
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <thead class="thead small">
@@ -59,11 +69,12 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <p>HISTORIQUE RENDEZ VOUS</p>
                         </div>
                     </div>
                     <div class="card mb-3">
-                        <div class="card-body bg-white">
-                            <form method="POST" action="{{ route('create-fichedb') }}" role="form" enctype="multipart/form-data">
+                        <div class="card-body bg-white small">
+                            <form method="POST" action="{{ route('create-fichedb') }}" role="form" enctype="multipart/form-data" class="small">
                                 @csrf
                                 <input type="hidden" name="client" value="{{ $clients->id }}">
                                 
@@ -77,19 +88,46 @@
                                     <label for="indications" class="form-label">{{ __('CONTRE-INDICATIONS') }}</label>
                                     <textarea name="indications" class="form-control @error('indications') is-invalid @enderror" id="custindications">{{ old('indications', $fiche?->indications) }}</textarea>
                                     {!! $errors->first('indications', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                                </div>
-                                
+                                </div>                          
                                 <div class="mb-3">
-                                    <label for="observations" class="form-label">{{ __('OBSERVATIONS') }}</label>
-                                    <textarea name="observations" class="form-control @error('observations') is-invalid @enderror" id="custobservations">{{ old('observations', $fiche?->observations) }}</textarea>
-                                    {!! $errors->first('observations', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                    <label for="observations" class="form-label">{{ __('OBSERVATIONS') }}</label><br>
+                                    <div class="row mb-2 small">
+                                        <label class="col-sm-2 col-form-label text-end">Sexe :</label>
+                                        <div class="col-sm-10">
+                                                <select name="gender" class="form-control small">
+                                                    @foreach($gender as $key => $value)
+                                                        <option value="{{ $key }}">{{ $value }}</option>
+                                                    @endforeach
+                                                </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2 small">
+                                        <label class="col-sm-2 col-form-label text-end">Taille(en cm) :</label>
+                                        <div class="col-sm-10">
+                                            <input type="number"  name="size" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2 small">
+                                        <label class="col-sm-2 col-form-label text-end">Poids (kg):</label>
+                                        <div class="col-sm-10">
+                                            <input type="" name="weight" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2 small">
+                                        <label class="col-sm-2 col-form-label text-end">IMC :</label>
+                                        <div class="col-sm-10">
+                                            <input type="number" name="imc"  class="form-control">
+                                        </div>
+                                    </div>
+
                                 </div>
                         </div>
                     </div>
-                    
-                    <!-- Commentaires Rendez-vous -->
                     <div class="card mb-4">
-                        <div class="card-body bg-white">
+                        <div class="card-body bg-white small">
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <thead class="thead small">
@@ -121,7 +159,7 @@
                             </div>
 
                             <div class="col-md-12 text-center">
-                                <button type="submit" class="btn btn-primary btn-lg">{{ __('Valider') }}</button>
+                                <button type="submit" class="btn btn-primary btn-lg btn-sm">{{ __('Valider') }}</button>
                             </div>
                             </form>
                         </div>
@@ -129,15 +167,15 @@
                     
                     <!-- Détails Paiement -->
                     <div class="card">
-                        <div class="card-body bg-white">
+                        <div class="card-body bg-white small">
                             <h5>*DETAILS DU PAYEMENT</h5>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <thead class="thead small">
                                         <tr>
-                                            <th>Fomrule/Prestation</th>
+                                            <th>Formule/Prestation</th>
                                             <th>Date et Lieu du rdv</th>
-                                            <th>Type de payement</th>
+                                            <th>Type de paiement</th>
                                             <th>Montant (En Ariary)</th>
                                         </tr>
                                     </thead>

@@ -22,11 +22,10 @@
                 </div>
 
                 <div class="card-body bg-white">
-                    <form method="GET" class="mb-4 g-1">
+                    <form method="GET" class="mb-4 g-1 small">
                             <div class="row g-2 align-items-end"> 
                                 <div class="col-md-4 col-lg-3">
                                     <label for="employee_name" class="form-label">Nom de l'employé</label>
-                                    <!-- INPUT dans ton formulaire -->
                                     <input type="text" id="employee_name" name="employee_name" class="form-control form-control-small"" placeholder="Rechercher un employé">
                                 </div>
                                  

@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid small">
     <div class="row">
         <div class="container px-4 py-4">
             @if(session('success'))
@@ -25,16 +25,16 @@
     </div>
 </div>
 
-<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+<div class="modal fade small " id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header text-white" style="background-color:rgb(252, 171, 31)">
-        <h5 class="modal-title" id="appointmentModalLabel">🗓️ Détails du Rendez-vous</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      <div class="modal-header text-white p-2" style="background-color:rgb(252, 171, 31)">
+        <h5 class="modal-title " id="appointmentModalLabel">🗓️ Détails du Rendez-vous</h5>
+        <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Fermer"></button>
       </div>
       <div class="modal-body">
-            <div class="table-responsive">
-                <table class="table">
+            <div class="table-responsive small">
+                <table class="table small">
                     <tbody>
                         <tr>
                             <th scope="row" class="col-md-3">Client</th>
@@ -78,7 +78,7 @@
         <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
       </div> -->
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
       </div>
     </div>
   </div>

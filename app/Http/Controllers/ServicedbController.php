@@ -41,6 +41,11 @@ class ServicedbController extends Controller
     public function store(Request $request)
     {
         $alldata = $request->all();
+        if(!isset($alldata['service_category_id'])){
+                return redirect()->back()
+                ->withErrors(['erreur' => "Echec de la mise à jour"])
+                ->withInput();
+        }
 //   dd($alldata);
         Services::create([
             "title"=>$alldata['title'],
@@ -81,9 +86,11 @@ class ServicedbController extends Controller
     public function update(Request $request, Services $service)
     {
         $alldata = $request->all();
-        // print_r($alldata['description']);die();
-        // dd($alldata);
-        // die();
+        if(!isset($alldata['service_category_id'])){
+                return redirect()->back()
+                ->withErrors(['erreur' => "Echec de la mise à jour"])
+                ->withInput();
+        }
         Services::where('id', $alldata['id'])->first()
                                             ->update(["title"=>$alldata['title'],
                                                     "description"=>$alldata['description'],

@@ -158,4 +158,19 @@ class EmployeesCreneaudbController extends Controller
         return response()->json($employees);
     }
 
+    public function getCreneaux($employee_id)
+    {
+        $creneaux = Employees::with(['creneaux' => function ($query) {
+            $query->wherePivot('is_active', 1)
+                ->orderByRaw("STR_TO_DATE(creneau, '%H:%i') asc");
+        }])->find($employee_id);
+
+        if (!$creneaux) {
+            return response()->json([], 404);
+        }
+        return response()->json($creneaux->creneaux);
+    }
+
+
+
 }

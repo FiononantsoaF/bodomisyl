@@ -179,6 +179,7 @@ class appointments extends Model
             ->join('service_category as sc', 'sc.id', '=', 's.service_category_id')
             ->orderByDesc('ap.id');
     }
+    
 
 
 

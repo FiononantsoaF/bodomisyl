@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container-fluid small">
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
@@ -102,8 +102,8 @@
                                                 @php
                                                     $fiche ='Fiche suivi' ;
                                                 @endphp
-                                                <form class="btn-group btn-group-sm" method="GET" action="{{ route('fichedb', ['id' => $client->id]) }}">
-                                                    <input type="submit" value="{{ $fiche }}" class="btn btn-outline-secondary" style="background-color: rgb(252, 171, 31); color: black;">
+                                                <form class="btn-group btn-group-sm small" method="GET" action="{{ route('fichedb', ['id' => $client->id]) }}">
+                                                    <input type="submit" value="{{ $fiche }}" class="btn btn-outline-secondary" style="background-color: rgb(252, 171, 31); color: black; font-size:0.6rem;">
                                                 </form>
                                             </td>
                                             <td>

@@ -5,16 +5,20 @@
 @endsection
 
 @section('content')
-    <section class="content container-fluid">
+    <section class="content container-fluid small">
         <div class="row">
             <div class="col-md-12">
-
                 <div class="card card-default">
                     <div class="card-header">
                         <span class="card-title">{{ __('Création ') }} rendez-vous</span>
                     </div>
+                    @if($errors->has('erreur'))
+                        <div class="alert alert-danger">
+                            <strong>{{ $errors->first('erreur') }}</strong>
+                        </div>
+                    @endif
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('appointmentsdb.creation')}}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('appointmentsdb.creation')}}" enctype="multipart/form-data" class="small">
                             @csrf
                             <div class="row padding-1 p-1">
                                 <div class="col-md-12">
@@ -30,7 +34,7 @@
                                         
                                         {{-- <input type="text" name="employee_id" class="form-control @error('employee_id') is-invalid @enderror" value="{{ $employee->id}}" id="session_id" placeholder="Employéé"> --}}
                                         <select name="employee_id" id="employee_id" class="form-control @error('employee_id') is-invalid @enderror">
-                                            <option>-- Choisir le prestataire --</option>
+                                            <option value="">-- Choisir le prestataire --</option>
                                             @foreach($employee as $emp)
                                                 <option value="{{ $emp->id }}" {{ $client->id ?? '' == $emp->id ? 'selected' : '' }}>
                                                     {{ $emp->name }}
@@ -54,8 +58,8 @@
                                     </div>
                                     <div class="form-group mb-2 mb20">
                                         <label for="creneau" class="form-label">{{ __('Horaire') }}</label>
-                                        <select name="creneau" id="creneau" class="form-control @error('creneau') is-invalid @enderror">
-                                            <option>-- Choisir heure --</option>
+                                        <select name="creneau" id="creneau" class="form-control @error('creneau') is-invalid @enderror" required>
+                                            <option value=" ">-- Choisir heure --</option>
                                             @foreach($creneau as $cre)
                                                 <option value="{{ $cre->creneau}}">
                                                     {{ $cre->creneau }}
@@ -81,4 +85,30 @@
             </div>
         </div>
     </section>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $('#employee_id').on('change', function () {
+            var employeeId = $(this).val();
+
+            if (employeeId) {
+                $.ajax({
+                    url: '/employees-creneaux/' + employeeId,
+                    type: 'GET',
+                    success: function (data) {
+                        var select = $('#creneau');
+                        select.empty();
+                        select.append('<option value=" " selected disabled>-- Choisir heure --</option>');
+                        data.forEach(function(creneaux) {
+                            select.append('<option value="' + creneaux.creneau + '">' + creneaux.creneau + '</option>');
+                        });
+                        select.prop('required', true);
+                    },
+                    error: function () {
+                        alert('Erreur lors de la récupération des créneaux.');
+                    }
+                });
+            }
+        });
+    </script>
+
 @endsection

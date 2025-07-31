@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\appointments;
 use Illuminate\Http\Request;
 use App\Models\Subscription;
+use App\Models\EmployeesCreneau;
 use App\Models\Clients;
+use App\Models\Creneau;
 use App\Models\Services;
 use App\Http\Requests\AppointmentRequest;
 use App\Services\GoogleCalendarService;
@@ -98,11 +100,44 @@ class AppointmentdbController extends Controller
     public function creation(Request $request)
     {
         $alldata = $request->all();
+        // dd($alldata);
+
+        if(!isset($alldata['start_times'])){
+            return redirect()->back()
+                ->withErrors(['erreur' => "La date est obligatoire "])
+                ->withInput();
+        }
+        if(!isset($alldata['creneau'])){
+            return redirect()->back()
+                ->withErrors(['erreur' => "Le créneau sont obligatoire "])
+                ->withInput();
+        }
         $start = $alldata['start_times'].' '. $alldata['creneau'].':00';
         $start_time = new DateTime($start);
         $duration =(int)$alldata['duration_minutes'];
         $end_time = clone $start_time;
         $end_time->modify("+{$duration} minutes");
+
+        $creneau = Creneau::where('creneau', $alldata['creneau'])->first();
+        $day_of_week = (int)$start_time->format('N');
+
+        $cren = new \App\Models\EmployeesCreneau();
+        $selected_day_name = $cren->daysMapping[$day_of_week];
+
+        $isAvailable = EmployeesCreneau::isCreneauAvailable($alldata['employee_id'], $creneau->id, $day_of_week);
+        if (!$isAvailable) {
+            $availableDays = $cren->getAvailableDaysForHour($alldata['employee_id'], $creneau->id);
+            $message = "L'employé n'est pas disponible le {$selected_day_name} à {$alldata['creneau']}";
+            if (!empty($availableDays)) {
+                $availableDaysNames = array_map(function($day) use($cren) {
+                    return $cren->daysMapping[$day];
+                }, $availableDays);
+                $message .= ". Jours disponibles à cette heure : " . implode(', ', $availableDaysNames) . ".";
+            }
+            return redirect()->back()
+                ->withErrors(['erreur' => $message])
+                ->withInput();
+        } 
         $appointment = appointments::create([
             "client_id"       => $alldata['client_id'],
             "service_id"      => $alldata['service_id'],
@@ -119,7 +154,7 @@ class AppointmentdbController extends Controller
         }
         Subscription::where('id', $alldata['subscription_id'])->increment('used_session');
         return redirect()->route('appointmentsdb')
-            ->with('success', 'Appointment created successfully.');
+            ->with('success', 'Rendez-vous créé avec succès');
     }
 
     public function changestate(Request $request, $id)
@@ -130,14 +165,12 @@ class AppointmentdbController extends Controller
         if (!$appointment) {
             return redirect()->back()->with('error', 'Rendez-vous introuvable.');
         }
-
         $service = Services::find($appointment->service_id);
         $client = Clients::find($appointment->client_id);
 
         if (!$client || !$client->email) {
             return redirect()->back()->with('error', 'Client ou email introuvable.');
         }
-
         $status = null;
 
         if (isset($param['valider']) && $param['valider'] == 1) {
@@ -205,4 +238,13 @@ class AppointmentdbController extends Controller
         return redirect()->route('appointments.index')
             ->with('success', 'Appointment deleted successfully');
     }
+    private  $daysMapping = [
+        1 => 'Lundi',
+        2 => 'Mardi', 
+        3 => 'Mercredi',
+        4 => 'Jeudi',
+        5 => 'Vendredi',
+        6 => 'Samedi',
+        7 => 'Dimanche'
+    ];
 }

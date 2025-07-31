@@ -95,6 +95,24 @@ class EmployeesCreneau extends Model
         return $creneau;
     }
 
+
+    public  function getAvailableDaysForHour($employeeId, $creneauId)
+    {
+        return EmployeesCreneau::where('employee_id', $employeeId)
+                              ->where('creneau_id', $creneauId)
+                              ->where('is_active', 1)
+                              ->pluck('jour')
+                              ->toArray();
+    }
+    public  $daysMapping = [
+        1 => 'Lundi',
+        2 => 'Mardi', 
+        3 => 'Mercredi',
+        4 => 'Jeudi',
+        5 => 'Vendredi',
+        6 => 'Samedi',
+        7 => 'Dimanche'
+    ];
  
 
     

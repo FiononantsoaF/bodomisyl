@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container-fluid small">
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
@@ -55,12 +55,12 @@
                                             <td>
                                         <form  method="POST" action="{{ route('service-categorydb.destroy',$serviceCategory->id) }}">
                                             <td style="white-space: nowrap;" >
-                                                <a class="btn btn-sm btn-success" href="{{ route('service-categorydb.edit',$serviceCategory->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
+                                                <a class="btn btn-sm btn-success" href="{{ route('service-categorydb.edit',$serviceCategory->id) }}" style="font-size: 0.6rem;"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                             </td>
                                             @csrf
                                             @method('DELETE')
                                             <td>
-                                                <button style="white-space: nowrap;" type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-s text-inline" style="font-size: 0.7rem">{{ __('Activer / Desactiver') }}</button>
+                                                <button  style="white-space: nowrap; font-size: 0.6rem;" type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-sm text-inline" style="font-size: 0.5rem">{{ __('Activer / Desactiver') }}</button>
                                             </td>
                                         </form>
                                         </tr>

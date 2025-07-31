@@ -77,7 +77,10 @@ class AppointmentsController extends Controller
         $end_times = clone $start_time;
         $end_times->modify("+" . ($service->duration_minutes > 0 ? $service->duration_minutes : 60) . " minutes");
         $day_of_week = (int)$start_time->format('N');
-        $selected_day_name = $this->daysMapping[$day_of_week];
+
+        $cren = new \App\Models\EmployeesCreneau();
+        $selected_day_name = $cren->daysMapping[$day_of_week];
+
         $hour = $start_time->format('H:i');
         $creneau = Creneau::where('creneau', $hour)->first();
 
@@ -87,11 +90,11 @@ class AppointmentsController extends Controller
         $isAvailable = EmployeesCreneau::isCreneauAvailable($param['employee_id'], $creneau->id, $day_of_week);
 
         if (!$isAvailable) {
-            $availableDays = $this->getAvailableDaysForHour($param['employee_id'], $creneau->id);
+            $availableDays = $cren->getAvailableDaysForHour($param['employee_id'], $creneau->id);
             $message = "L'employé n'est pas disponible le {$selected_day_name} à {$hour}";
             if (!empty($availableDays)) {
-                $availableDaysNames = array_map(function($day) {
-                    return $this->daysMapping[$day];
+                $availableDaysNames = array_map(function($day) use ($cren){
+                    return $cren->daysMapping[$day];
                 }, $availableDays);
                 
                 $message .= ". Jours disponibles à cette heure : " . implode(', ', $availableDaysNames) . ".";
@@ -192,23 +195,7 @@ class AppointmentsController extends Controller
             'already_paid'    => $isFromSubscription
         ], 200);
     }
-    private function getAvailableDaysForHour($employeeId, $creneauId)
-    {
-        return EmployeesCreneau::where('employee_id', $employeeId)
-                              ->where('creneau_id', $creneauId)
-                              ->where('is_active', 1)
-                              ->pluck('jour')
-                              ->toArray();
-    }
-    private  $daysMapping = [
-        1 => 'Lundi',
-        2 => 'Mardi', 
-        3 => 'Mercredi',
-        4 => 'Jeudi',
-        5 => 'Vendredi',
-        6 => 'Samedi',
-        7 => 'Dimanche'
-    ];
+
 
     /**
      * @OA\Get(

@@ -131,9 +131,8 @@ class SubscriptiondbController extends Controller
     }
 
     
-    public function continue(Request $request)
+    public function continue($id)
     {
-        $id = $request->input('subscription_id');
         $subscription = Subscription::find($id);
         $client = Clients::find($subscription->client_id);
         $service= Services::find($subscription->services_id);

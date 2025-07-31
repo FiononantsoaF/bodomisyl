@@ -77,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
 
     //subscription
     Route::get('/subscriptiondb', [SubscriptiondbController::class, 'index'])->name('subscriptiondb');
-    Route::post('/subscription/appoint', [SubscriptiondbController::class, 'continue'])->name('subscriptiondb.appoint');
+    Route::get('/subscription/appoint/{id}', [SubscriptiondbController::class, 'continue'])->name('subscriptiondb.appoint');
     // destroy
     Route::delete('/service-category/{id}', [ServiceCategorydbController::class, 'destroy'])->name('service-categorydb.destroy');
     Route::get('/service-category/create', [ServiceCategorydbController::class, 'create'])->name('service-categorydb.create');
@@ -124,6 +124,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/employees-creneau/store', [EmployeesCreneaudbController::class, 'store'])->name('employees-creneaudb.store');
     Route::get('/employees-creneau/search', [EmployeesCreneaudbController::class, 'searchByName']);
     Route::post('/employees-creneau/upadtecrenau', [EmployeesCreneaudbController::class, 'updatecreneau'])->name('employees-creneaudb.updatecreneau');
+    Route::get('/employees-creneaux/{employee_id}', [EmployeesCreneaudbController::class, 'getCreneaux']);
+
 
     //fiche suivi client et paiement
     Route::get('/fiche/{id}', [PaymentdbController::class, 'index'])->name('fichedb');

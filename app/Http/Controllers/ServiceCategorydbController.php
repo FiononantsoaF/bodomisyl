@@ -89,6 +89,11 @@ class ServiceCategorydbController extends Controller
         // $serviceCategory->update($request->validated());
         // $serviceCategory->update(["name"=>"test","description"=>"test"]);
         $alldata = $request->all();
+        if(!isset($alldata['id'])){
+                return redirect()->back()
+                ->withErrors(['erreur' => "Echec de la mise à jour"])
+                ->withInput();
+        }
         if(isset($alldata['image_url'])){
             $request->validate([
                 'image_url' => 'required|mimes:jpg,jpeg,png,bmp,tiff |max:4096',

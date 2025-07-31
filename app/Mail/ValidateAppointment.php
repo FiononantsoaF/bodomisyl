@@ -29,7 +29,7 @@ class ValidateAppointment extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Validation de votre rendez-vous',
+            subject: 'Mise à jour concernant votre rendez-vous',
         );
     }
 

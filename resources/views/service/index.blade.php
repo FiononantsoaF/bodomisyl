@@ -56,13 +56,13 @@
                                                     <span class="badge bg-danger">Désactivé</span>
                                                 @endif</td>
                                             <td>
-                                                <form action="{{ route('servicedb.destroy',$service->id) }}" method="POST">
+                                                <form action="{{ route('servicedb.destroy',$service->id) }}" method="POST" class="small">
                                                     <!-- <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a> -->
-                                                    <a class="btn btn-sm btn-success" href="{{ route('servicedb.edit',$service->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('servicedb.edit',$service->id) }}" style="font-size: 0.6rem"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                                     @csrf
                                                     @method('DELETE')
                                                     <td>
-                                                        <button style="white-space: nowrap;"  type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-s text-inline" style="font-size: 0.7rem">{{ __('Activer / Desactiver') }}</button>
+                                                        <button style="white-space: nowrap; font-size: 0.6rem;"  type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-sm text-inline" style="font-size: 0.7rem">{{ __('Activer / Desactiver') }}</button>
                                                     </td>
                                                 </form>
                                             </td>

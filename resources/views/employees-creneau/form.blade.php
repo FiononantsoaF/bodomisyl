@@ -73,14 +73,11 @@
 
 {{-- Champ caché --}}
 <input type="hidden" name="is_active" value="{{ old('is_active', $employeesCreneau?->is_active ?? 1) }}">
-
-<div class="col-md-2 mt-3">
-    <button type="submit" class="btn btn-primary w-100">
-        {{ __('Valider') }}
-    </button>
-    <a href="{{ route('employees-creneaudb') }}" class="btn btn-outline-primary rounded-pill px-4 py-2 mt-2 w-100">
-        <i class="fas fa-arrow-left me-2"></i> {{ __('Retour') }}
-    </a>
+<div class="col-md-12 mt20 mt-2">
+        <button type="submit" class="btn btn-primary">{{ __('Valider') }}</button>
+        <a href="{{ route('employees-creneaudb') }}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-medium">
+            <i class="fas fa-arrow-left me-2"></i> {{ __('Retour') }}
+        </a>
 </div>
 <script>
     document.getElementById('toggleNewCreneau').addEventListener('click', function () {

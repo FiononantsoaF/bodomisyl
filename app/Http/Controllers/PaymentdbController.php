@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\appointments;
 use App\Models\Clients;
 use App\Models\FicheClient;
+use App\Services\UtilService;
 use App\Http\Requests\PaymentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,16 +27,19 @@ class PaymentdbController extends Controller
         $clients = Clients::find($request['id']);
         $appointments = Clients::getAppointmentsByClient($request['id']);
         $fiche=FicheClient::where(['client_id' => $request['id']])->first();
+
+        $gender = UtilService::getGenders();
         
         $paymentsClients=Clients::getPaymentsByClient($request['id']);
         $appointsCommentaire = Clients::getAppointmentsByClientComment($request['id']);
 
-        return view('payment.index', compact('payments','clients','appointments','fiche','appointsCommentaire','paymentsClients'))
+        return view('payment.index', compact('payments','clients','appointments','fiche','appointsCommentaire','paymentsClients','gender'))
             ->with('i', (request()->input('page', 1) - 1) * $payments->perPage());
     }
 
     public function createfiche(Request $request)
     {
+
         $alldata=$request->all();
         if(isset($alldata['assistant_comment'])){
             foreach ($alldata['assistant_comment'] as $appointmentId => $commentaire) {

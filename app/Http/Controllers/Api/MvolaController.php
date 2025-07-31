@@ -116,7 +116,7 @@ class MvolaController extends Controller
 
             }
 
-            return $this->apiResponse(true, "Paiement lancé avec succès.", $response, 200);
+            return $this->apiResponse(true, "Paiement réussi", $response, 200);
             
         } catch (\Exception $e) {
             return response()->json([
