@@ -25,6 +25,7 @@ class ServiceCategoryRequest extends FormRequest
             
 			'name' => 'required|string',
 			'description' => 'required|string',
+            'image_url' => 'required|mimes:jpg,jpeg,png,bmp,tiff|max:4096',
         ];
     }
 }

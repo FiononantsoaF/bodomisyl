@@ -41,10 +41,17 @@ class ServicedbController extends Controller
     public function store(Request $request)
     {
         $alldata = $request->all();
-//        dd($alldata);
+        if(!isset($alldata['service_category_id'])){
+                return redirect()->back()
+                ->withErrors(['erreur' => "Echec de la mise à jour"])
+                ->withInput();
+        }
+//   dd($alldata);
         Services::create([
             "title"=>$alldata['title'],
             "description"=>$alldata['description'],
+            "detail"=>$alldata['detail'],
+            "remarque"=>$alldata['remarque'],
             "service_category_id"=>$alldata['service_category_id'],
             "price"=>$alldata['price'],
             "duration_minutes"=>$alldata['duration_minutes'],
@@ -79,10 +86,16 @@ class ServicedbController extends Controller
     public function update(Request $request, Services $service)
     {
         $alldata = $request->all();
-        // dd($alldata);
+        if(!isset($alldata['service_category_id'])){
+                return redirect()->back()
+                ->withErrors(['erreur' => "Echec de la mise à jour"])
+                ->withInput();
+        }
         Services::where('id', $alldata['id'])->first()
                                             ->update(["title"=>$alldata['title'],
                                                     "description"=>$alldata['description'],
+                                                    "detail"=>$alldata['detail'],
+                                                    "remarque"=>$alldata['remarque'],
                                                     "duration_minutes"=>$alldata['duration_minutes'],
                                                     "service_category_id"=>$alldata['service_category_id'],
                                                     "price"=>$alldata['price'],
@@ -93,12 +106,12 @@ class ServicedbController extends Controller
             ->with('success', 'Service modifier avec succès');
     }
 
-
     public function destroy($id)
     {
-        Services::find($id)->delete();
-
+        $service=Services::find($id);
+        $service->changeactive();
         return redirect()->route('servicedb')
-            ->with('success', 'Service deleted successfully');
+            ->with('success', 'Mise à jours effectuée');
     }
+
 }

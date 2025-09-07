@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('service_session', function (Blueprint $table) {
-            $table->renameColumn('service_id','services_id');
-            $table->foreign('services_id')->references('id')->on('services')->onDelete('cascade')->change();
-        });
+        // Schema::table('service_session', function (Blueprint $table) {
+        //     $table->renameColumn('service_id','services_id');
+        //     $table->foreign('services_id')->references('id')->on('services')->onDelete('cascade')->change();
+        // });
     }
 
     /**

@@ -13,12 +13,12 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Service Session') }}
+                                {{ __('Préstation Session') }}
                             </span>
 
                              <div class="float-right">
                                 <a href="{{ route('service-session.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  Associer service / session
+                                  Associer préstation / session
                                 </a>
                               </div>
                         </div>
@@ -34,11 +34,11 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
+                                        <th>Numero</th>
                                         
-                                                <th>Services</th>
-                                                <th>Session</th>
-                                                <th>Session Per Period</th>
+                                        <th>Préstation</th>
+                                        <th>Session</th>
+                                        <th>Session par semaine</th>
                                                 <!--th>Period Type</th-->
 
                                         <th></th>

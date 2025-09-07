@@ -1,11 +1,20 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\appointments;
 use Illuminate\Http\Request;
+use App\Models\Subscription;
+use App\Models\EmployeesCreneau;
+use App\Models\Clients;
+use App\Models\Creneau;
+use App\Models\Services;
 use App\Http\Requests\AppointmentRequest;
+use App\Services\GoogleCalendarService;
 use DB;
+use DateTime;
+use Mail;
+use App\Mail\ValidateAppointment;
+
 /**
  * Class AppointmentdbController
  * @package App\Http\Controllers
@@ -17,10 +26,10 @@ class AppointmentdbController extends Controller
      */
     public function index(Request $request)
     {
-        // $appointments = appointments::where(['status' => "pending"])->orderBy('id','desc')->paginate();
         $param = $request->all();
-        $phone = isset($param['phone'])?$param['phone']:'';
-        $email = isset($param['email'])?$param['email']:'';
+        $phone = (isset($param['phone']) && !isset($param['reset'])) ?$param['phone']:'';
+        $email = (isset($param['email']) && !isset($param['reset']))?$param['email']:'';
+        $name = (isset($param['name']) && !isset($param['reset']))?$param['name']:'';
         $appointments = DB::table('appointments as ap')
         ->select("ap.id as idrdv",
         "ap.status",
@@ -30,19 +39,33 @@ class AppointmentdbController extends Controller
         "s.title as typeprestation",
         "ep.name as nomprestataire",
         "s.price as prixservice",
+        "ap.final_price as final_price",
         "s.duration_minutes as dure_minute",
+        "ap.subscription_id",
+        "ap.promotion_id",
         DB::raw("date_format(ap.start_times,'%d-%m-%Y %H:%i%:%s') as date_reserver"),
         DB::raw("DATE_ADD(STR_TO_DATE(ap.start_times, '%Y-%m-%d %H:%i:%s'), INTERVAL s.duration_minutes MINUTE) as fin_prestation"),
         DB::raw("date_format(ap.created_at,'%d-%m-%Y %H:%i%:%s') as date_creation")
         )
+        ->when($name, function ($query, $name) {
+            $query->where('c.name', 'like', '%' . $name . '%');
+        })
+
+        ->when($phone , function ($query, string $phone) {
+            $query->where('c.phone', $phone);
+        })
+        ->when($email , function ($query, string $email) {
+            $query->where('c.email', $email);
+        })
         ->join('clients as c', 'c.id','=', 'ap.client_id')
         ->join('employees as ep', 'ep.id', '=','ap.employee_id')
         ->join('services as s', 's.id' ,'=', 'ap.service_id')
         ->join('service_category as sc', 'sc.id' ,'=', 's.service_category_id')
-        
-        // ->where(['c.phone' => $phone])
        
         ->orderBy('ap.id','desc')->paginate(10);
+        if($name){
+            $appointments->where('c.name', 'like', '%' . $name . '%');
+        }
         if($phone){
             $appointments->where(['c.phone' => $phone]);
         }
@@ -51,7 +74,7 @@ class AppointmentdbController extends Controller
         }
         // print_r($appointments->toSql());die();
         $activemenuappoint = 1;
-        return view('appointment.index', compact('appointments','activemenuappoint'))
+        return view('appointment.index', compact('appointments','activemenuappoint','phone','email','name'))
             ->with('i', (request()->input('page', 1) - 1) * $appointments->perPage());
     }
 
@@ -74,6 +97,102 @@ class AppointmentdbController extends Controller
         return redirect()->route('appointments.index')
             ->with('success', 'Appointment created successfully.');
     }
+
+    public function creation(Request $request)
+    {
+        $alldata = $request->all();
+        if(!isset($alldata['start_times'])){
+            return redirect()->back()
+                ->withErrors(['erreur' => "La date est obligatoire "])
+                ->withInput();
+        }
+        if(!isset($alldata['creneau'])){
+            return redirect()->back()
+                ->withErrors(['erreur' => "Le créneau sont obligatoire "])
+                ->withInput();
+        }
+        $start = $alldata['start_times'].' '. $alldata['creneau'].':00';
+        $start_time = new DateTime($start);
+        $duration =(int)$alldata['duration_minutes'];
+        $end_time = clone $start_time;
+        $end_time->modify("+{$duration} minutes");
+
+        $creneau = Creneau::where('creneau', $alldata['creneau'])->first();
+        $day_of_week = (int)$start_time->format('N');
+
+        $cren = new \App\Models\EmployeesCreneau();
+        $selected_day_name = $cren->daysMapping[$day_of_week];
+
+        $isAvailable = EmployeesCreneau::isCreneauAvailable($alldata['employee_id'], $creneau->id, $day_of_week);
+        if (!$isAvailable) {
+            $availableDays = $cren->getAvailableDaysForHour($alldata['employee_id'], $creneau->id);
+            $message = "L'employé n'est pas disponible le {$selected_day_name} à {$alldata['creneau']}";
+            if (!empty($availableDays)) {
+                $availableDaysNames = array_map(function($day) use($cren) {
+                    return $cren->daysMapping[$day];
+                }, $availableDays);
+                $message .= ". Jours disponibles à cette heure : " . implode(', ', $availableDaysNames) . ".";
+            }
+            return redirect()->back()
+                ->withErrors(['erreur' => $message])
+                ->withInput();
+        } 
+        $appointment = appointments::create([
+            "client_id"       => $alldata['client_id'],
+            "service_id"      => $alldata['service_id'],
+            "employee_id"     => $alldata['employee_id'],
+            "subscription_id" => $alldata['subscription_id'],
+            "start_times"     => $start_time,
+            "end_times"       => $end_time,
+            "status"          => 'pending',
+        ]);
+        $calendarService = app(\App\Services\GoogleCalendarService::class);
+        $googleEventId = $calendarService->syncAppointment($appointment); 
+        if ($googleEventId) {
+            $appointment->update(['google_event_id' => $googleEventId]);
+        }
+        Subscription::where('id', $alldata['subscription_id'])->increment('used_session');
+        return redirect()->route('appointmentsdb')
+            ->with('success', 'Rendez-vous créé avec succès');
+    }
+
+    public function changestate(Request $request, $id)
+    {
+        $param = $request->all();
+        $appointment = appointments::find($id);
+        if (!$appointment) {
+            return redirect()->back()->with('error', 'Rendez-vous introuvable.');
+        }
+        $service = Services::find($appointment->service_id);
+        $client = Clients::find($appointment->client_id);
+
+        if (!$client || !$client->email) {
+            return redirect()->back()->with('error', 'Client ou email introuvable.');
+        }
+        $status = null;
+        if (isset($param['valider']) && $param['valider'] == 1) {
+            $status = 'confirmed';
+            $statusText = 'confirmé';
+        } elseif (isset($param['annuler']) && $param['annuler'] == 1) {
+            $status = 'cancelled';
+            $statusText = 'annulé';
+        } elseif (isset($param['waits']) && $param['waits'] == 1) {
+            $status = 'pending';
+            $statusText = 'mis en attente';
+        }
+        if ($status) {
+            $appointment->update(["status" => $status]);
+            Mail::to($client->email)->send(new ValidateAppointment([
+                'title' => 'Mise à jour de votre rendez-vous',
+                'body'  => "Bonjour {$client->name}",
+                'service'=> "Votre rendez-vous pour le service : {$service->title} prévu le {$appointment->start_times}  a été {$statusText}"
+            ]));
+            return redirect()->route('appointmentsdb')
+                ->with('success', "Rendez-vous {$statusText} avec succès");
+        }
+        return redirect()->back()->with('error', 'Aucune action valide détectée.');
+    }
+
 
     /**
      * Display the specified resource.
@@ -113,4 +232,13 @@ class AppointmentdbController extends Controller
         return redirect()->route('appointments.index')
             ->with('success', 'Appointment deleted successfully');
     }
+    private  $daysMapping = [
+        1 => 'Lundi',
+        2 => 'Mardi', 
+        3 => 'Mercredi',
+        4 => 'Jeudi',
+        5 => 'Vendredi',
+        6 => 'Samedi',
+        7 => 'Dimanche'
+    ];
 }

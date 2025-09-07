@@ -31,12 +31,21 @@ class Services extends Model
                     ->withPivot('total_session', 'session_per_period', 'period_type')
                     ->withTimestamps();
     }
+
+    public static function getSessionsByServiceId($serviceId)
+    {
+        $service = Services::find($serviceId);
+        if (!$service) {
+            return response()->json(['error' => 'Service introuvable'], 404);
+        }
+        return $service->sessions;
+    }
     /**
      * Attributes that should be mass-assignable.
      *
      * @var array
      */
-    protected $fillable = ['title', 'description', 'service_category_id', 'price', 'duration_minutes','validity_days', 'image_url','validity_days'];
+    protected $fillable = ['title', 'description', 'service_category_id', 'price', 'duration_minutes','validity_days', 'image_url','validity_days','remarque','detail'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -44,5 +53,11 @@ class Services extends Model
     public function appointments()
     {
         return $this->hasMany(\App\Models\Appointment::class, 'id', 'service_id');
+    }
+
+    public function changeactive()
+    {
+        $this->is_active = $this->is_active == 1 ? 0 : 1;
+        $this->save();
     }
 }

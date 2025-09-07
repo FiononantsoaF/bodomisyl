@@ -169,3 +169,16 @@ body.sidebar-collapsed .main-content {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
 }
+
+.fc-daygrid-day-events {
+    min-height: 0 !important;
+}
+.fc-daygrid-day-top {
+    justify-content: center;
+}
+.fc-daygrid-day-number {
+    padding: 2px !important;
+}
+.fc-event-title {
+    white-space: normal !important;
+}

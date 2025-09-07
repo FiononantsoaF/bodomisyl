@@ -1,0 +1,47 @@
+Rapport d'assemblage
+
+-----------------------------------------------------------------------------
+Document :
+Nom : logo DOMISYL.ai
+Mode : Couleurs CMJN
+Profil colorimétrique : Sans
+Unité : millimètres
+Dimensions : 297 mm x 210 mm
+Afficher les images en mode Tracés : INACTIF
+Mettre en évidence les polices substituées : INACTIF
+Mettre en évidence les glyphes substitués : INACTIF
+Conserver le caractère modifiable du texte
+Simuler le papier couleur : INACTIF
+
+-----------------------------------------------------------------------------
+Objets en tons directs :
+
+-----------------------------------------------------------------------------
+Polices manquantes :SANS
+
+-----------------------------------------------------------------------------
+Polices protégées non assemblées :SANS
+
+-----------------------------------------------------------------------------
+Polices :
+Agency FB (OTF)
+Albertus MT Std (OTF)
+Cinzel Decorative Bold (OTF)
+Augustus (TrueType)
+Apalu (TrueType)
+Helvetica Neue LT Pro 45 Light (OTF)
+Helvetica Neue LT Pro 46 Light Italic (OTF)
+Helvetica Neue LT Pro 63 Medium Extended (OTF)
+University Roman LET Plain:1.0 (TrueType)
+
+-----------------------------------------------------------------------------
+Polices incorporées :
+SANS
+
+-----------------------------------------------------------------------------
+Liens manquants :
+SANS
+
+-----------------------------------------------------------------------------
+Images liées :
+SANS

@@ -11,14 +11,13 @@
                 <div class="card">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                            <span id="card_title">
-                                {{ __('Service') }}
-                            </span>
+                            <h5 class="mb-0" id="card_title">
+                                {{ __('Préstation') }}
+                            </h5>
 
                              <div class="float-right">
                                 <a href="{{ route('servicedb.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                  {{ __('Ajouter') }}
                                 </a>
                               </div>
                         </div>
@@ -32,37 +31,39 @@
                     <div class="card-body bg-white">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="thead small">
                                     <tr>           
-										<th>Title</th>
-										<th>Description</th>
-										<th>Service Category</th>
-										<th>Price</th>
-										<th>Duration Minutes</th>
-										<!--th>Image Url</th-->
-                                        <th>Date validité</th>
-
+										<th>Titre</th>
+										<!-- <th>Description</th> -->
+										<th>Formules</th>
+										<th>Prix</th>
+										<th>Durée/séance(min)</th>
+                                        <th>Statut</th>
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="small">
                                     @foreach ($services as $service)
                                         <tr>
-											<td>{{ $service->title }}</td>
-											<td>{{ $service->description }}</td>
-											<td>{{ $service->serviceCategory->name }}</td>
-											<td>{{ $service->price }}</td>
-											<td>{{ $service->duration_minutes }}</td>
-                                            <td>{{ $service->validity_days ?? ' '}}</td>
-											<!-- <td>{{ $service->image_url }}</td> -->
-
+											<td style="white-space: nowrap;" >{{ $service->title }}</td>
+						
+											<td style="white-space: nowrap;" ><span class="badge bg-light text-dark">{{ $service->serviceCategory->name }}</span></td>
+											<td>{{ $service->price }} Ar</td>
+                                            <td>{{ $service->duration_minutes ? $service->duration_minutes . ' min' : '-' }}</td>
+                                            <td>@if($service->is_active)
+                                                    <span class="badge bg-success">Activé</span>
+                                                @else
+                                                    <span class="badge bg-danger">Désactivé</span>
+                                                @endif</td>
                                             <td>
-                                                <form action="" method="POST">
+                                                <form action="{{ route('servicedb.destroy',$service->id) }}" method="POST" class="small">
                                                     <!-- <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a> -->
-                                                    <a class="btn btn-sm btn-success" href="{{ route('servicedb.edit',$service->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('servicedb.edit',$service->id) }}" style="font-size: 0.6rem"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <!-- <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button> -->
+                                                    <td>
+                                                        <button style="white-space: nowrap; font-size: 0.6rem;"  type="submit" onclick="return confirm('Voulez vous vraiement effectuer cette action')" class="btn btn-danger btn-sm text-inline" style="font-size: 0.7rem">{{ __('Activer / Desactiver') }}</button>
+                                                    </td>
                                                 </form>
                                             </td>
                                         </tr>

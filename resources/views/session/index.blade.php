@@ -12,13 +12,13 @@
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
-                            <span id="card_title">
+                            <h5 id="card_title">
                                 {{ __('Session') }}
-                            </span>
+                            </h5>
 
                              <div class="float-right">
                                 <a href="{{ route('sessiondb.create') }}" " class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                  {{ __('Ajouter') }}
                                 </a>
                               </div>
                         </div>
@@ -34,9 +34,9 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
+                                        <th>Num</th>
                                         
-										<th>Title</th>
+										<th>Titre</th>
 
                                         <th></th>
                                     </tr>

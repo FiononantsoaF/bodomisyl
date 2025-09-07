@@ -7,35 +7,36 @@
     "paths": {
         "/api/appointments": {
             "post": {
-                "summary": "creer rendez vous",
+                "summary": "Créer un rendez-vous",
                 "operationId": "19791c95c5cdf9a7b9f1a0cd4db89652",
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
                                     "clients": {
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "name": {
-                                                    "type": "string"
-                                                },
-                                                "email": {
-                                                    "type": "string"
-                                                },
-                                                "phone": {
-                                                    "type": "string"
-                                                },
-                                                "address": {
-                                                    "type": "string"
-                                                },
-                                                "password": {
-                                                    "type": "string"
-                                                }
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
                                             },
-                                            "type": "object"
-                                        }
+                                            "email": {
+                                                "type": "string"
+                                            },
+                                            "phone": {
+                                                "type": "string"
+                                            },
+                                            "address": {
+                                                "type": "string"
+                                            },
+                                            "password": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "sub_id": {
+                                        "type": "integer"
                                     },
                                     "employee_id": {
                                         "type": "integer"
@@ -45,16 +46,80 @@
                                     },
                                     "start_times": {
                                         "type": "string",
-                                        "format": "date"
+                                        "format": "date-time"
                                     },
                                     "end_times": {
                                         "type": "string",
-                                        "format": "date"
+                                        "format": "date-time"
                                     },
                                     "status": {
                                         "type": "string"
                                     },
                                     "comment": {
+                                        "type": "string"
+                                    },
+                                    "from_subscription": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/appointments/client/{id}": {
+            "get": {
+                "summary": "detail client",
+                "operationId": "6d7c0cde260b8d46adf4bebaa1d22097",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id client",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/appointmentsall": {
+            "get": {
+                "summary": "appointments",
+                "operationId": "e14b026d8e8af869d68fbf15e026cbc3",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/client/login": {
+            "post": {
+                "summary": "Login client",
+                "operationId": "14d1f3ecaab763686d39f8c2c9079501",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "login": {
+                                        "description": "email ou phone",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "mot de passe",
                                         "type": "string"
                                     }
                                 },
@@ -63,6 +128,50 @@
                         }
                     }
                 },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/client/changepass": {
+            "post": {
+                "summary": "Changer mot de passe",
+                "operationId": "a444d968a557b1a8472842532f6ef7fb",
+                "parameters": [
+                    {
+                        "name": "idclient",
+                        "in": "query"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "password": {
+                                        "description": "mot de passe",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/creneaus": {
+            "get": {
+                "summary": "liste creneaus",
+                "operationId": "379b0eb1783e9b1f95b9ecc54d9cf8e7",
                 "responses": {
                     "200": {
                         "description": "Success"
@@ -81,10 +190,91 @@
                 }
             }
         },
+        "/api/mvola": {
+            "post": {
+                "summary": "Payer ",
+                "operationId": "8c1dc05219375293f53a9bccc958d2e3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "price": {
+                                        "type": "integer"
+                                    },
+                                    "client_phone": {
+                                        "type": "string"
+                                    },
+                                    "appointment_id": {
+                                        "type": "integer"
+                                    },
+                                    "subscription_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/services-promotions": {
+            "get": {
+                "summary": "liste promotions",
+                "operationId": "59c82623000e37a84ac190ac461a1f8e",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/service-category": {
             "get": {
                 "summary": "liste categories",
                 "operationId": "71bcee7fa6f032022a7849086425e3d5",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/checkcreneau": {
+            "post": {
+                "summary": "Vérifier creneau",
+                "operationId": "2a09452c4289d37318b9cb98955ebe2f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "employee_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "start_times": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-09-05 10:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Success"
@@ -108,6 +298,136 @@
                     }
                 }
             }
+        },
+        "/api/stripe/create-payment-intent": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Créer un clientSecret Stripe",
+                "operationId": "3ea128c380b93c32fe4d13761140400c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount"
+                                ],
+                                "properties": {
+                                    "amount": {
+                                        "description": "Montant en centimes",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "ClientSecret généré avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "clientSecret": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/payments/confirm-stripe": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Enregistre un paiement Stripe réussi",
+                "operationId": "5f872b92bbc688290a34d97be11dfa71",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "appointment_id",
+                                    "amount"
+                                ],
+                                "properties": {
+                                    "appointment_id": {
+                                        "type": "string",
+                                        "example": "123"
+                                    },
+                                    "subscription_id": {
+                                        "type": "string",
+                                        "example": "null"
+                                    },
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "reference": {
+                                        "type": "string",
+                                        "example": "pi_3N2t..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Paiement enregistré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/subscription/client/{id}": {
+            "get": {
+                "summary": "detail client",
+                "operationId": "72ecc4778f456cc1e7c7f0848ecb50a9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id client",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Stripe",
+            "description": "Stripe"
+        }
+    ]
 }
