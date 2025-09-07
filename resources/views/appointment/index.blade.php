@@ -52,13 +52,18 @@
 
                 <div class="card shadow-sm">
                     <div class="card-header bg-white border-bottom-0 py-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                             <h5 class="mb-0">
                                 <i class="fas fa-calendar-alt me-2"></i> Liste des rendez-vous
                             </h5>
-                            <a href="{{ route('export.appointments') }}" class="btn btn-success btn-sm">
-                                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
-                            </a>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{{ route('export.appointmentsday') }}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-file-earmark-excel me-1"></i>Export du jour
+                                </a>
+                                <a href="{{ route('export.appointments') }}" class="btn btn-success btn-sm">
+                                    <i class="bi bi-file-earmark-excel me-1"></i> Export complet
+                                </a>
+                            </div>
                         </div>
                     </div>
                     
@@ -72,13 +77,14 @@
 
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
-                                <thead class="table-light small">
+                                <thead class="table-light ">
                                     <tr>
                                         <th>Client</th>
                                         <th>Formule</th>
                                         <th>Type</th>
                                         <th>Prestataire</th>
                                         <th>Prix</th>
+                                        <th>Prix_promo</th>
                                         <th>Date RDV</th>
                                         <th>Durée</th>
                                         <th>Abonnement</th>
@@ -99,6 +105,16 @@
                                             </td>
                                             <td>{{ $appointment->nomprestataire }}</td>
                                             <td class="text-end">{{ number_format($appointment->prixservice, 2) }} Ar</td>
+                                            <td class="text-end">
+                                                @if($appointment->promotion_id)
+                                                    {{ number_format($appointment->final_price, 0, ',', ' ') }} Ar
+                                                    <span class="badge bg-success ms-2">Promo</span>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+
+
                                             <td>
                                                 {{ \Carbon\Carbon::parse($appointment->date_reserver)->format('d/m/Y H:i') }}
                                             </td>

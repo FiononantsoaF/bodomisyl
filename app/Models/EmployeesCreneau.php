@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 
 /**
  * Class EmployeesCreneau
@@ -75,7 +78,7 @@ class EmployeesCreneau extends Model
             ->orderBy('ec.id', 'desc')
             ->get();
     }
-
+    
     public static function createEmployeeCreneau($employee_id,$creneau_id, $jours)
     {
             $empc = new EmployeesCreneau();

@@ -22,6 +22,27 @@ class FicheClientController extends Controller
             ->with('i', (request()->input('page', 1) - 1) * $ficheClients->perPage());
     }
 
+    // public function exportPDF($id)
+    // {
+    //     $clients = Clients::findOrFail($id);
+    //     $appointments = Appointment::where('client_id', $id)->get();
+    //     $appointsCommentaire = Appointment::where('client_id', $id)->get(); 
+    //     $paymentsClients = Payment::where('client_id', $id)->get();
+    //     $fiche = FicheClient::where('client_id', $id)->first();
+    //     $gender = ['Homme' => 'Homme', 'Femme' => 'Femme']; 
+
+    //     $pdf = Pdf::loadView('pdf.fiche', compact(
+    //         'clients',
+    //         'appointments',
+    //         'appointsCommentaire',
+    //         'paymentsClients',
+    //         'fiche',
+    //         'gender'
+    //     ));
+
+    //     return $pdf->download('fiche-client-'.$clients->name.'.pdf');
+    // }
+
     /**
      * Show the form for creating a new resource.
      */

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobCategory;
 use App\Http\Requests\JobCategoryRequest;
-
+use Illuminate\Http\Request;
 /**
  * Class JobCategoryController
  * @package App\Http\Controllers
@@ -17,8 +17,8 @@ class JobCategoryController extends Controller
     public function index()
     {
         $jobCategories = JobCategory::paginate();
-
-        return view('job-category.index', compact('jobCategories'))
+        $menuemployee = 1;
+        return view('job-category.index', compact('jobCategories','menuemployee'))
             ->with('i', (request()->input('page', 1) - 1) * $jobCategories->perPage());
     }
 
@@ -34,12 +34,14 @@ class JobCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(JobCategoryRequest $request)
+    public function store(Request $request)
     {
-        JobCategory::create($request->validated());
-
-        return redirect()->route('job-categories.index')
-            ->with('success', 'JobCategory created successfully.');
+        $alldata = $request->all();
+        JobCategory::create([
+            "name"=>$alldata['name']
+        ]);
+        return redirect()->route('jobdb')
+            ->with('success', 'Emplois créé avec succèss');
     }
 
     /**
@@ -58,26 +60,33 @@ class JobCategoryController extends Controller
     public function edit($id)
     {
         $jobCategory = JobCategory::find($id);
-
         return view('job-category.edit', compact('jobCategory'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(JobCategoryRequest $request, JobCategory $jobCategory)
+ 
+    public function update(Request $request, $id)
     {
-        $jobCategory->update($request->validated());
+        $alldata = $request->all();
 
-        return redirect()->route('job-categories.index')
-            ->with('success', 'JobCategory updated successfully');
+        $job = JobCategory::findOrFail($id);
+        $job->update([
+            "name" => $alldata['name']
+        ]);
+
+        return redirect()->route('jobdb')
+            ->with('success', 'Mise à jour avec succès');
     }
+
+
 
     public function destroy($id)
     {
         JobCategory::find($id)->delete();
 
-        return redirect()->route('job-categories.index')
-            ->with('success', 'JobCategory deleted successfully');
+        return redirect()->route('jobdb')
+            ->with('success', 'Emplois supprimé');
     }
 }

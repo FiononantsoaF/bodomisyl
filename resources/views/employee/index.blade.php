@@ -33,7 +33,7 @@
 										<th>Phone</th>
 										<th>Email</th>
 										<th>Address</th>
-
+                                        <th>Statut</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -47,12 +47,32 @@
 											<td>{{ $employee->phone }}</td>
 											<td>{{ $employee->email }}</td>
 											<td>{{ $employee->address }}</td>
-                                            <td>
-                                                <form action="" method="post">
-                                                    <a class="btn btn-sm btn-success" href="{{ route('employeedb.edit',$employee->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
-                                                    @csrf
-                                                </form>
+											<td >
+                                                @if($employee->is_active)
+                                                <span class="badge bg-success">Actif</span>
+                                                @else
+                                                    <span class="badge bg-danger">Inactif</span>
+                                                @endif</td>
                                             </td>
+                                            <td style="white-space: nowrap;" class="text-end">
+                                                {{-- Bouton Modifier --}}
+                                                <a class="btn btn-sm btn-success me-1" href="{{ route('employeedb.edit', $employee->id) }}" style="font-size: 0.6rem;">
+                                                    <i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <form action="{{route('employeedb.desactiver', $employee->id) }}" 
+                                                    method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="btn btn-sm {{ $employee->is_active ? 'btn-danger' : 'btn-success' }}" style="font-size: 0.6rem;">
+                                                        <i class="fa fa-fw {{ $employee->is_active ? 'fa-ban' : 'fa-check' }}"></i>
+                                                        {{ $employee->is_active ? __('Désactiver') : __('Réactiver') }}
+                                                    </button>
+                                                </form>
+
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>

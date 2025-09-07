@@ -37,7 +37,8 @@ class SubscriptionController extends Controller
         "sc.name as formule",
         "s.title as service",
         "s.price as prixservice",
-        "s.duration_minutes as dure_minute"
+        "s.duration_minutes as dure_minute",
+        "ap.final_price as prixpromo"
         /*DB::raw("date_format(ap.start_times,'%d-%m-%Y %H:%i%:%s') as date_reserver"),
         DB::raw("DATE_ADD(STR_TO_DATE(ap.start_times, '%Y-%m-%d %H:%i:%s'), INTERVAL s.duration_minutes MINUTE) as fin_prestation"),
         DB::raw("date_format(ap.created_at,'%d-%m-%Y %H:%i%:%s') as date_creation")*/

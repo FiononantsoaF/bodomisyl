@@ -8,7 +8,8 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class AppointmentsExport implements FromCollection, WithHeadings, ShouldAutoSize, WithMapping
+
+class AppointmentsDayExport implements FromCollection, WithHeadings, ShouldAutoSize, WithMapping
 {
     public function collection()
     {
@@ -25,12 +26,13 @@ class AppointmentsExport implements FromCollection, WithHeadings, ShouldAutoSize
                 "),
                 "c.name as nomclient",
                 "c.email",
+                "c.phone",
+                "c.address",
+                "ap.comment",
                 "sc.name as nomservice",
                 "s.title as typeprestation",
                 "ep.name as nomprestataire",
-                "s.price as prixservice",
                 "s.duration_minutes as duree_minute",
-                "ap.final_price as prix_final",
                 DB::raw("DATE_FORMAT(ap.start_times,'%d-%m-%Y %H:%i') as date_reserver"),
                 DB::raw("DATE_FORMAT(DATE_ADD(ap.start_times, INTERVAL s.duration_minutes MINUTE),'%d-%m-%Y %H:%i') as fin_prestation"),
                 DB::raw("DATE_FORMAT(ap.created_at,'%d-%m-%Y %H:%i') as date_creation")
@@ -46,19 +48,19 @@ class AppointmentsExport implements FromCollection, WithHeadings, ShouldAutoSize
     public function headings(): array
     {
         return [
-            'ID RDV',
+            'Num',
             'Statut',
             'Client',
             'Email client',
+            'Contact client',
+            'Adresse',
+            'Commentaire client',
             'Formule',
             'Type de prestation',
             'Prestataire',
-            'Prix',
-            'Prix final',
             'Durée (minutes)',
-            'Début séance',
-            'Fin séance',
-            'Date de création',
+            'Date de reservation',
+
         ];
     }
 
@@ -69,15 +71,16 @@ class AppointmentsExport implements FromCollection, WithHeadings, ShouldAutoSize
             ucfirst($row->status),
             $row->nomclient,
             $row->email,
+            $row->phone,
+            $row->address,
+            $row->comment,
             $row->nomservice,
             $row->typeprestation,
             $row->nomprestataire,
-            number_format($row->prixservice, 2, ',', ' '),
-            number_format($row->prix_final, 2, ',', ' '),
+            // number_format($row->prixservice, 2, ',', ' '),
+            // number_format($row->prix_final, 2, ',', ' '),
             $row->duree_minute,
             $row->date_reserver,
-            $row->fin_prestation,
-            $row->date_creation,
         ];
     }
 }

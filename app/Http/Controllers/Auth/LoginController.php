@@ -25,7 +25,7 @@ class LoginController extends Controller
         if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::login($user);
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'));
+            return redirect()->route('dashboard');
         }
 
         return back()->withErrors([

@@ -38,6 +38,8 @@ class SubscriptiondbController extends Controller
         "ab.total_session as total",
         "ab.used_session as session_achevee",
         "s.price as prixservice",
+        "ab.final_price as final_price",
+        "ab.promotion_id",
         DB::raw("date_format(ab.period_start,'%d-%m-%Y %H:%i%:%s') as period_start"),
         DB::raw("date_format(ab.period_end,'%d-%m-%Y %H:%i%:%s') as period_end"),
         DB::raw("date_format(ab.created_at,'%d-%m-%Y %H:%i%:%s') as date_creation"),

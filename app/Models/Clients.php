@@ -16,6 +16,10 @@ class Clients extends Model
             'phone',
             'password',
             'adress',
+            'gender',
+            'size',
+            'weight',
+            'IMC'
         ];
     use HasFactory;
 
@@ -45,6 +49,19 @@ class Clients extends Model
         // die('aa');
     }
 
+    public function updateclient($id, $weight = null, $gender = null, $size = null, $IMC = null)
+    {
+        if ($client = Clients::find($id)) {
+            print_r($client);
+            $client->update(array_filter([
+                'weight' => $weight,
+                'gender' => $gender,
+                'size'   => $size,
+                'IMC'    => $IMC,
+            ], fn($v) => !is_null($v)));
+        }
+        return isset($client);
+    }
     public static function getAppointmentsByClient($id)
     {
         $appointments = DB::table('appointments as ap')

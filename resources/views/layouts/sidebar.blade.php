@@ -111,14 +111,26 @@
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsemployee" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Gestion  Employés et Créneaux
+                                Gestion  Employés & Créneaux & Emplois
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse @if(isset($menuemployee)) show @else @endif" id="collapsemployee" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">  
-                                    <a class="nav-link" href="{{ route('employeedb') }}">Liste employés</a>    
-                                    <a class="nav-link" href="{{ route('creneaudb') }}">Liste créneaux</a>
+                                    <a class="nav-link" href="{{ route('employeedb') }}">Liste employés</a> 
+                                    <a class="nav-link" href="{{ route('jobdb') }}">Liste emplois</a>    
+
+                                    <!--a class="nav-link" href="{{ route('creneaudb') }}">Liste créneaux</a-->
                                     <a class="nav-link" href="{{ route('employees-creneaudb') }}">Employés & Créneaux</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapspromo" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Gestion  des promotions
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse @if(isset($promo)) show @else @endif" id="collapspromo" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">  
+                                    <a class="nav-link" href="{{ route('promotiondb') }}">Promotions</a>    
                                 </nav>
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseutilisateur" aria-expanded="false" aria-controls="collapseLayouts">

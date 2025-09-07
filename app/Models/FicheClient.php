@@ -34,7 +34,7 @@ class FicheClient extends Model
      *
      * @var array
      */
-    protected $fillable = ['client_id', 'objectifs', 'indications', 'observations'];
+    protected $fillable = ['client_id', 'objectifs', 'indications', 'observations','consultations','programmes'];
 
 
     /**
@@ -45,14 +45,15 @@ class FicheClient extends Model
         return $this->belongsTo(\App\Models\Client::class, 'client_id', 'id');
     }
 
-    public static function createFiche($client_id,$objectifs, $indications, $observations)
-    {
+    public function createFiche($client_id,$objectifs, $indications,$consultations, $programmes)
+    { 
         $fiches=FicheClient::where(['client_id' => $client_id])->first();
         if($fiches){
             $fiches->where('client_id', $client_id)->first()
                             ->update(["objectifs"=>$objectifs,
                             "indications"=>$indications,
-                            "observations"=>$observations
+                            "consulations"=>$consultations,
+                            "programmes"=>$programmes,
                             ]);
 
         } else {
@@ -60,7 +61,8 @@ class FicheClient extends Model
             $fiche ->client_id = $client_id;
             $fiche ->objectifs = $objectifs;
             $fiche ->indications =$indications;
-            $fiche ->observations =$observations;
+            $fiche ->consultations = $consultations;
+            $fiche ->programmes =$programmes;
             $fiche ->save();
         }
 

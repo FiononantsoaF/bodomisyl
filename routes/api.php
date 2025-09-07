@@ -11,6 +11,9 @@ use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\MvolaController;
 use App\Http\Controllers\Api\CreneauController;
 use App\Http\Controllers\Api\StripeController;
+use App\Http\Controllers\Api\PromotionsController;
+
+
 
 
 /*
@@ -41,9 +44,15 @@ Route::get('/appointments/client/{id}', [AppointmentsController::class, 'getappo
 
 Route::get('/subscription/client/{id}', [SubscriptionController::class, 'getsubscriptionbyclient']);
 Route::post('/client/login', [ClientsController::class, 'loginclient']);
+
+Route::post('/checkcreneau', [ServiceCategoryController::class, 'checkcreneaux']);
+
 Route::post('/client/changepass', [ClientsController::class, 'changepassword']);
 
 Route::get('/appointmentsall', [AppointmentsController::class, 'getallappointments']);
+
+Route::get('/services-promotions', [PromotionsController::class, 'getServicesWithPromotions']);
+
 
 
 // paiement mvola 

@@ -37,6 +37,7 @@
 										<th>Séances achevée</th>
 										<th>Reste Séances</th>
                                         <th >Prix</th>
+                                        <th>Prix_promo</th>
 										<th>Période</th>
                                         <th>Statut</th>
                                         <th class="end-text">Action</th>
@@ -55,6 +56,15 @@
 											<td>{{ $subscription->session_achevee }}</td>
 											<td>{{  $subscription->total - $subscription->session_achevee  }}</td>
                                             <td style="white-space: nowrap;" class="text-end">{{ number_format($subscription->prixservice, 2) }} Ar</td>
+                                            <td class="text-end">
+                                                    @if($subscription->promotion_id)
+                                                        {{ number_format($subscription->final_price, 0, ',', ' ') }} Ar
+                                                        <span class="badge bg-success ms-2">Promo</span>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+
                                             <td>
                                                 {{ \Carbon\Carbon::parse($subscription->period_start)->format('d/m/Y') }}
                                                 &nbsp;&rarr;&nbsp;

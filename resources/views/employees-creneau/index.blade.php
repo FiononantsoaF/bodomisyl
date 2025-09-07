@@ -105,7 +105,7 @@
                                             @else
                                                 <ul class="list-group">
                                                     @foreach($employee->creneaux as $creneau)
-                                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="height: 30%;">
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="height: 30%; width: 100%;">
                                                          @php
                                                             $jours = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 7 => 'Dimanche'];
                                                         @endphp

@@ -38,7 +38,7 @@ class Subscription extends Model
      *
      * @var array
      */
-    protected $fillable = ['client_id', 'services_id', 'status', 'total_session', 'used_session', 'period_start', 'period_end'];
+    protected $fillable = ['client_id', 'services_id', 'status', 'total_session', 'used_session', 'period_start', 'period_end','promotion_id','final_price'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -58,7 +58,7 @@ class Subscription extends Model
     
     public static function createSubscription(array $param, $checkclient, $service)
     {
-        
+
         if ($service && $service->validity_days != 0) {
 
             $total = Subscription::getTotalSession($service);
@@ -72,11 +72,18 @@ class Subscription extends Model
                 
                 $endDate = null;
             }
+            $promotions = new Promotion();
+            $promotion =$promotions->getPromoPrice($param['service_id']);
+            
             $subscription = new Subscription();
             $subscription->client_id = $checkclient->id;
             $subscription->services_id = $param['service_id'];
             $subscription->period_start = $startDate;
             $subscription->period_end = $endDate;
+            $subscription->promotion_id  = $promotion ? $promotion['id'] : null;
+            $subscription->final_price   = $promotion 
+                                            ? $promotion['price_promo'] 
+                                            : $service->price;
             $subscription->status = 'active';
             $subscription->total_session = $total;
             $subscription->used_session = 1;

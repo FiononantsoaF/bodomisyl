@@ -23,6 +23,7 @@ class SubscriptionsExport implements FromCollection, WithHeadings, ShouldAutoSiz
                 's.total_session as total',
                 's.used_session as session_achevee',
                 'sv.price as prixservice',
+                's.final_price as prix_final',
                 's.period_start',
                 's.period_end'
             )
@@ -39,6 +40,7 @@ class SubscriptionsExport implements FromCollection, WithHeadings, ShouldAutoSiz
             'Séances achevées',
             'Séances restantes',
             'Prix',
+            'Prix final',
             'Début',
             'Fin',
         ];
@@ -54,6 +56,7 @@ class SubscriptionsExport implements FromCollection, WithHeadings, ShouldAutoSiz
             $row->session_achevee,
             $row->total - $row->session_achevee,
             number_format($row->prixservice, 2, ',', ' '),
+            number_format($row->prix_final, 2, ',', ' '),
             \Carbon\Carbon::parse($row->period_start)->format('d/m/Y'),
             \Carbon\Carbon::parse($row->period_end)->format('d/m/Y'),
         ];

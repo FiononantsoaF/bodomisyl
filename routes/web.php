@@ -20,6 +20,9 @@ use App\Http\Controllers\PaymentdbController;
 use App\Http\Controllers\EmployeesCreneaudbController;
 use App\Http\Controllers\CurrencydbController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\PromotiondbController;
+use App\Http\Controllers\JobCategoryController;
+
 
 
 /*
@@ -74,6 +77,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/creneau/create', [CreneaudbController::class, 'create'])->name('creneaudb.create');
     Route::post('/creneau/store', [CreneaudbController::class, 'store'])->name('creneaudb.store');
     Route::post('/creneau/upadtecrenau', [CreneaudbController::class, 'updatecreneau'])->name('creneaudb.updatecreneau');
+    
+    // promotions
+    Route::get('promotion',[PromotiondbController::class, 'index'])->name('promotiondb');
+    Route::get('/promotion/create', [PromotiondbController::class, 'create'])->name('promotiondb.create');
+    Route::post('/promotion/store', [PromotiondbController::class, 'store'])->name('promotiondb.store');
+    Route::get('/promotion/edit/{id}', [PromotiondbController::class, 'edit'])->name('promotiondb.edit');
+    Route::delete('/promotion/destroy/{id}', [PromotiondbController::class, 'destroy'])->name('promotiondb.destroy');
+    Route::post('/promotion/update/{id}', [PromotiondbController::class, 'update'])->name('promotiondb.update');
+    
+
+
 
     //subscription
     Route::get('/subscriptiondb', [SubscriptiondbController::class, 'index'])->name('subscriptiondb');
@@ -116,7 +130,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/employee/store', [EmployeedbController::class, 'store'])->name('employeedb.store');
     Route::get('/employee/edit/{id}', [EmployeedbController::class, 'edit'])->name('employeedb.edit');
     Route::patch('/employee/update/{id}', [EmployeedbController::class, 'update'])->name('employeedb.update');
-
+    Route::patch('/employee/{id}/desactiver', [EmployeedbController::class, 'desactiver'])->name('employeedb.desactiver');
 
     // employee creneau
     Route::get('/employees-creneau', [EmployeesCreneaudbController::class, 'index'])->name('employees-creneaudb');
@@ -125,6 +139,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employees-creneau/search', [EmployeesCreneaudbController::class, 'searchByName']);
     Route::post('/employees-creneau/upadtecrenau', [EmployeesCreneaudbController::class, 'updatecreneau'])->name('employees-creneaudb.updatecreneau');
     Route::get('/employees-creneaux/{employee_id}', [EmployeesCreneaudbController::class, 'getCreneaux']);
+
+    Route::get('/job', [JobCategoryController::class, 'index'])->name('jobdb');
+    Route::get('/job/edit/{id}', [JobCategoryController::class, 'edit'])->name('jobdb.edit');
+    Route::get('/job/create', [JobCategoryController::class, 'create'])->name('jobdb.create');
+    Route::post('/job/store', [JobCategoryController::class, 'store'])->name('jobdb.store');
+    Route::delete('/job/{id}', [JobCategoryController::class, 'destroy'])->name('jobdb.destroy');
+    Route::patch('/job/update/{id}', [JobCategoryController::class, 'update'])->name('jobdb.update');
 
 
     //fiche suivi client et paiement
@@ -143,6 +164,7 @@ Route::middleware(['auth'])->group(function () {
     // export
     Route::get('/export-subscriptions', [ExportController::class, 'exportSubscriptions'])->name('export.subscriptions');
     Route::get('/export-appointments', [ExportController::class, 'exportAppointments'])->name('export.appointments');
+    Route::get('/export-appointmentsday', [ExportController::class, 'exportAppointmentsDay'])->name('export.appointmentsday');
     Route::get('/export-employees', [ExportController::class, 'exportEmployees'])->name('export.employees');
 
 

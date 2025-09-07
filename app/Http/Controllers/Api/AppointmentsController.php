@@ -11,6 +11,7 @@ use App\Models\EmployeesCreneau;
 use App\Models\Creneau;
 use App\Models\Subscription;
 use App\Models\WaitingList;
+use App\Models\Promotion;
 use Illuminate\Http\Request;
 use App\Services\GoogleCalendarService;
 use DB;
@@ -104,6 +105,9 @@ class AppointmentsController extends Controller
 
         $isFromSubscription = $request->input('from_subscription', false);
         $subscription_id = null;
+        $promotions = new Promotion();
+        $promotion =$promotions->getPromoPrice($service->id);
+
         if ($isFromSubscription) {
             $appointment = appointments::createFromRequest($request);
             $appointment->changeActive();
@@ -112,6 +116,8 @@ class AppointmentsController extends Controller
                 'appointment_id'  => $appointment->id,
                 'subscription_id' => $appointment->subscription_id,
                 'price'           => $service->price ?? $appointment->prixservice ?? null,
+                'price_promo'     => isset($promotion['price_promo']) 
+                        ? number_format($promotion['price_promo']): null,
                 'client_phone'    => $clientInfo['phone'] ?? null,
                 'already_paid'    => true
             ], 200);
@@ -171,6 +177,10 @@ class AppointmentsController extends Controller
         $appoint->client_id = $existingClient->id;
         $appoint->employee_id = $param['employee_id'];
         $appoint->service_id = $param['service_id'];
+        $appoint->promotion_id  = $promotion ? $promotion['id'] : null;
+        $appoint->final_price   = $promotion 
+                                        ? $promotion['price_promo'] 
+                                        : $service->price;
         $appoint->start_times = $param['start_times'];
         $appoint->end_times = $end_times;
         $appoint->subscription_id = $subscription_id;
@@ -191,6 +201,8 @@ class AppointmentsController extends Controller
             'appointment_id'  => $appoint->id,
             'subscription_id' => $appoint->subscription_id,
             'price'           => $service->price ?? $appoint->prixservice ?? null,
+            'price_promo'     => isset($promotion['price_promo']) 
+                            ? number_format($promotion['price_promo']): null,
             'client_phone'    => $clientInfo['phone'] ?? null,
             'already_paid'    => $isFromSubscription
         ], 200);
@@ -224,6 +236,7 @@ class AppointmentsController extends Controller
         "ep.name as nomprestataire",
         "s.price as prixservice",
         "s.duration_minutes as dure_minute",
+        "ap.final_price as prixpromo",
         "ap.subscription_id",
         DB::raw("date_format(ap.start_times,'%d-%m-%Y %H:%i%:%s') as date_reserver"),
         DB::raw("DATE_ADD(STR_TO_DATE(ap.start_times, '%Y-%m-%d %H:%i:%s'), INTERVAL s.duration_minutes MINUTE) as fin_prestation"),

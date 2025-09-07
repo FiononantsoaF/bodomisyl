@@ -20,10 +20,6 @@ class EmployeedbController extends Controller
     public function index()
     {
         $employees = Employees::with('jobCategory')->paginate();                       
-        // echo  '<pre>';
-        // print_r($employees);
-        // die();
-
         $menuemployee = 1;
         return view('employee.index', compact('employees','menuemployee'))
             ->with('i', (request()->input('page', 1) - 1) * $employees->perPage());
@@ -77,6 +73,13 @@ class EmployeedbController extends Controller
         return view('employee.edit', compact('employee','job'));
     }
 
+    public function desactiver($id)
+    {
+        $employee = Employees::find($id);
+        $employee->changeActive();
+        return redirect()->route('employeedb')
+            ->with('success', 'Mise à jour effectuée avec succès');
+    }
     /**
      * Update the specified resource in storage.
      */

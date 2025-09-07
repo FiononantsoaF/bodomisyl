@@ -228,10 +228,53 @@
                 }
             }
         },
+        "/api/services-promotions": {
+            "get": {
+                "summary": "liste promotions",
+                "operationId": "59c82623000e37a84ac190ac461a1f8e",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/service-category": {
             "get": {
                 "summary": "liste categories",
                 "operationId": "71bcee7fa6f032022a7849086425e3d5",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/checkcreneau": {
+            "post": {
+                "summary": "Vérifier creneau",
+                "operationId": "2a09452c4289d37318b9cb98955ebe2f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "employee_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "start_times": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-09-05 10:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Success"
@@ -274,8 +317,7 @@
                                 "properties": {
                                     "amount": {
                                         "description": "Montant en centimes",
-                                        "type": "integer",
-                                        "example": 210000
+                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
@@ -291,8 +333,7 @@
                                 "schema": {
                                     "properties": {
                                         "clientSecret": {
-                                            "type": "string",
-                                            "example": "pi_3N2t...secret_123"
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"
@@ -329,8 +370,7 @@
                                         "example": "null"
                                     },
                                     "amount": {
-                                        "type": "integer",
-                                        "example": 210000
+                                        "type": "integer"
                                     },
                                     "reference": {
                                         "type": "string",
@@ -350,12 +390,10 @@
                                 "schema": {
                                     "properties": {
                                         "success": {
-                                            "type": "boolean",
-                                            "example": true
+                                            "type": "boolean"
                                         },
                                         "message": {
-                                            "type": "string",
-                                            "example": "Paiement enregistré"
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"

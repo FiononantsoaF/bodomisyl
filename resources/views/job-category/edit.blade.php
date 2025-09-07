@@ -11,10 +11,10 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Job Category</span>
+                        <span class="card-title">{{ __('Mise à jours') }} d'un  emploi</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('job-categories.update', $jobCategory->id) }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('jobdb.update', $jobCategory->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 

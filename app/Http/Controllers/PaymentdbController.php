@@ -37,16 +37,24 @@ class PaymentdbController extends Controller
             ->with('i', (request()->input('page', 1) - 1) * $payments->perPage());
     }
 
-    public function createfiche(Request $request)
+    public function createfiche(Request $request, FicheClient $fiche, Clients $client)
     {
 
         $alldata=$request->all();
+        // dd($alldata);
         if(isset($alldata['assistant_comment'])){
-            foreach ($alldata['assistant_comment'] as $appointmentId => $commentaire) {
-            appointments::changeComment($appointmentId, $commentaire);
+                foreach ($alldata['assistant_comment'] as $appointmentId => $commentaire) {
+                appointments::changeComment($appointmentId, $commentaire);
+            }
         }
+        if(isset($alldata['size']) || isset($alldata['weight']) || isset($alldata['IMC'])){
+            $reponse= $client->updateclient($alldata['client'], $alldata['weight'], $alldata['gender'], $alldata['size'], $alldata['IMC']);
+            echo ($reponse);
+            // die();
+
         }
-        FicheClient::createFiche($alldata['client'],$alldata['objectifs'], $alldata['indications'], $alldata['observations']);
+        $fiche->createFiche($alldata['client'],$alldata['objectifs'], $alldata['indications'], $alldata['consultations'],
+                            $alldata['programmes']);
         return redirect()->route('fichedb', ['id' => $alldata['client']])
             ->with('success', 'Fiche client créée');
     }

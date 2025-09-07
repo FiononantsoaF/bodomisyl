@@ -26,7 +26,6 @@ class AppointmentdbController extends Controller
      */
     public function index(Request $request)
     {
-        // $appointments = appointments::where(['status' => "pending"])->orderBy('id','desc')->paginate();
         $param = $request->all();
         $phone = (isset($param['phone']) && !isset($param['reset'])) ?$param['phone']:'';
         $email = (isset($param['email']) && !isset($param['reset']))?$param['email']:'';
@@ -40,8 +39,10 @@ class AppointmentdbController extends Controller
         "s.title as typeprestation",
         "ep.name as nomprestataire",
         "s.price as prixservice",
+        "ap.final_price as final_price",
         "s.duration_minutes as dure_minute",
         "ap.subscription_id",
+        "ap.promotion_id",
         DB::raw("date_format(ap.start_times,'%d-%m-%Y %H:%i%:%s') as date_reserver"),
         DB::raw("DATE_ADD(STR_TO_DATE(ap.start_times, '%Y-%m-%d %H:%i:%s'), INTERVAL s.duration_minutes MINUTE) as fin_prestation"),
         DB::raw("date_format(ap.created_at,'%d-%m-%Y %H:%i%:%s') as date_creation")
@@ -100,8 +101,6 @@ class AppointmentdbController extends Controller
     public function creation(Request $request)
     {
         $alldata = $request->all();
-        // dd($alldata);
-
         if(!isset($alldata['start_times'])){
             return redirect()->back()
                 ->withErrors(['erreur' => "La date est obligatoire "])
@@ -161,7 +160,6 @@ class AppointmentdbController extends Controller
     {
         $param = $request->all();
         $appointment = appointments::find($id);
-
         if (!$appointment) {
             return redirect()->back()->with('error', 'Rendez-vous introuvable.');
         }
@@ -172,7 +170,6 @@ class AppointmentdbController extends Controller
             return redirect()->back()->with('error', 'Client ou email introuvable.');
         }
         $status = null;
-
         if (isset($param['valider']) && $param['valider'] == 1) {
             $status = 'confirmed';
             $statusText = 'confirmé';
@@ -185,17 +182,14 @@ class AppointmentdbController extends Controller
         }
         if ($status) {
             $appointment->update(["status" => $status]);
-
             Mail::to($client->email)->send(new ValidateAppointment([
                 'title' => 'Mise à jour de votre rendez-vous',
                 'body'  => "Bonjour {$client->name}",
                 'service'=> "Votre rendez-vous pour le service : {$service->title} prévu le {$appointment->start_times}  a été {$statusText}"
             ]));
-
             return redirect()->route('appointmentsdb')
                 ->with('success', "Rendez-vous {$statusText} avec succès");
         }
-
         return redirect()->back()->with('error', 'Aucune action valide détectée.');
     }
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Exports\SubscriptionsExport;
 use App\Exports\EmployeesExport;
 use App\Exports\AppointmentsExport;
+use App\Exports\AppointmentsDayExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Carbon;
 
@@ -25,6 +26,13 @@ class ExportController extends Controller
         $fileName = "rendezvous_domisyl_{$now}.xlsx";
         
         return Excel::download(new AppointmentsExport, $fileName);
+    }
+    public function exportAppointmentsDay()
+    {
+        $now = Carbon::now()->format('dmY_H\hi');
+        $fileName = "rendezvous_domisyl_Jour:_{$now}.xlsx";
+        
+        return Excel::download(new AppointmentsDayExport, $fileName);
     }
 
     public function exportEmployees()

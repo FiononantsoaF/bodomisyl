@@ -34,17 +34,9 @@ class JobCategory extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'service_category_id'];
+    protected $fillable = ['name'];
 
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function serviceCategory()
-    {
-        return $this->belongsTo(\App\Models\ServiceCategory::class, 'service_category_id', 'id');
-    }
-    
+ 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

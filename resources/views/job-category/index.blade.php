@@ -13,12 +13,12 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Job Category') }}
+                                {{ __(' Gestion des emplois') }}
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('job-categories.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                <a href="{{ route('jobdb.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                  {{ __('Ajouter un emploi') }}
                                 </a>
                               </div>
                         </div>
@@ -34,11 +34,9 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
+                                        <th>Num</th>
                                         
-										<th>Name</th>
-										<th>Service Category Id</th>
-
+										<th>Emplois</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -48,15 +46,13 @@
                                             <td>{{ ++$i }}</td>
                                             
 											<td>{{ $jobCategory->name }}</td>
-											<td>{{ $jobCategory->service_category_id }}</td>
 
                                             <td>
-                                                <form action="{{ route('job-categories.destroy',$jobCategory->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('job-categories.show',$jobCategory->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('job-categories.edit',$jobCategory->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                <form action="{{ route('jobdb.destroy',$jobCategory->id) }}" method="POST">
+                                                    <a class="btn btn-sm btn-success" href="{{ route('jobdb.edit',$jobCategory->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> {{ __('Supprimer') }}</button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -66,7 +62,7 @@
                         </div>
                     </div>
                 </div>
-                {!! $jobCategories->links() !!}
+                {{ $jobCategories->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>
