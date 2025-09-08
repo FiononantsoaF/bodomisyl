@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/appointmentsdb', [AppointmentdbController::class, 'index'])->name('appointmentsdb');
     Route::post('/appointmentsdb/changestate/{id}', [AppointmentdbController::class, 'changestate'])->name('appointmentsdb.changestate');
     Route::post('/appointmentsdb/creation', [AppointmentdbController::class, 'creation'])->name('appointmentsdb.creation');
+    
     //session
     Route::get('/session', [SessiondbController::class, 'index'])->name('sessiondb');
     Route::get('/session/create', [SessiondbController::class, 'create'])->name('sessiondb.create');
@@ -86,9 +87,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/promotion/destroy/{id}', [PromotiondbController::class, 'destroy'])->name('promotiondb.destroy');
     Route::post('/promotion/update/{id}', [PromotiondbController::class, 'update'])->name('promotiondb.update');
     
-
-
-
     //subscription
     Route::get('/subscriptiondb', [SubscriptiondbController::class, 'index'])->name('subscriptiondb');
     Route::get('/subscription/appoint/{id}', [SubscriptiondbController::class, 'continue'])->name('subscriptiondb.appoint');
@@ -102,7 +100,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/service-session/create', [ServiceSessiondbController::class, 'create'])->name('service-session.create');
     Route::post('/service-session/store', [ServiceSessiondbController::class, 'store'])->name('service-session.store');
     Route::get('/user/index', [UserController::class, 'index'])->name('userdb');
-
 
     // userdb.create
     Route::get('/user/create', [UserController::class, 'create'])->name('userdb.create');
@@ -160,14 +157,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/currency/edit/{id}', [CurrencydbController::class, 'edit'])->name('currencydb.edit');
     Route::post('/currency/upadte', [CurrencydbController::class, 'update'])->name('currencydb.update');
 
-
     // export
     Route::get('/export-subscriptions', [ExportController::class, 'exportSubscriptions'])->name('export.subscriptions');
     Route::get('/export-appointments', [ExportController::class, 'exportAppointments'])->name('export.appointments');
     Route::get('/export-appointmentsday', [ExportController::class, 'exportAppointmentsDay'])->name('export.appointmentsday');
     Route::get('/export-employees', [ExportController::class, 'exportEmployees'])->name('export.employees');
-
-
+    // Route::get('/export-appointments-range', [ExportController::class, 'exportAppointmentsRange'])->name('export.appointments.range');
 
     // Route::get('/mvola-test-form', function () {
     //     return view('mvola/index');

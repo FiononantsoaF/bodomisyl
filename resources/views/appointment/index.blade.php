@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Dashboard')
-
 @section('content')
     <div class="container-fluid small mb-2 py-3 p-0">
         <div class="row">
@@ -57,13 +55,28 @@
                                 <i class="fas fa-calendar-alt me-2"></i> Liste des rendez-vous
                             </h5>
                             <div class="d-flex gap-2 flex-wrap">
-                                <a href="{{ route('export.appointmentsday') }}" class="btn btn-warning btn-sm">
-                                    <i class="bi bi-file-earmark-excel me-1"></i>Export du jour
-                                </a>
+                                <form action="{{ route('export.appointmentsday') }}" method="GET" class="d-flex gap-2 flex-wrap">
+                                    @php
+                                        $today = now()->format('Y-m-d');
+                                    @endphp
+                                    <input type="date" name="start_date" class="form-control"
+                                        value="{{ request('start_date', $today) }}">
+                                    <input type="date" name="end_date" class="form-control"
+                                        value="{{ request('end_date', $today) }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-search me-1"></i> Exporter
+                                    </button>
+                                </form>
+                                <!-- Export du jour -->
+                                <!-- <a href="{{ route('export.appointmentsday') }}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-file-earmark-excel me-1"></i> Export du jour
+                                </a> -->
+                                <!-- Export complet -->
                                 <a href="{{ route('export.appointments') }}" class="btn btn-success btn-sm">
                                     <i class="bi bi-file-earmark-excel me-1"></i> Export complet
                                 </a>
                             </div>
+
                         </div>
                     </div>
                     

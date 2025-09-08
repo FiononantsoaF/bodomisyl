@@ -32,7 +32,7 @@
                             <table class="table table-hover align-middle">
                                 <thead class="table-light small">
                                     <tr>
-										<th>Name</th>
+										<th>Nom</th>
 										<th>Description</th>
                                         <th>Statut</th>
                                         <th>Image</th>

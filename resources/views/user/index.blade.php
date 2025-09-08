@@ -18,7 +18,7 @@
 
                              <div class="float-right">
                                 <a href="{{ route('userdb.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Ajouter utisateur') }}
+                                  {{ __('Ajouter utilisateur') }}
                                 </a>
                               </div>
                         </div>
@@ -34,12 +34,11 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
+                                        <th>Num</th>
                                         
 										<th>Nom</th>
 										<th>Email</th>
-
-                                        <th></th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

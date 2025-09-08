@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('creneau', function (Blueprint $table) {
-            $table->timestamps();
-        });
+        // Schema::table('creneau', function (Blueprint $table) {
+        //     $table->timestamps();
+        // });
     }
 
     /**

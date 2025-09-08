@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('services', function (Blueprint $table) {
-            $table->integer('validity_days')->nullable(); // ou avec les mêmes propriétés qu’avant
-        });
+        if (!Schema::hasColumn('services', 'validity_days')) {
+            Schema::table('services', function (Blueprint $table) {
+                $table->integer('validity_days')->nullable();
+            });
+        }
     }
 
     public function down(): void

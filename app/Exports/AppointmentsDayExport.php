@@ -11,6 +11,16 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class AppointmentsDayExport implements FromCollection, WithHeadings, ShouldAutoSize, WithMapping
 {
+
+    protected $start;
+    protected $end;
+
+    public function __construct($start, $end)
+    {
+        $this->start = $start;
+        $this->end = $end;
+    }
+
     public function collection()
     {
         return DB::table('appointments as ap')
@@ -42,6 +52,10 @@ class AppointmentsDayExport implements FromCollection, WithHeadings, ShouldAutoS
             ->join('services as s', 's.id' ,'=', 'ap.service_id')
             ->join('service_category as sc', 'sc.id' ,'=', 's.service_category_id')
             ->orderBy('ap.id','desc')
+            ->whereBetween('ap.start_times', [
+                $this->start . ' 00:00:00',
+                $this->end   . ' 23:59:59'
+            ])
             ->get();
     }
 

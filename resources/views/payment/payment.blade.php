@@ -87,9 +87,9 @@
                             <tr>
                                 <td >{{ \Carbon\Carbon::parse($pay->paid_at)->format('d/m/Y') }}</td>
                                 <td>{{  $pay->method}}</td>
-                                <td>{{ $pay->client->phone }}</td>
+                                <td>{{ $pay->client->phone ?? 'Non renseigné' }}</td>
                                 <td>{{  $pay->total_amount }}</td>
-                                <td style="white-space: nowrap;">{{ $pay->client->name }}</td>
+                                <td style="white-space: nowrap;">{{ $pay->client->name  ?? 'Non renseigné' }}</td>
                     
                             </tr>
                             @endforeach

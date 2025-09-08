@@ -4,7 +4,7 @@
         <div class="form-group mb-2 mb20">
             <input type="hidden" name="id" value="{{ $serviceCategory->id }}" id="id">
             <label for="name" class="form-label">{{ __('Nom') }}</label>
-            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $serviceCategory?->name) }}" id="name" placeholder="nom ">
+            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $serviceCategory?->name) }}" id="name" placeholder="Nom">
             {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="form-group mb-2 mb20">
@@ -13,8 +13,8 @@
             {!! $errors->first('description', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="form-group mb-2 mb20">
-            <label for="remarque" class="form-label">{{ __('remarque') }}</label>
-            <input type="text" name="remarque" class="form-control @error('remarque') is-invalid @enderror" value="{{ old('remarque', $serviceCategory?->remarque) }}" id="remarque" placeholder="remarque">
+            <label for="remarque" class="form-label">{{ __('Remarque') }}</label>
+            <input type="text" name="remarque" class="form-control @error('remarque') is-invalid @enderror" value="{{ old('remarque', $serviceCategory?->remarque) }}" id="remarque" placeholder="Remarque">
             {!! $errors->first('remarque', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="mb-3">
