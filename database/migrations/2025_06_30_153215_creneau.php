@@ -15,8 +15,9 @@ return new class extends Migration
         Schema::create('creneau', function (Blueprint $table) {
             $table->id();
             $table->string('creneau', 100);
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('update_at')->useCurrent();
+            $table->timestamps();
+            // $table->timestamp('created_at')->useCurrent();
+            // $table->timestamp('update_at')->useCurrent();
         });
     }
     /**

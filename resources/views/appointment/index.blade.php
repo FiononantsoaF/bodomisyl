@@ -11,41 +11,58 @@
                         <h5 class="mb-0">
                             <i class="fas fa-search me-2"></i> Recherche de rendez-vous
                         </h5>
-                    </div>
-                    
-                    <div class="card-body p-2 border-0">
-                        <form method="GET" class="row g-3">
-                            <div class="row g-2 align-items-end">
-                                <div class="col-md-3 col-sm-6">
+                    </div>                  
+                    <div class="card-body p-3 border-0">
+                        <form method="GET" class="row g-4">
+                            <div class="row g-2 align-items-end mb-1">
+                                <div class="col-md-4 col-sm-6">
                                     <label for="name" class="form-label small">Nom</label>
-                                    <input type="text" id="name" name="name" value="{{ $name }}" 
-                                        class="form-control form-control-sm" placeholder="nom">
+                                    <input type="text" id="name" name="name" value="{{ $name ?? '' }}" 
+                                        class="form-control form-control-sm" placeholder="Nom" autocomplete="off">
                                 </div>
 
-                                <div class="col-md-3 col-sm-6">
+                                <div class="col-md-4 col-sm-6">
                                     <label for="phone" class="form-label small">Téléphone</label>
-                                    <input type="text" id="phone" name="phone" value="{{ $phone }}" 
-                                        class="form-control form-control-sm" placeholder="téléphone">
+                                    <input type="text" id="phone" name="phone" value="{{ $phone ?? '' }}" 
+                                        class="form-control form-control-sm" placeholder="Téléphone" autocomplete="off">
                                 </div>
 
-                                <div class="col-md-3 col-sm-6">
+                                <div class="col-md-4 col-sm-6">
                                     <label for="email" class="form-label small">Email</label>
-                                    <input type="email" id="email" name="email" value="{{ $email }}" 
-                                        class="form-control form-control-sm" placeholder="email">
+                                    <input type="email" id="email" name="email" value="{{ $email ?? '' }}" 
+                                        class="form-control form-control-sm" placeholder="Email" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <!-- Ligne 2 -->
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="start_date" class="form-label small">Date début</label>
+                                    <input type="date" id="start_date" name="start_date" value="{{ $start_date ?? '' }}" 
+                                        class="form-control form-control-sm">
                                 </div>
 
-                                <div class="col-md-3 col-sm-6 d-flex align-items-end gap-2">
-                                    <div class="d-flex gap-2 w-100">
-                                        <button type="submit" class="btn btn-primary btn-sm flex-grow-1 h-100">
+                                <div class="col-md-4 col-sm-6">
+                                    <label for="end_date" class="form-label small">Date fin</label>
+                                    <input type="date" id="end_date" name="end_date" value="{{ $end_date ?? '' }}" 
+                                        class="form-control form-control-sm">
+                                </div>
+
+                                <div class="col-md-4 col-sm-12 d-flex align-items-end">
+                                    <div class="btn-group d-flex gap-2 w-100">
+                                        <button type="submit" class="btn btn-primary btn-sm">
                                             🔍 Rechercher
                                         </button>
-                                        <button type="submit" class="btn btn-outline-secondary btn-sm flex-grow-1 h-100" 
-                                            name="reset" value="1">
+                                        <button name="reset" value="1" class="btn btn-outline-secondary btn-sm">
                                             🔄 Réinitialiser
+                                        </button>
+                                        <button type="submit" name="export" value="2" class="btn btn-success btn-sm">
+                                            <i class="bi bi-file-earmark-excel me-1"></i> Export
                                         </button>
                                     </div>
                                 </div>
                             </div>
+
                         </form>
                     </div>
                 </div>
@@ -56,14 +73,14 @@
                             <h5 class="mb-0">
                                 <i class="fas fa-calendar-alt me-2"></i> Liste des rendez-vous
                             </h5>
-                            <div class="d-flex gap-2 flex-wrap">
+                            <!--div class="d-flex gap-2 flex-wrap">
                                 <a href="{{ route('export.appointmentsday') }}" class="btn btn-warning btn-sm">
                                     <i class="bi bi-file-earmark-excel me-1"></i>Export du jour
                                 </a>
                                 <a href="{{ route('export.appointments') }}" class="btn btn-success btn-sm">
                                     <i class="bi bi-file-earmark-excel me-1"></i> Export complet
                                 </a>
-                            </div>
+                            </div-->
                         </div>
                     </div>
                     
@@ -99,7 +116,7 @@
                                                 <div class="fw-semibold">{{ $appointment->nomclient }}</div>
                                                 <small class="text-muted">{{ $appointment->phone ?? ' ' }}</small>
                                             </td>
-                                            <td>{{ $appointment->nomsercie }}</td>
+                                            <td>{{ $appointment->nomservice }}</td>
                                             <td>
                                                 <span class="badge bg-light text-dark">{{ $appointment->typeprestation }}</span>
                                             </td>
@@ -124,11 +141,11 @@
                                                 {{ $appointment->subscription_id ? 'oui' : 'non' }}
                                             </td>
                                             <td>
-                                                @if($appointment->status == 'pending')         
+                                                @if($appointment->status == 'En attente')         
                                                     <span class="badge bg-warning bg-opacity-15 text-warning" style="color:black!important;">
                                                         <i class="fas fa-clock me-1"></i> En attente
                                                     </span>         
-                                                @elseif($appointment->status == 'confirmed')
+                                                @elseif($appointment->status == 'Validé')
                                                     <span class="badge bg-success bg-opacity-15 text-success" style="color:black!important;">
                                                         <i class="fas fa-check-circle me-1"></i> Confirmé
                                                     </span>   

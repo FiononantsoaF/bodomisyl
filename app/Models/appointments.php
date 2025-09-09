@@ -180,7 +180,31 @@ class appointments extends Model
             ->orderByDesc('ap.id');
     }
     
-
+    public function getAppointmentBetweenTwoDate(DateTime $debut, DateTime $fin)
+    {
+        return DB::table('appointments as ap')
+            ->select(
+                "ap.id as idrdv",
+                "ap.status",
+                "c.name as nomclient",
+                "c.phone",
+                "c.email",
+                "c.address",
+                "sc.name as nomservice",
+                "s.title as typeprestation",
+                "ep.name as nomprestataire",
+                "s.duration_minutes as duree_minute",
+                DB::raw("DATE_FORMAT(ap.start_times,'%d-%m-%Y %H:%i:%s') as date_reserver"),
+                DB::raw("DATE_ADD(ap.start_times, INTERVAL s.duration_minutes MINUTE) as fin_prestation")
+            )
+            ->join('clients as c', 'c.id', '=', 'ap.client_id')
+            ->join('employees as ep', 'ep.id', '=', 'ap.employee_id')
+            ->join('services as s', 's.id', '=', 'ap.service_id')
+            ->join('service_category as sc', 'sc.id', '=', 's.service_category_id')
+            ->whereBetween('ap.start_times', [$debut->format('Y-m-d 00:00:00'), $fin->format('Y-m-d 23:59:59')])
+            ->orderByDesc('ap.id')
+            ->get(); 
+    }
 
 
 }

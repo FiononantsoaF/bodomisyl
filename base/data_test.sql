@@ -1,8 +1,8 @@
 use App\Models\User;
 
 User::create([
-    'name' => 'Fy',
-    'email' => 'fy@gmail.com',
+    'name' => 'fy',
+    'email' => 'fy.rakotojaona@groupe-syl.com',
     'password' => bcrypt('123'),
 ]);
 

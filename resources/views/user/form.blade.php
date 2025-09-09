@@ -2,8 +2,8 @@
     <div class="col-md-12">
         
         <div class="form-group mb-2 mb20">
-            <label for="name" class="form-label">{{ __('Name') }}</label>
-            <input type="text" required name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user?->name) }}" id="name" placeholder="Name">
+            <label for="name" class="form-label">{{ __('Nom') }}</label>
+            <input type="text" required name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user?->name) }}" id="name" placeholder="Nom">
             {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="form-group mb-2 mb20">
@@ -17,8 +17,8 @@
             {!! $errors->first('password', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         {{-- <div class="form-group mb-2 mb20">
-            <label for="update_at" class="form-label">{{ __('Update At') }}</label>
-            <input type="text" name="update_at" class="form-control @error('update_at') is-invalid @enderror" value="{{ old('update_at', $user?->update_at) }}" id="update_at" placeholder="Update At">
+            <label for="update_at" class="form-label">{{ __('Modifié le ') }}</label>
+            <input type="text" name="update_at" class="form-control @error('update_at') is-invalid @enderror" value="{{ old('update_at', $user?->update_at) }}" id="update_at">
             {!! $errors->first('update_at', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div> --}}
 
