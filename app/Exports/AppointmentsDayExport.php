@@ -7,23 +7,27 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithMapping;
-
+use Carbon\Carbon;
 
 class AppointmentsDayExport implements FromCollection, WithHeadings, ShouldAutoSize, WithMapping
 {
+    protected ?Carbon $start_date;
+    protected ?Carbon $end_date;
+    private ?string $phone;
+    private ?string $email;
+    private ?string $name;
 
-    protected $start;
-    protected $end;
-
-    public function __construct($start, $end)
-    {
-        $this->start = $start;
-        $this->end = $end;
+    public function __construct(?Carbon $start_date, ?Carbon $end_date, ?string $phone = null, ?string $email = null, ?string $name = null) {
+        $this->start_date = $start_date;
+        $this->end_date = $end_date;
+        $this->phone = $phone;
+        $this->email = $email;
+        $this->name = $name;
     }
 
     public function collection()
     {
-        return DB::table('appointments as ap')
+        $query = DB::table('appointments as ap')
             ->select(
                 "ap.id as idrdv",
                 DB::raw("
@@ -51,12 +55,28 @@ class AppointmentsDayExport implements FromCollection, WithHeadings, ShouldAutoS
             ->join('employees as ep', 'ep.id', '=','ap.employee_id')
             ->join('services as s', 's.id' ,'=', 'ap.service_id')
             ->join('service_category as sc', 'sc.id' ,'=', 's.service_category_id')
-            ->orderBy('ap.id','desc')
-            ->whereBetween('ap.start_times', [
-                $this->start . ' 00:00:00',
-                $this->end   . ' 23:59:59'
-            ])
-            ->get();
+            ->orderBy('ap.id','desc');
+
+        if ($this->phone) {
+            $query->where('c.phone', 'LIKE', "%{$this->phone}%");
+        }
+        if ($this->email) {
+            $query->where('c.email', 'LIKE', "%{$this->email}%");
+        }
+
+        if ($this->name) {
+            $query->where('c.name', 'LIKE', "%{$this->name}%");
+        }
+
+        if ($this->start_date) {
+            $query->whereDate('ap.start_times', '>=', \Carbon\Carbon::parse($this->start_date)->format('Y-m-d'));
+        }
+
+        if ($this->end_date) {
+            $query->whereDate('ap.start_times', '<=', \Carbon\Carbon::parse($this->end_date)->format('Y-m-d'));
+        }
+        // dd($query->toSql());
+        return $query->get();
     }
 
     public function headings(): array
@@ -73,7 +93,7 @@ class AppointmentsDayExport implements FromCollection, WithHeadings, ShouldAutoS
             'Type de prestation',
             'Prestataire',
             'Durée (minutes)',
-            'Date de reservation',
+            'Date du rendez-vous',
 
         ];
     }

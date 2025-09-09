@@ -14,6 +14,7 @@ use DB;
 use DateTime;
 use Mail;
 use App\Mail\ValidateAppointment;
+use Carbon\Carbon;
 
 /**
  * Class AppointmentdbController
@@ -27,56 +28,93 @@ class AppointmentdbController extends Controller
     public function index(Request $request)
     {
         $param = $request->all();
-        $phone = (isset($param['phone']) && !isset($param['reset'])) ?$param['phone']:'';
-        $email = (isset($param['email']) && !isset($param['reset']))?$param['email']:'';
-        $name = (isset($param['name']) && !isset($param['reset']))?$param['name']:'';
-        $appointments = DB::table('appointments as ap')
-        ->select("ap.id as idrdv",
-        "ap.status",
-        "c.name as nomclient",
-        "c.email",
-        "sc.name as nomsercie",
-        "s.title as typeprestation",
-        "ep.name as nomprestataire",
-        "s.price as prixservice",
-        "ap.final_price as final_price",
-        "s.duration_minutes as dure_minute",
-        "ap.subscription_id",
-        "ap.promotion_id",
-        DB::raw("date_format(ap.start_times,'%d-%m-%Y %H:%i%:%s') as date_reserver"),
-        DB::raw("DATE_ADD(STR_TO_DATE(ap.start_times, '%Y-%m-%d %H:%i:%s'), INTERVAL s.duration_minutes MINUTE) as fin_prestation"),
-        DB::raw("date_format(ap.created_at,'%d-%m-%Y %H:%i%:%s') as date_creation")
-        )
-        ->when($name, function ($query, $name) {
-            $query->where('c.name', 'like', '%' . $name . '%');
-        })
-
-        ->when($phone , function ($query, string $phone) {
+        $phone = (isset($param['phone']) && !isset($param['reset'])) ? $param['phone'] : null;
+        $email = (isset($param['email']) && !isset($param['reset'])) ? $param['email'] : null;
+        $name  = (isset($param['name']) && !isset($param['reset']))  ? $param['name']  : null;
+        $start_date = (!empty($param['start_date']) && !isset($param['reset'])) ? $param['start_date'] : null;
+        $end_date   = (!empty($param['end_date']) && !isset($param['reset']))   ? $param['end_date']   : null;
+        $query = DB::table('appointments as ap')
+            ->select(
+                "ap.id as idrdv",
+                DB::raw("
+                    CASE ap.status
+                        WHEN 'pending' THEN 'En attente'
+                        WHEN 'confirmed' THEN 'Validé'
+                        WHEN 'cancelled' THEN 'Annulé'
+                        ELSE ap.status
+                    END as status
+                "),
+                "c.name as nomclient",
+                "c.email",
+                "c.phone",
+                "sc.name as nomservice",
+                "s.title as typeprestation",
+                "ep.name as nomprestataire",
+                "s.price as prixservice",
+                "ap.final_price as final_price",
+                "s.duration_minutes as duree_minute",
+                "ap.subscription_id",
+                "ap.promotion_id",
+                DB::raw("DATE_FORMAT(ap.start_times,'%d-%m-%Y %H:%i') as date_reserver"),
+                DB::raw("DATE_FORMAT(DATE_ADD(ap.start_times, INTERVAL s.duration_minutes MINUTE),'%d-%m-%Y %H:%i') as fin_prestation"),
+                DB::raw("DATE_FORMAT(ap.created_at,'%d-%m-%Y %H:%i') as date_creation")
+            )
+            ->join('clients as c', 'c.id','=', 'ap.client_id')
+            ->join('employees as ep', 'ep.id', '=','ap.employee_id')
+            ->join('services as s', 's.id' ,'=', 'ap.service_id')
+            ->join('service_category as sc', 'sc.id' ,'=', 's.service_category_id')
+            ->orderBy('ap.id','desc');
+        if ($name) {
+            $query->where('c.name', 'like', "%$name%");
+        }
+        if ($phone) {
             $query->where('c.phone', $phone);
-        })
-        ->when($email , function ($query, string $email) {
+        }
+        if ($email) {
             $query->where('c.email', $email);
-        })
-        ->join('clients as c', 'c.id','=', 'ap.client_id')
-        ->join('employees as ep', 'ep.id', '=','ap.employee_id')
-        ->join('services as s', 's.id' ,'=', 'ap.service_id')
-        ->join('service_category as sc', 'sc.id' ,'=', 's.service_category_id')
-       
-        ->orderBy('ap.id','desc')->paginate(10);
-        if($name){
-            $appointments->where('c.name', 'like', '%' . $name . '%');
         }
-        if($phone){
-            $appointments->where(['c.phone' => $phone]);
+        if ($start_date) {
+            $query->whereDate('ap.start_times', '>=', $start_date);
         }
-        if($email){
-            $appointments->where(['c.email' => $email]);
+        if ($end_date) {
+            $query->whereDate('ap.start_times', '<=', $end_date);
         }
-        // print_r($appointments->toSql());die();
+        $now = Carbon::now()->format('dmY_H\hi');
+
+        if ($start_date && $end_date) {
+            $filename = "rendezvous_domisyl_{$start_date}_au_{$end_date}_{$now}.xlsx";
+        } elseif ($start_date) {
+            $filename = "rendezvous_domisyl_depuis_{$start_date}_{$now}.xlsx";
+        } elseif ($end_date) {
+            $filename = "rendezvous_domisyl_jusqua_{$end_date}_{$now}.xlsx";
+        } else {
+            $filename = "rendezvous_domisyl_Jour_{$now}.xlsx";
+        }
+        if ($request->has('export')) {
+            $data = $query->get();
+            dump($data);
+            return Excel::download(new AppointmentsDayExport(
+                $request->start_date ? Carbon::parse($request->start_date) : null,
+                $request->end_date ? Carbon::parse($request->end_date) : null,
+                $phone,
+                $email,
+                $name
+            ), $filename);
+        }
+        $appointments = $query->paginate(10);
         $activemenuappoint = 1;
-        return view('appointment.index', compact('appointments','activemenuappoint','phone','email','name'))
-            ->with('i', (request()->input('page', 1) - 1) * $appointments->perPage());
+
+        return view('appointment.index', compact(
+            'appointments',
+            'activemenuappoint',
+            'phone',
+            'email',
+            'name',
+            'start_date',
+            'end_date'
+        ))->with('i', (request()->input('page', 1) - 1) * $appointments->perPage());
     }
+
 
     /**
      * Show the form for creating a new resource.
