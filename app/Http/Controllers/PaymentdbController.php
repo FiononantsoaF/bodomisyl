@@ -27,9 +27,7 @@ class PaymentdbController extends Controller
         $clients = Clients::find($request['id']);
         $appointments = Clients::getAppointmentsByClient($request['id']);
         $fiche=FicheClient::where(['client_id' => $request['id']])->first();
-
         $gender = UtilService::getGenders();
-        
         $paymentsClients=Clients::getPaymentsByClient($request['id']);
         $appointsCommentaire = Clients::getAppointmentsByClientComment($request['id']);
 

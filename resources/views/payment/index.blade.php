@@ -13,6 +13,11 @@
                         <div class="col-md-10">
                             <h5 class="mb-1" style="padding-left: 0.9rem;">FICHE SUIVI CLIENT</h5>
                         </div>
+                        <div class="col-md-2 text-end">
+                            <a href="{{ route('clientdb') }}" class="btn btn-secondary">
+                                ← Retour
+                            </a>
+                        </div>
                     </div>       
                     <div class="card mb-3 border-0">
                         <div class="card-header bg-white">
@@ -36,6 +41,58 @@
                                                 <th>Adresse </th>
                                                 <td>{{ $clients->address }}</td>
                                             </tr>
+                                            <tr>
+                                                <td>
+                                                    <button 
+                                                        type="button" 
+                                                        class="btn btn-outline-primary" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#changePasswordModal{{ $clients->id }}"
+                                                        title="Modifier les informations clients"
+                                                    >
+                                                        Modifier
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="modal fade" id="changePasswordModal{{ $clients->id }}" tabindex="-1" aria-labelledby="changePasswordLabel{{ $clients->id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content shadow-lg">
+                                                    <form method="POST" action="{{ route('clientdb.changepassowrd') }}">
+                                                        @csrf
+                                                        <div class="modal-header bg-white text-black">
+                                                        <h5 class="modal-title" id="changePasswordLabel{{ $clients->id }}">
+                                                            Modifier les informations du client : {{ $clients->name }}
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                        <input type="hidden" name="id" value="{{ $clients->id }}">
+                                                        <div class="mb-3">
+                                                            <label for="name" class="form-label">Nom</label>
+                                                            <input type="text" name="name" class="form-control" value="{{ $clients->name }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="phone" class="form-label">Téléphone</label>
+                                                            <input type="number" name="phone" class="form-control" value="{{ $clients->phone }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="email" class="form-label">Email</label>
+                                                            <input type="email" name="email" class="form-control" value="{{ $clients->email }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="adress" class="form-label">Adresse</label>
+                                                            <input type="text" name="adress" id="adress" class="form-control" value="{{ $clients->address }}" required>
+                                                            <p id="addressError" style="color:red; display:none;"></p>
+                                                        </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                        <button type="submit" class="btn btn-primary">Modifier</button>
+                                                        </div>
+                                                    </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </tbody>
                                     </table>
                                     <p class="mt-3 mb-0"><strong>*SUIVI RÈGLEMENTS</strong></p>
@@ -215,4 +272,19 @@
             </div>
         </div>
     </div>
+    <script>
+        const addressInput = document.getElementById('adress');
+        const errorText = document.getElementById('addressError');
+
+        addressInput.addEventListener('input', () => {
+        const value = addressInput.value.trim();
+        if (/^[0-9]+$/.test(value)) {
+            errorText.textContent = "L'adresse ne peut pas contenir uniquement des chiffres.";
+            errorText.style.display = "block";
+        } else {
+            errorText.textContent = "";
+            errorText.style.display = "none";
+        }
+        });
+    </script>
 @endsection

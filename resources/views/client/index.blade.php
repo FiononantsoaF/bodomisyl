@@ -68,6 +68,7 @@
                                             <th>Nombre abonnement</th>
                                             <th>Nombre rendez-vous</th>
                                             <th>Fiche suivi client</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <Nametbody class="small">
@@ -107,42 +108,52 @@
                                                 </form>
                                             </td>
                                             <td>
-                                                <!-- <button  class="d-inline btn-sm" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal{{ $client->id }}">
-                                                    Modifier mot de passe
-                                                </button> -->
+                                                <button  class="d-inline btn-sm" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal{{ $client->id }}" title="Modifier le client">
+                                                   <i class="fa fa-fw fa-edit"></i>
+                                                </button>
                                             </td>
                                             <div class="modal fade" id="changePasswordModal{{ $client->id }}" tabindex="-1" aria-labelledby="changePasswordLabel{{ $client->id }}" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content shadow-lg">
-                                                <form method="POST" action="{{ route('clientdb.changepassowrd') }}">
-                                                    @csrf
-                                                    <div class="modal-header bg-white text-black">
-                                                    <h5 class="modal-title" id="changePasswordLabel{{ $client->id }}">Changer le mot de passe : {{ $client->name }}</h5>
-                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-
-                                                    <div class="modal-body">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content shadow-lg">
+                                                    <form method="POST" action="{{ route('clientdb.changepassowrd') }}">
+                                                        @csrf
+                                                        <div class="modal-header bg-white text-black">
+                                                        <h5 class="modal-title" id="changePasswordLabel{{ $client->id }}">
+                                                            Modifier les informations du client : {{ $client->name }}
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
                                                         <input type="hidden" name="id" value="{{ $client->id }}">
-                                                        <div class="mb-3">
-                                                            <label for="new_password" class="form-label">Nouveau mot de passe </label>
-                                                            <input type="password" name="new_password" class="form-control" required>
-                                                        </div>
+                                                        <input type="hidden" name="liste" value="1">
 
                                                         <div class="mb-3">
-                                                            <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
-                                                            <input type="password" name="confirm_password" class="form-control" required>
+                                                            <label for="name" class="form-label">Nom</label>
+                                                            <input type="text" name="name" class="form-control" value="{{ $client->name }}" required>
                                                         </div>
+                                                        <div class="mb-3">
+                                                            <label for="phone" class="form-label">Téléphone</label>
+                                                            <input type="number" name="phone" class="form-control" value="{{ $client->phone }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="email" class="form-label">Email</label>
+                                                            <input type="email" name="email" id="email" class="form-control" value="{{ $client->email }}" required>
+                                                            <p id="emailError" style="color:red; display:none;"></p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="address" class="form-label">Adresse</label>
+                                                            <input type="text" name="adress" id="adress" class="form-control" value="{{ $client->address }}" required>
+                                                            <p id="addressError" style="color:red; display:none;"></p>
+                                                        </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                        <button type="submit" class="btn btn-primary">Modifier</button>
+                                                        </div>
+                                                    </form>
                                                     </div>
-
-                                                    <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                    <button type="submit" class="btn btn-primary">Changer</button>
-                                                    </div>
-                                                </form>
                                                 </div>
                                             </div>
-                                            </div>
-
                                         </tr>
                                         @endforeach
 
@@ -155,4 +166,33 @@
             </div>
         </div>
     </div>
+    <script>
+        const addressInput = document.getElementById('adress');
+        const errorText = document.getElementById('addressError');
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+        
+        addressInput.addEventListener('input', () => {
+        const value = addressInput.value.trim();
+        if (/^[0-9]+$/.test(value)) {
+            errorText.textContent = "L'adresse ne peut pas contenir uniquement des chiffres.";
+            errorText.style.display = "block";
+        } else {
+            errorText.textContent = "";
+            errorText.style.display = "none";
+        }
+        });
+
+        emailInput.addEventListener('input', () => {
+        const value = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            emailError.textContent = "L'email n'est pas valide.";
+            emailError.style.display = "block";
+        } else {
+            emailError.textContent = "";
+            emailError.style.display = "none";
+        }
+        });
+    </script>
 @endsection
