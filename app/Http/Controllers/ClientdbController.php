@@ -57,22 +57,27 @@ class ClientdbController extends Controller
     public function changepassword(Request $request)
     {
         $param = $request->all();
-        if($param['new_password'] == $param['confirm_password']){
+        if (isset($param['id'])) {
             $client = new Clients();
-            $client->changepassword($param['id'], $param['new_password']);
-
+            $client->updateClientInformation(
+                $param['id'], 
+                $param['name'], 
+                $param['phone'], 
+                $param['email'], 
+                $param['adress']
+            );
+            if (isset($param['liste']) && $param['liste'] == 1) {
+                return redirect()->route('clientdb')
+                    ->with('success', 'Mise à jour effectuée');
+            } else {
+                return redirect()->route('fichedb', ['id' => $param['id']])
+                    ->with('success', 'Mise à jour effectuée');
+            }
+        } else {
             return redirect()->route('clientdb')
-            ->with('success', 'Mise à jours mot de passe réussie');
-        }else{
-            return redirect()->route('clientdb')
-            ->with('erreur', 'Mise à jours non effectuée');
+                ->with('erreur', 'Mise à jour non effectuée');
         }
-        
-
-        
-        // die('aa');
     }
-
 
     /**
      * Show the form for creating a new resource.

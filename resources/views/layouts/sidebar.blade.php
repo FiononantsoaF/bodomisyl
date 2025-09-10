@@ -100,13 +100,13 @@
 
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseclients" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Gestion Clients / Devise
+                                Gestion Clients 
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse @if(isset($menuclient)) show @else @endif" id="collapseclients" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="{{ route('clientdb') }}">Liste Clients</a>  
-                                    <a class="nav-link" href="{{ route('currencydb') }}">Devise</a> 
+                                    <!--a class="nav-link" href="{{ route('currencydb') }}">Devise</a--> 
                                 </nav>
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsemployee" aria-expanded="false" aria-controls="collapseLayouts">

@@ -15,7 +15,7 @@ class Clients extends Model
             'email',
             'phone',
             'password',
-            'adress',
+            'address',
             'gender',
             'size',
             'weight',
@@ -62,6 +62,21 @@ class Clients extends Model
         }
         return isset($client);
     }
+
+    public function updateClientInformation($id, $nom = null, $phone = null, $email = null, $adresse = null)
+    {
+        if ($client = Clients::find($id)) {
+            print_r($client);
+            $client->update(array_filter([
+                'name' => $nom,
+                'phone' => $phone,
+                'email'   => $email,
+                'address'    => $adresse,
+            ], fn($v) => !is_null($v)));
+        }
+        return isset($client);
+    }
+
     public static function getAppointmentsByClient($id)
     {
         $appointments = DB::table('appointments as ap')
