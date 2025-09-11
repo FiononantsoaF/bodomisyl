@@ -171,7 +171,6 @@
         const errorText = document.getElementById('addressError');
         const emailInput = document.getElementById('email');
         const emailError = document.getElementById('emailError');
-        
         addressInput.addEventListener('input', () => {
         const value = addressInput.value.trim();
         if (/^[0-9]+$/.test(value)) {
