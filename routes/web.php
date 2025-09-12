@@ -136,6 +136,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employees-creneau/search', [EmployeesCreneaudbController::class, 'searchByName']);
     Route::post('/employees-creneau/upadtecrenau', [EmployeesCreneaudbController::class, 'updatecreneau'])->name('employees-creneaudb.updatecreneau');
     Route::get('/employees-creneaux/{employee_id}', [EmployeesCreneaudbController::class, 'getCreneaux']);
+    Route::post('/employee-creneau/destroy',[EmployeesCreneaudbController::class, 'destroy'])->name('employees-creneaudb.delete');
 
     Route::get('/job', [JobCategoryController::class, 'index'])->name('jobdb');
     Route::get('/job/edit/{id}', [JobCategoryController::class, 'edit'])->name('jobdb.edit');

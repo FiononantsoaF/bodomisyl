@@ -16,13 +16,25 @@ class AppointmentsDayExport implements FromCollection, WithHeadings, ShouldAutoS
     private ?string $phone;
     private ?string $email;
     private ?string $name;
+    private ?string $statut;
+    private ?int $prestataire;
 
-    public function __construct(?Carbon $start_date, ?Carbon $end_date, ?string $phone = null, ?string $email = null, ?string $name = null) {
-        $this->start_date = $start_date;
-        $this->end_date = $end_date;
-        $this->phone = $phone;
-        $this->email = $email;
-        $this->name = $name;
+    public function __construct(
+        ?Carbon $start_date,
+        ?Carbon $end_date,
+        ?string $phone = null,
+        ?string $email = null,
+        ?string $name = null,
+        ?string $statut = null,
+        ?int $prestataire = null
+    ) {
+        $this->start_date   = $start_date;
+        $this->end_date     = $end_date;
+        $this->phone        = $phone;
+        $this->email        = $email;
+        $this->name         = $name;
+        $this->statut       = $statut;
+        $this->prestataire  = $prestataire;
     }
 
     public function collection()
@@ -75,6 +87,13 @@ class AppointmentsDayExport implements FromCollection, WithHeadings, ShouldAutoS
         if ($this->end_date) {
             $query->whereDate('ap.start_times', '<=', \Carbon\Carbon::parse($this->end_date)->format('Y-m-d'));
         }
+        if ($this->statut) {
+            $query->where('ap.status', $this->statut);
+        }
+        if (!is_null($this->prestataire) && $this->prestataire !== 0) {
+            $query->where('ap.employee_id', $this->prestataire);
+        }
+
         // dd($query->toSql());
         return $query->get();
     }

@@ -45,7 +45,7 @@
                                             <i class="fas fa-search me-1"></i> Rechercher
                                         </button>
                                         <button type="submit" class="btn btn-outline-secondary" name="reset" value="1">
-                                            <i class="fas fa-eraser me-1"></i> Effacer
+                                            <i class="fas fa-eraser me-1"></i> Réinitialiser
                                         </button>
                                     </div>
                                 </div>
@@ -77,6 +77,7 @@
                             </thead>
                             <tbody class="small">
                                 @foreach ($employees as $index => $employee)
+                                {{ $isOpen = request('open_employee') == $employee->id;}}
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $employee->name }}</td>
@@ -98,39 +99,63 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr class="creneaux-row" id="creneaux-{{ $employee->id }}" style="display: none;">
-                                        <td colspan="4">
+                                    <tr class="creneaux-row {{ $isOpen ? 'show' : '' }}" id="creneaux-{{ $employee->id }}" style="display: none;">
+                                            <td colspan="4">
+                                            
                                             @if($employee->creneaux->isEmpty())
                                                 <p class="text-muted">Aucun créneau assigné</p>
                                             @else
-                                                <ul class="list-group">
-                                                    @foreach($employee->creneaux as $creneau)
-                                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="height: 30%; width: 100%;">
-                                                         @php
-                                                            $jours = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 7 => 'Dimanche'];
-                                                        @endphp
-                                                            {{ $creneau->creneau }}
-                                                            <strong>{{ $jours[$creneau->pivot->jour] ?? '-' }}</strong>
-                                                            @if($creneau->pivot->is_active)
-                                                                <span class="badge bg-success">Activé</span>
-                                                            @else
-                                                                <span class="badge bg-danger">Désactivé</span>
-                                                            @endif
-                                                            
-                                                            <form method="POST" action="{{ route('employees-creneaudb.updatecreneau') }}">
-                                                                @csrf
-                                                                <input type="hidden" name="id" value="{{ $creneau->id }}">
-                                                                <input type="hidden" name="employee_id" value="{{ $employee->id }}">
-                                                                <input type="hidden" name="is_active" value="{{ $creneau->pivot->is_active }}">
-                                                                <button type="submit" class="btn btn-sm {{ $creneau->pivot->is_active == 0 ? 'btn-success' : 'btn-danger' }} text-nowrap" style="width: 6rem;">
-                                                                    <i class="bi {{ $creneau->pivot->is_active == 0 ? 'bi-check-circle' : 'bi-x-circle' }}"></i> 
-                                                                    {{ $creneau->pivot->is_active == 0 ? 'Activer' : 'Désactiver' }}
-                                                                </button>
-                                                            </form>
+                                                @php
+                                                    $jours = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 7 => 'Dimanche'];
+                                                @endphp
 
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
+                                                <table class="table table-sm table-bordered">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Créneau</th>
+                                                            <th>Jour</th>
+                                                            <th>Status</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($employee->creneaux as $creneau)
+                                                            <tr>
+                                                                <td>{{ $creneau->creneau }}</td>
+                                                                <td>{{ $jours[$creneau->pivot->jour] ?? '-' }}</td>
+                                                                <td>
+                                                                    @if($creneau->pivot->is_active)
+                                                                        <span class="badge bg-success">Activé</span>
+                                                                    @else
+                                                                        <span class="badge bg-danger">Désactivé</span>
+                                                                    @endif
+                                                                </td>
+                                                                <td class="d-flex gap-2">
+                                                                    <form method="POST" action="{{ route('employees-creneaudb.updatecreneau') }}">
+                                                                        @csrf
+                                                                        <input type="hidden" name="id" value="{{ $creneau->id }}">
+                                                                        <input type="hidden" name="employee_id" value="{{ $employee->id }}">
+                                                                        <input type="hidden" name="is_active" value="{{ $creneau->pivot->is_active }}">
+                                                                        <button type="submit" 
+                                                                                class="btn btn-sm {{ $creneau->pivot->is_active == 0 ? 'btn-success' : 'btn-dark' }}" 
+                                                                                title="{{ $creneau->pivot->is_active == 0 ? 'Activer' : 'Désactiver' }}">
+                                                                            <i class="bi {{ $creneau->pivot->is_active == 0 ? 'bi-check-circle' : 'bi-x-circle' }}"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                    <form method="POST" action="{{ route('employees-creneaudb.delete') }}">
+                                                                        @csrf
+                                                                        <input type="hidden" name="id" value="{{ $creneau->pivot->id }}">
+                                                                        <input type="hidden" name="id_creneau" value="{{ $creneau->id }}">
+                                                                        <input type="hidden" name="employee_id" value="{{ $employee->id }}">
+                                                                        <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                                                            <i class="bi bi-trash"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
                                             @endif
                                         </td>
                                     </tr>
