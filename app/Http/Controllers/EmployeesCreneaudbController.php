@@ -40,8 +40,6 @@ class EmployeesCreneaudbController extends Controller
         }
 
         $employees = $query->get();
-        // echo "<pre>";
-        // dd($employees->creneau);
         $menuemployee = 1;
         return view('employees-creneau.index', compact('employees', 'menuemployee'));
     }
@@ -141,12 +139,19 @@ class EmployeesCreneaudbController extends Controller
             ->with('success', 'Mise à jour effectuée');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        EmployeesCreneau::find($id)->delete();
-
-        return redirect()->route('employees-creneaus.index')
-            ->with('success', 'EmployeesCreneau deleted successfully');
+        $param = $request->all();
+        $creneau = EmployeesCreneau::find($param['id']);
+        $employeeId = $param['employee_id'] ?? null; 
+        if ($creneau) {
+            $creneau->delete();
+            return redirect()->route('employees-creneaudb',['open_employee' => $employeeId])
+                ->with('success', 'Créneau supprimé avec succès.');
+        } else {
+            return redirect()->route('employees-creneaudb',['open_employee' => $employeeId])
+                ->with('error', 'Créneau introuvable.');
+        }
     }
 
     public function searchByName(Request $request)

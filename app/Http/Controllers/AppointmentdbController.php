@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Subscription;
 use App\Models\EmployeesCreneau;
 use App\Models\Clients;
+use App\Models\Employees;
 use App\Models\Creneau;
 use App\Models\Services;
 use App\Http\Requests\AppointmentRequest;
@@ -15,6 +16,13 @@ use DateTime;
 use Mail;
 use App\Mail\ValidateAppointment;
 use Carbon\Carbon;
+use App\Exports\AppointmentsDayExport;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 /**
  * Class AppointmentdbController
@@ -28,22 +36,18 @@ class AppointmentdbController extends Controller
     public function index(Request $request)
     {
         $param = $request->all();
+        $prestataires=Employees::all();
         $phone = (isset($param['phone']) && !isset($param['reset'])) ? $param['phone'] : null;
         $email = (isset($param['email']) && !isset($param['reset'])) ? $param['email'] : null;
         $name  = (isset($param['name']) && !isset($param['reset']))  ? $param['name']  : null;
+        $statut  = (isset($param['statut']) && !isset($param['reset']))  ? $param['statut']  : null;
+        $prestataire  = (isset($param['prestataire']) && !isset($param['reset']))  ? $param['prestataire']  : null;
         $start_date = (!empty($param['start_date']) && !isset($param['reset'])) ? $param['start_date'] : null;
         $end_date   = (!empty($param['end_date']) && !isset($param['reset']))   ? $param['end_date']   : null;
         $query = DB::table('appointments as ap')
             ->select(
                 "ap.id as idrdv",
-                DB::raw("
-                    CASE ap.status
-                        WHEN 'pending' THEN 'En attente'
-                        WHEN 'confirmed' THEN 'Validé'
-                        WHEN 'cancelled' THEN 'Annulé'
-                        ELSE ap.status
-                    END as status
-                "),
+                "ap.status as status",
                 "c.name as nomclient",
                 "c.email",
                 "c.phone",
@@ -68,7 +72,7 @@ class AppointmentdbController extends Controller
             $query->where('c.name', 'like', "%$name%");
         }
         if ($phone) {
-            $query->where('c.phone', $phone);
+            $query->where('c.phone','like',"%$phone%" );
         }
         if ($email) {
             $query->where('c.email', $email);
@@ -79,8 +83,14 @@ class AppointmentdbController extends Controller
         if ($end_date) {
             $query->whereDate('ap.start_times', '<=', $end_date);
         }
-        $now = Carbon::now()->format('dmY_H\hi');
+        if ($statut) {
+            $query->where('ap.status', $statut);
+        }
+        if($prestataire){
+            $query->where('ap.employee_id',$prestataire);
+        }
 
+        $now = Carbon::now()->format('dmY_H\hi');
         if ($start_date && $end_date) {
             $filename = "rendezvous_domisyl_{$start_date}_au_{$end_date}_{$now}.xlsx";
         } elseif ($start_date) {
@@ -90,20 +100,22 @@ class AppointmentdbController extends Controller
         } else {
             $filename = "rendezvous_domisyl_Jour_{$now}.xlsx";
         }
+
         if ($request->has('export')) {
             $data = $query->get();
-            dump($data);
+            // dump($data);
             return Excel::download(new AppointmentsDayExport(
                 $request->start_date ? Carbon::parse($request->start_date) : null,
                 $request->end_date ? Carbon::parse($request->end_date) : null,
                 $phone,
                 $email,
-                $name
+                $name,
+                $statut,
+                $prestataire
             ), $filename);
         }
         $appointments = $query->paginate(10);
         $activemenuappoint = 1;
-
         return view('appointment.index', compact(
             'appointments',
             'activemenuappoint',
@@ -111,7 +123,10 @@ class AppointmentdbController extends Controller
             'email',
             'name',
             'start_date',
-            'end_date'
+            'end_date',
+            'prestataires',
+            'prestataire',
+            'statut'
         ))->with('i', (request()->input('page', 1) - 1) * $appointments->perPage());
     }
 
