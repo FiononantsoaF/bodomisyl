@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\MvolaController;
 use App\Http\Controllers\Api\CreneauController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\PromotionsController;
+use App\Http\Controllers\Api\AuthController;
 
 
 
@@ -53,7 +54,11 @@ Route::get('/appointmentsall', [AppointmentsController::class, 'getallappointmen
 
 Route::get('/services-promotions', [PromotionsController::class, 'getServicesWithPromotions']);
 
+Route::post('/password-reset-request', [AuthController::class, 'sendResetEmail']);
 
+Route::post('/change-password', [ClientsController::class, 'changepassword']);
+
+Route::post('/user/update',[ClientsController::class, 'update']);
 
 // paiement mvola 
 Route::post('/mvola', [MvolaController::class, 'payIn']);

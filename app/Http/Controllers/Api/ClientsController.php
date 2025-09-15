@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Clients;
 use Illuminate\Http\Request;
+use App\Models\PasswordResetTokens;
 
 class ClientsController extends Controller
 {
@@ -85,14 +86,11 @@ class ClientsController extends Controller
      * @OA\Post(
      *     path="/api/client/changepass",
      *     summary="Changer mot de passe",
-     *    @OA\Parameter(
-     *         name="idclient",
-     *         in="query"
-     *      ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="password", type="string",description="mot de passe")
+     *             @OA\Property(property="token", type="string",description="Token")
+     *             @OA\Property(property="newPassword", type="string",description="mot de passe")
      *         )
      *     ),
      *     @OA\Response(response=200, description="Success"),
@@ -102,12 +100,57 @@ class ClientsController extends Controller
     public function changepassword(Request $request)
     {
         $param = $request->all();
-        $checkclient = Clients::where("id",'=',$param['idclient'])->first();
-        if(!$checkclient){
-            return $this->apiResponse(false, "Client non trouvé",null, 400);
+        $request->validate([
+            'token' => 'required|string',
+            'newPassword' => 'required|string',
+        ]);
+        $reset = PasswordResetTokens::where('token', $request->token)->first();
+        if (!$reset) {
+            return $this->apiResponse(false, "Lien expiré ou invalide", null, 400);
         }
-        $checkclient->update(["password"=>password_hash($param['password'], PASSWORD_DEFAULT)]);
-        return $this->apiResponse(true, "Modification login avec succès",$checkclient, 200);
+        $client = Clients::find($reset->id_client);
+        if (!$client) {
+            return $this->apiResponse(false, "Utilisateur non trouvé", null, 404);
+        }
+        $client->update(["newPassword"=>password_hash($param['newPassword'], PASSWORD_DEFAULT)]);
+        $reset->delete();
+        return $this->apiResponse(true, "Modification mot de passe avec succès",$client, 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/user/update",
+     *     summary="Changer les informations de l'utilisateur",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="number", description="ID de l'utilisateur"),
+     *             @OA\Property(property="name", type="string", description="Nom complet"),
+     *             @OA\Property(property="phone", type="string", description="Numéro de téléphone"),
+     *             @OA\Property(property="email", type="string", description="Email"),
+     *             @OA\Property(property="address", type="string", description="Adresse"),
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Modification réussie"),
+     *     @OA\Response(response=400, description="Erreur de validation ou ID manquant")
+     * )
+     */
+    public function update(Request $request)
+    {
+        $param = $request->all();
+        if (!isset($param['id'])) {
+            return $this->apiResponse(true, "Id utilisateur manquant", null, 400);
+        }
+        $client = Clients::find($param['id']);
+        if (!$client) {
+            return $this->apiResponse(true, "Utilisateur non trouvé", null, 404);
+        }
+        $client->name = $param['name'] ?? $client->name;
+        $client->phone = $param['phone'] ?? $client->phone;
+        $client->email = $param['email'] ?? $client->email;
+        $client->address = $param['address'] ?? $client->address;
+        $client->save();
+        return $this->apiResponse(true, "Informations mises à jour avec succès", $client, 200);
     }
 
     private function apiResponse($success, $message, $data = null, $status = 200) {
@@ -146,14 +189,6 @@ class ClientsController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Clients $clients)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Clients $clients)
     {
         //
     }

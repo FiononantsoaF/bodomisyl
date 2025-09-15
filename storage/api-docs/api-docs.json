@@ -104,6 +104,32 @@
                 }
             }
         },
+        "/api/password-reset-request": {
+            "post": {
+                "summary": "Reinitialisation mot de passe",
+                "operationId": "a9747d3b2091395a5457d3d9460e05ce",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "identifier": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/client/login": {
             "post": {
                 "summary": "Login client",
