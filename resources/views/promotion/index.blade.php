@@ -137,13 +137,19 @@
                                         <tr class="collapse bg-light" id="servicesRow{{ $promotion->id }}">
                                             <td colspan="8">
                                                 @php
-                                                    $servicesData = unserialize($promotion->services);
+                                                    $servicesData = [];
+                                                    if (!empty($promotion->services)) {
+                                                        $servicesData = @unserialize($promotion->services);
+                                                        if ($servicesData === false) {
+                                                            $servicesData = [];
+                                                        }
+                                                    }
+
                                                     $serviceIds = $servicesData ? array_keys($servicesData) : [];
                                                     $services = $serviceIds
                                                         ? \App\Models\Services::with('serviceCategory')->whereIn('id', $serviceIds)->get()
                                                         : collect();
                                                 @endphp
-
                                                 @if($services->count() > 0)
                                                     <div class="row">
                                                         @foreach($services as $service)

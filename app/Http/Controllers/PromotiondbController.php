@@ -40,17 +40,18 @@ class PromotiondbController extends Controller
 
     public function store(Request $request)
     {
-        // $all =$request->all();
-        // dd($all);
+            //  $all =$request->all();
+            //  dd($all);
             $validatedData = $request->validate([
-                'code_promo' => 'required|string|max:255|unique:promotions',
+                'code_promo' => 'required|string|max:255',
                 'discount_type' => 'required|in:percentage,amount',
                 'pourcent' => 'nullable|numeric|min:0|max:100',
                 'amount' => 'nullable|numeric|min:0',
                 'start_promo' => 'required|date',
                 'end_promo' => 'required|date|after:start_promo',
                 'apply_to' => 'required|in:service,services,subcategory',
-                'subcategory_id' => 'required_if:apply_to,subcategory|exists:service_category,id',
+                'subcategory_id' => 'nullable|required_if:apply_to,subcategory|exists:service_category,id',
+                // 'subcategory_id' => 'required_if:apply_to,subcategory|exists:service_category,id',
                 'services' => 'nullable|array',
                 'services.*' => 'exists:services,id',
                 'valeur_specifiques' => 'nullable|array',

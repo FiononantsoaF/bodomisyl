@@ -134,6 +134,7 @@
                                                                     <form method="POST" action="{{ route('employees-creneaudb.updatecreneau') }}">
                                                                         @csrf
                                                                         <input type="hidden" name="id" value="{{ $creneau->id }}">
+                                                                        <input type="hidden" name="pivot" value="{{ $creneau->pivot->jour }}">
                                                                         <input type="hidden" name="employee_id" value="{{ $employee->id }}">
                                                                         <input type="hidden" name="is_active" value="{{ $creneau->pivot->is_active }}">
                                                                         <button type="submit" 

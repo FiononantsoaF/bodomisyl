@@ -95,16 +95,16 @@ class EmployeesCreneaudbController extends Controller
     public function updatecreneau(Request $request)
     {
         $alldata=$request->all();
+        // dd($alldata);
         $creneau = EmployeesCreneau::where('creneau_id', $alldata['id'])
             ->where('employee_id', $alldata['employee_id'])
+            ->where('jour', $alldata['pivot'])
             ->first();
         if (!$creneau) {
             return redirect()->route('employees-creneaudb')
                 ->with('error', 'Créneau non trouvé');
         }
         $creneau->changeactive();
-        // dd($creneau);
-        // die()
         return redirect()->route('employees-creneaudb')
             ->with('success', 'Mise à jour créneau réussie');
     }
