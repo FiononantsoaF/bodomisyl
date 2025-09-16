@@ -104,6 +104,7 @@ class EmployeesCreneaudbController extends Controller
             return redirect()->route('employees-creneaudb')
                 ->with('error', 'Créneau non trouvé');
         }
+        
         $creneau->changeactive();
         return redirect()->route('employees-creneaudb')
             ->with('success', 'Mise à jour créneau réussie');

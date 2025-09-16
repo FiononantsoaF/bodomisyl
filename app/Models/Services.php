@@ -60,4 +60,10 @@ class Services extends Model
         $this->is_active = $this->is_active == 1 ? 0 : 1;
         $this->save();
     }
+
+    public function employees()
+    {
+        return $this->belongsToMany(Employees::class, 'service_employees', 'service_id', 'employee_id')
+                    ->withTimestamps();
+    }
 }
