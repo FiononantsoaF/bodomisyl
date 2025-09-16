@@ -57,8 +57,52 @@
                                                     <span class="badge bg-danger">Désactivé</span>
                                                 @endif</td>
                                             
-                                            
-                                            <td></td>
+                                            <td>
+                                                <div data-bs-toggle="modal" data-bs-target="#employeesModal-{{ $service->id }}" style="cursor:pointer;">
+                                                    <ul>
+                                                        @forelse ($service->employees as $employee)
+                                                            <li>{{ $employee->nom }}</li>
+                                                        @empty
+                                                            <li>Aucun employé assigné</li>
+                                                        @endforelse
+                                                    </ul>
+                                                </div>
+                                            </td>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="employeesModal-{{ $service->id }}" tabindex="-1" aria-labelledby="employeesModalLabel-{{ $service->id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="employeesModalLabel-{{ $service->id }}">
+                                                        Prestataire de  : {{ $service->title }}
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="" method="POST">
+                                                        @csrf
+                                                        @method('PUT')
+
+                                                        <label for="employees">Sélectionnez des employés :</label>
+                                                        <select name="employee_ids[]" class="form-control" multiple>
+                                                            @foreach($employees as $employee)
+                                                                <option value="{{ $employee->id }}"
+                                                                    {{ $service->employees->contains($employee->id) ? 'selected' : '' }}>
+                                                                    {{ $employee->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+
+                                                        <div class="mt-3">
+                                                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </div>
+
                                             <td>
                                                 <form action="{{ route('servicedb.destroy',$service->id) }}" method="POST" class="small">
                                                     <!-- <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a> -->

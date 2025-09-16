@@ -19,7 +19,7 @@ class ServicedbController extends Controller
      */
     public function index()
     {
-        $services = Service::with('employees')->paginate();
+        $services = Services::with('employees')->paginate();
         $employees = Employees::all();
         $activemenuservices = 1;
         return view('service.index', compact('services','activemenuservices','employees'))
