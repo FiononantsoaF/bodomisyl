@@ -39,6 +39,7 @@
 										<th>Prix</th>
 										<th>Durée/séance(min)</th>
                                         <th>Statut</th>
+                                        <th>Prestataire</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -55,6 +56,9 @@
                                                 @else
                                                     <span class="badge bg-danger">Désactivé</span>
                                                 @endif</td>
+                                            
+                                            
+                                            <td></td>
                                             <td>
                                                 <form action="{{ route('servicedb.destroy',$service->id) }}" method="POST" class="small">
                                                     <!-- <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a> -->

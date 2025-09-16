@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Services;
+use App\Models\Employees;
 use App\Http\Requests\ServiceRequest;
 use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
@@ -18,11 +19,13 @@ class ServicedbController extends Controller
      */
     public function index()
     {
-        $services = Services::paginate();
+        $services = Service::with('employees')->paginate();
+        $employees = Employees::all();
         $activemenuservices = 1;
-        return view('service.index', compact('services','activemenuservices'))
+        return view('service.index', compact('services','activemenuservices','employees'))
             ->with('i', (request()->input('page', 1) - 1) * $services->perPage());
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -46,7 +49,6 @@ class ServicedbController extends Controller
                 ->withErrors(['erreur' => "Echec de la mise à jour"])
                 ->withInput();
         }
-//   dd($alldata);
         Services::create([
             "title"=>$alldata['title'],
             "description"=>$alldata['description'],
