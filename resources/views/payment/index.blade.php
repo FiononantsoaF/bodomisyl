@@ -73,11 +73,22 @@
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="phone" class="form-label">Téléphone</label>
-                                                            <input type="number" name="phone" class="form-control" value="{{ $clients->phone }}" required>
+                                                            <input type="tel" name="phone" class="form-control" value="{{ $clients->phone }}" required
+                                                                     pattern="^(032|033|034|037|038)[0-9]{7}$"
+                                                                     title="Le numéro doit commencer par 032, 033, 034, 037 ou 038 et contenir 10 chiffres">
+                                                                 @error('phone')
+                                                                    <div class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </div>
+                                                                @enderror
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="email" class="form-label">Email</label>
-                                                            <input type="email" name="email" class="form-control" value="{{ $clients->email }}" required>
+                                                            
+                                                            <input type="email" name="email" class="form-control" value="{{ $clients->email }}" required
+                                                                     pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                                                     title="Veuillez entrer une adresse email valide"
+                                                            >
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="adress" class="form-label">Adresse</label>

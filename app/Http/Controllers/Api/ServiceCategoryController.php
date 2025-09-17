@@ -38,6 +38,7 @@ class ServiceCategoryController extends Controller
                 $query->wherePivot('is_active', 1)
                     ->orderByRaw("STR_TO_DATE(creneau, '%H:%i') ASC");
             }])
+            ->with('services')
             ->get();
         $logo = asset('images/LOGODOMISYL_mobile.png');
         $back = asset('images/BACKGROUND.png');

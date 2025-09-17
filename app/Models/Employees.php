@@ -81,7 +81,7 @@ class Employees extends Model
 
     public function services()
     {
-        return $this->belongsToMany(Servics::class, 'service_employees', 'employee_id', 'service_id')
+        return $this->belongsToMany(Services::class, 'service_employees', 'employee_id', 'service_id')
                     ->withTimestamps();
     }
 

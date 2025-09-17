@@ -66,7 +66,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/services/edit/{id}', [ServicedbController::class, 'edit'])->name('servicedb.edit');
     Route::patch('/services/update', [ServicedbController::class, 'update'])->name('servicedb.update');
     Route::delete('/services/{id}', [ServicedbController::class, 'destroy'])->name('servicedb.destroy');
+    Route::put('/services/{id}/employees', [ServicedbController::class, 'updateEmployees'])
+         ->name('services.updateEmployees');
 
+ 
     // category session
     Route::get('/category', [CategorydbController::class, 'index'])->name('categorydb');
     Route::get('/category/create', [CategorydbController::class, 'create'])->name('categorydb.create');

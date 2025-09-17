@@ -22,6 +22,8 @@ class CreneaudbController extends Controller
         return view('creneau.index', compact('creneaus', 'menuemployee'))
             ->with('i', (request()->input('page', 1) - 1) * $creneaus->perPage());
     }
+
+    
     /**
      * Show the form for creating a new resource.
      */

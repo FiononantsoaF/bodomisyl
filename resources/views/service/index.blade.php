@@ -39,7 +39,7 @@
 										<th>Prix</th>
 										<th>Durée/séance(min)</th>
                                         <th>Statut</th>
-                                        <th>Prestataire</th>
+                                        <th>Prestataires</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -55,58 +55,59 @@
                                                     <span class="badge bg-success">Activé</span>
                                                 @else
                                                     <span class="badge bg-danger">Désactivé</span>
-                                                @endif</td>
-                                            
-                                            <td>
-                                                <div data-bs-toggle="modal" data-bs-target="#employeesModal-{{ $service->id }}" style="cursor:pointer;">
-                                                    <ul>
-                                                        @forelse ($service->employees as $employee)
-                                                            <li>{{ $employee->nom }}</li>
-                                                        @empty
-                                                            <li>Aucun employé assigné</li>
-                                                        @endforelse
-                                                    </ul>
-                                                </div>
+                                                @endif
+                                            </td>
+                                            <td style="white-space: nowrap;" class="small">
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#employeesModal-{{ $service->id }}" class="small"  style="font-size: 0.7rem">
+                                                    Prestataires ({{ $service->employees->count() }})
+                                                </button>
                                             </td>
 
                                             <!-- Modal -->
                                             <div class="modal fade" id="employeesModal-{{ $service->id }}" tabindex="-1" aria-labelledby="employeesModalLabel-{{ $service->id }}" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="employeesModalLabel-{{ $service->id }}">
-                                                        Prestataire de  : {{ $service->title }}
-                                                    </h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="" method="POST">
-                                                        @csrf
-                                                        @method('PUT')
-
-                                                        <label for="employees">Sélectionnez des employés :</label>
-                                                        <select name="employee_ids[]" class="form-control" multiple>
-                                                            @foreach($employees as $employee)
-                                                                <option value="{{ $employee->id }}"
-                                                                    {{ $service->employees->contains($employee->id) ? 'selected' : '' }}>
-                                                                    {{ $employee->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-
-                                                        <div class="mt-3">
-                                                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="employeesModalLabel-{{ $service->id }}">
+                                                                Prestataires de : {{ $service->title }}
+                                                            </h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                                         </div>
-                                                    </form>
-                                                </div>
-                                                </div>
-                                            </div>
-                                            </div>
+                                                        <div class="modal-body">
+                                                            <form action="{{ route('services.updateEmployees', $service->id) }}" method="POST">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <label for="employees">Sélectionnez des employés </label>
+                                                                <div class="mt-2">
+                                                                    @foreach($employees as $employee)
+                                                                        <div class="form-check">
+                                                                            <input 
+                                                                                class="form-check-input" 
+                                                                                type="checkbox" 
+                                                                                name="employee_ids[]" 
+                                                                                value="{{ $employee->id }}"
+                                                                                id="employee-{{ $service->id }}-{{ $employee->id }}"
+                                                                                {{ $service->employees->contains($employee->id) ? 'checked' : '' }}
+                                                                            >
+                                                                            <label class="form-check-label" for="employee-{{ $service->id }}-{{ $employee->id }}">
+                                                                                {{ $employee->name }}
+                                                                            </label>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
 
+                                                                <div class="mt-3">
+                                                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <td>
                                                 <form action="{{ route('servicedb.destroy',$service->id) }}" method="POST" class="small">
                                                     <!-- <a class="btn btn-sm btn-primary " href=""><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a> -->
-                                                    <a class="btn btn-sm btn-success" href="{{ route('servicedb.edit',$service->id) }}" style="font-size: 0.6rem"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('servicedb.edit',$service->id) }}" style="font-size: 0.7rem"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
                                                     @csrf
                                                     @method('DELETE')
                                                     <td>
