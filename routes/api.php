@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\CreneauController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\PromotionsController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\OrangeMoneyController;
 
 
 
@@ -66,4 +67,6 @@ Route::post('/mvola', [MvolaController::class, 'payIn']);
 Route::post('/stripe/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
 Route::post('/payments/confirm-stripe', [StripeController::class, 'storeStripe']);
 
+Route::post('/orangemoney/uuid', [OrangeMoneyController::class, 'uuid']);
+Route::post('/orangemoney/pocess-payement', [OrangeMoneyController::class, 'processPayement']);
 
