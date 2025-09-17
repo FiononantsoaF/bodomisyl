@@ -89,7 +89,7 @@ class ClientsController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="token", type="string",description="Token")
+     *             @OA\Property(property="token", type="string",description="Token"),
      *             @OA\Property(property="newPassword", type="string",description="mot de passe")
      *         )
      *     ),
@@ -112,7 +112,7 @@ class ClientsController extends Controller
         if (!$client) {
             return $this->apiResponse(false, "Utilisateur non trouvé", null, 404);
         }
-        $client->update(["newPassword"=>password_hash($param['newPassword'], PASSWORD_DEFAULT)]);
+        $client->update(["password"=>password_hash($param['newPassword'], PASSWORD_DEFAULT)]);
         $reset->delete();
         return $this->apiResponse(true, "Modification mot de passe avec succès",$client, 200);
     }

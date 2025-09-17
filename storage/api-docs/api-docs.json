@@ -165,19 +165,17 @@
             "post": {
                 "summary": "Changer mot de passe",
                 "operationId": "a444d968a557b1a8472842532f6ef7fb",
-                "parameters": [
-                    {
-                        "name": "idclient",
-                        "in": "query"
-                    }
-                ],
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "password": {
+                                    "token": {
+                                        "description": "Token",
+                                        "type": "string"
+                                    },
+                                    "newPassword": {
                                         "description": "mot de passe",
                                         "type": "string"
                                     }
@@ -190,6 +188,52 @@
                 "responses": {
                     "200": {
                         "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/user/update": {
+            "post": {
+                "summary": "Changer les informations de l'utilisateur",
+                "operationId": "06d3bfc5e27c4e51b028be7f9d4ed7fc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "id": {
+                                        "description": "ID de l'utilisateur",
+                                        "type": "number"
+                                    },
+                                    "name": {
+                                        "description": "Nom complet",
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "description": "Numéro de téléphone",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "Email",
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "description": "Adresse",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Modification réussie"
+                    },
+                    "400": {
+                        "description": "Erreur de validation ou ID manquant"
                     }
                 }
             }
@@ -239,6 +283,43 @@
                                         "type": "integer"
                                     },
                                     "subscription_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/orangemoney/uuid": {
+            "post": {
+                "summary": "Payer",
+                "operationId": "ed278f1f2ea1b84ee38577c6389265f9",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/orangemoney/pocess-payement": {
+            "post": {
+                "summary": "Payer",
+                "operationId": "746116e6a05300418740055896bc32fe",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "amount": {
                                         "type": "integer"
                                     }
                                 },
