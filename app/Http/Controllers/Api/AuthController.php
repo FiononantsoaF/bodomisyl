@@ -32,7 +32,7 @@ class AuthController extends Controller
         $request->validate(['identifier' => 'required|string']);
         $user = Clients::where('email', $request->identifier)->first();
         if (!$user) {
-            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+            return $this->apiResponse(false, "Utilisateur non trouvé", null, 200);
         }
         $token = Str::random(60);
         PasswordResetTokens::create([
@@ -41,12 +41,19 @@ class AuthController extends Controller
             'created_at' => now(),
         ]);
         $resetUrl = env('FRONTEND_URL') . "password-reset/$token";
-
         Mail::raw("Cliquez ici pour réinitialiser votre mot de passe : $resetUrl", function($message) use ($user) {
             $message->to($user->email)
                     ->subject('Réinitialisation de mot de passe');
         });
 
-        return response()->json(['message' => 'Email envoyé avec succès']);
+        return response()->json(['message' => 'Email envoyé ! Vérifiez votre boîte de réception.']);
+    }
+
+    private function apiResponse($success, $message, $data = null, $status = 200) {
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+            'data' => $data
+        ], $status);
     }
 }

@@ -26,6 +26,15 @@ class ServicedbController extends Controller
             ->with('i', (request()->input('page', 1) - 1) * $services->perPage());
     }
 
+    public function updateEmployees(Request $request, $id)
+    {
+        $service = Services::findOrFail($id);
+        $employeeIds = $request->input('employee_ids', []); 
+        $service->employees()->sync($employeeIds);
+        return redirect()->back()->with('success', 'Les prestataires ont été mis à jour avec succès.');
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
