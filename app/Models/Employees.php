@@ -52,7 +52,6 @@ class Employees extends Model
         $this->save();
     }
 
-
     public function creneauxDisponibles($date)
     {
         $jourSemaine = Carbon::parse($date)->dayOfWeek;
