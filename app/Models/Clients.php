@@ -84,6 +84,7 @@ class Clients extends Model
                 DB::raw('COALESCE(sub.period_start, ap.start_times) AS date'),
                 's.title as prestation',
                 'sc.name as formule',
+                'ap.status as statut',
                 DB::raw('COALESCE(sub.total_session, 1) AS nb_rdv'),
                 DB::raw('COALESCE(sub.used_session, 0) AS nb_restant')
             )
@@ -91,11 +92,13 @@ class Clients extends Model
             ->join('service_category as sc', 's.service_category_id', '=', 'sc.id')
             ->leftJoin('subscriptions as sub', 'ap.subscription_id', '=', 'sub.id')
             ->where('ap.client_id', '=', $id)
+            ->where('ap.status','<>','cancelled')
             ->groupBy(
                 DB::raw('IFNULL(sub.id, ap.id)'),
                 DB::raw('COALESCE(sub.period_start, ap.start_times)'),
                 's.title',
                 'sc.name',
+                'ap.status',
                 'sub.total_session',
                 'sub.used_session'
             )

@@ -106,8 +106,30 @@
                                             </div>
                                         </tbody>
                                     </table>
-                                    <p class="mt-3 mb-0"><strong>*SUIVI RÈGLEMENTS</strong></p>
+                                    <div class="card-header bg-white">
+                                        <div class="d-flex align-items-center">
+                                            <p class="mt-3 mb-0 h6">
+                                                <strong>*SUIVI RÈGLEMENTS</strong>
+                                            </p>
+                                            <!-- {{ route('export.pdf', $clients->id) }} -->
+                                            <a href="" 
+                                            class="btn btn-success d-inline-flex align-items-center gap-2 ms-auto me-2"
+                                            title="Exporter en PDF">
+                                                <i class="fa-solid fa-file-pdf"></i>
+                                                PDF
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
+                                <!-- <div class="col-md-2 text-end">
+                                <button 
+                                    class="btn btn-success hover:bg-red-600 text-white  px-4 py-8 rounded-lg shadow flex items-center"
+                                    title="Version pdf"
+                                >
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    PDF
+                                </button>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -122,6 +144,7 @@
                                             <th>Prestation</th>
                                             <th>Nombre de rdv</th>
                                             <th>Nombre de rdv restant</th>
+                                            <th>Statut</th>
                                         </tr>
                                     </thead>
                                     <tbody class="small">
@@ -132,6 +155,17 @@
                                                 <td>{{ $appoint->formule }}</td>
                                                 <td>{{ $appoint->nb_rdv }}</td>
                                                 <td>{{ $appoint->nb_restant }}</td>
+                                                <td>
+                                                    @if($appoint->statut == 'pending')         
+                                                        <span class="badge bg-warning bg-opacity-15 text-warning" style="color:black!important;">
+                                                            <i class="fas fa-clock me-1"></i> En attente
+                                                        </span>         
+                                                    @else($appoint->statut == 'confirmed')
+                                                        <span class="badge bg-success bg-opacity-15 text-success" style="color:black!important;">
+                                                            <i class="fas fa-check-circle me-1"></i> Confirmé
+                                                        </span>      
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>

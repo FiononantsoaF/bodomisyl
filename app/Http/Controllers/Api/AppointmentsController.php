@@ -122,11 +122,9 @@ class AppointmentsController extends Controller
                 'already_paid'    => true
             ], 200);
         }
-
-        $existingClient = Clients::orWhere([
-            'email' => $clientInfo['email'],
-            'phone' => $clientInfo['phone']
-        ])->first();
+        $existingClient = Clients::where('email', $clientInfo['email'])
+            ->orWhere('phone', $clientInfo['phone'])
+            ->first();
 
         if (!$existingClient) {
             $existingClient = new Clients();
@@ -140,7 +138,6 @@ class AppointmentsController extends Controller
                 return $this->apiResponse(false, "Erreur lors de l'enregistrement du client", null, 500);
             }
         }
-
         $existingAppointment = appointments::where([
             'start_times' => $param['start_times'],
             'client_id'   => $existingClient->id,

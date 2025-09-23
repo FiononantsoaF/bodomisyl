@@ -71,7 +71,6 @@ class PaymentdbController extends Controller
                 $q->where('name', 'like', '%' . $request->client . '%');
             });
         }
-
         if ($request->filled('date_start')) {
             $query->whereDate('paid_at', '>=', $request->date_start);
         }
@@ -148,4 +147,14 @@ class PaymentdbController extends Controller
         return redirect()->route('payments.index')
             ->with('success', 'Payment deleted successfully');
     }
+
+    // public function exportPdf($id)
+    // {
+    //     $client = Clients::findOrFail($id);
+    //     $appointments = $client->appointments;
+    //     $paymentsClients = $client->paymentsClients;
+    //     $appointsCommentaire = $client->appointsCommentaire;
+    //     $pdf = Pdf::loadView('clients.pdf', compact('client', 'appointments', 'paymentsClients', 'appointsCommentaire'));
+    //     return $pdf->download("fiche_suivi_client_{$client->id}.pdf");
+    // }
 }

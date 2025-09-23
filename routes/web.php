@@ -166,6 +166,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/export-appointments', [ExportController::class, 'exportAppointments'])->name('export.appointments');
     Route::get('/export-appointmentsday', [ExportController::class, 'exportAppointmentsDay'])->name('export.appointmentsday');
     Route::get('/export-employees', [ExportController::class, 'exportEmployees'])->name('export.employees');
+    Route::get('/clients/{id}/export-pdf', [PaymentdbController::class, 'exportPdf'])->name('export.pdf');
     // Route::get('/export-appointments-range', [ExportController::class, 'exportAppointmentsRange'])->name('export.appointments.range');
 
     // Route::get('/mvola-test-form', function () {

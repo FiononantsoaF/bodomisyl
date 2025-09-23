@@ -64,6 +64,7 @@ class Employees extends Model
 
         $creneauxPris = DB::table('appointments')
             ->where('employee_id', $this->id)
+            ->where('status','<>','cancelled')
             ->whereDate('start_times', $date)
             ->pluck('start_times')
             ->map(fn($t) => Carbon::parse($t)->format('H:i'))
