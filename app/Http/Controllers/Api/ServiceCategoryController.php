@@ -31,7 +31,6 @@ class ServiceCategoryController extends Controller
         }])
         ->where('is_active', 1)
         ->get();
-
         $scat = new Employees();
         $prestataires = Employees::where('is_active', 1)
             ->with(['creneaux' => function ($query) {

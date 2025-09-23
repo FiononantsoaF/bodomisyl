@@ -44,6 +44,8 @@ Route::post('/appointments', [AppointmentsController::class, 'create']);
 
 Route::get('/appointments/client/{id}', [AppointmentsController::class, 'getappointbyclient']);
 
+
+
 Route::get('/subscription/client/{id}', [SubscriptionController::class, 'getsubscriptionbyclient']);
 Route::post('/client/login', [ClientsController::class, 'loginclient']);
 
