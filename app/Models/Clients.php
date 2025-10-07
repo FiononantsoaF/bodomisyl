@@ -29,7 +29,7 @@ class Clients extends Model
      */
     public function appointments()
     {
-        return $this->hasMany(\App\Models\Appointment::class, 'id', 'client_id');
+        return $this->hasMany(\App\Models\appointments::class, 'id', 'client_id');
     }
     
     /**

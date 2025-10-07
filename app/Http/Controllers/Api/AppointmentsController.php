@@ -194,7 +194,7 @@ class AppointmentsController extends Controller
         //     $waitlist->save();
         // }
 
-        return $this->apiResponse(true, "Réservation réussie", [
+        return $this->apiResponse(true, "Félicitations ! Votre réservation a été effectuée avec succès.", [
             'appointment_id'  => $appoint->id,
             'subscription_id' => $appoint->subscription_id,
             'price'           => $service->price ?? $appoint->prixservice ?? null,

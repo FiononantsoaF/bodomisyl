@@ -112,12 +112,13 @@
                                                 <strong>*SUIVI RÈGLEMENTS</strong>
                                             </p>
                                             <!-- {{ route('export.pdf', $clients->id) }} -->
-                                            <a href="" 
-                                            class="btn btn-success d-inline-flex align-items-center gap-2 ms-auto me-2"
-                                            title="Exporter en PDF">
+                                            <a href="{{ route('export.pdf', $clients->id) }}" target="_blank"
+                                                class="btn btn-success d-inline-flex align-items-center gap-2 ms-auto me-2"
+                                                title="Exporter en PDF">
                                                 <i class="fa-solid fa-file-pdf"></i>
                                                 PDF
                                             </a>
+
                                         </div>
                                     </div>
                                 </div>
@@ -211,21 +212,21 @@
                                     <div class="row mb-2 small">
                                         <label class="col-sm-2 col-form-label text-end">Taille (m) :</label>
                                         <div class="col-sm-10">
-                                            <input type="number" name="size" class="form-control" min="0" step="0.01" value="{{ old('size', $clients?->size) }}">
+                                            <input type="number" name="size" class="form-control" min="0" step="0.01" value="{{ old('size', $clients?->size) }}" id="size">
                                         </div>
                                     </div>
 
                                     <div class="row mb-2 small">
                                         <label class="col-sm-2 col-form-label text-end">Poids (kg):</label>
                                         <div class="col-sm-10">
-                                            <input type="number" name="weight" class="form-control" min="0" step="0.01" value="{{ old('weight', $clients?->weight) }}">
+                                            <input type="number" name="weight" class="form-control" min="0" step="0.01" value="{{ old('weight', $clients?->weight) }}" id="weight">
                                         </div>
                                     </div>
 
                                     <div class="row mb-2 small">
                                         <label class="col-sm-2 col-form-label text-end">IMC :</label>
                                         <div class="col-sm-10">
-                                            <input type="number" name="IMC"  class="form-control" min="0" step="0.01" value="{{ old('IMC', $clients?->IMC) }}">
+                                            <input type="number" name="IMC"  class="form-control" min="0" step="0.01" value="{{ old('IMC', $clients?->IMC) }}" readonly id="IMC">
                                         </div>
                                     </div>
 
@@ -320,6 +321,25 @@
     <script>
         const addressInput = document.getElementById('adress');
         const errorText = document.getElementById('addressError');
+
+        const sizeInput = document.getElementById('size');
+        const weightInput = document.getElementById('weight');
+        const imcInput = document.getElementById('IMC');
+
+        function calculateIMC() {
+            const size = parseFloat(sizeInput.value);
+            const weight = parseFloat(weightInput.value);
+
+            if (size > 0 && weight > 0) {
+                const imc = weight / (size * size);
+                imcInput.value = imc.toFixed(2);
+            } else {
+                imcInput.value = '';
+            }
+        }
+
+        sizeInput.addEventListener('input', calculateIMC);
+        weightInput.addEventListener('input', calculateIMC);
 
         addressInput.addEventListener('input', () => {
         const value = addressInput.value.trim();

@@ -6,10 +6,12 @@ use App\Models\Payment;
 use App\Models\appointments;
 use App\Models\Clients;
 use App\Models\FicheClient;
+use App\Models\Services;
 use App\Services\UtilService;
 use App\Http\Requests\PaymentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 /**
@@ -143,18 +145,20 @@ class PaymentdbController extends Controller
     public function destroy($id)
     {
         Payment::find($id)->delete();
-
         return redirect()->route('payments.index')
             ->with('success', 'Payment deleted successfully');
     }
 
-    // public function exportPdf($id)
-    // {
-    //     $client = Clients::findOrFail($id);
-    //     $appointments = $client->appointments;
-    //     $paymentsClients = $client->paymentsClients;
-    //     $appointsCommentaire = $client->appointsCommentaire;
-    //     $pdf = Pdf::loadView('clients.pdf', compact('client', 'appointments', 'paymentsClients', 'appointsCommentaire'));
-    //     return $pdf->download("fiche_suivi_client_{$client->id}.pdf");
-    // }
+    public function exportPdf($id)
+    {
+        $client = Clients::findOrFail($id);
+        $appointments = $client->appointments;
+        $paymentsClients = $client->paymentsClients;
+        $prestations = Services::with("serviceCategory")
+            ->where('is_active', 1)
+            ->get()->keyBy('id');
+        $appointsCommentaire = $client->appointsCommentaire;
+        $pdf = Pdf::loadView('payment.pdf', compact('client', 'appointments', 'paymentsClients', 'appointsCommentaire','prestations'));
+        return $pdf->download("fiche_suivi_client_{$client->name}.pdf");
+    }
 }

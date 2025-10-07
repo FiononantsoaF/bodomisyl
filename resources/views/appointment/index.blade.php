@@ -15,7 +15,7 @@
                     <div class="card-body p-1 py-1 border-0">
                         <form method="GET" class="row g-3">
                             <!-- Ligne 1 -->
-                            <div class="row  align-items-end mb-2">
+                            <div class="row align-items-end mb-2">
                                 <div class="col-md-3 col-sm-6">
                                     <label for="name" class="form-label small">Nom</label>
                                     <input type="text" id="name" name="name" value="{{ $name ?? '' }}" 
@@ -27,9 +27,9 @@
                                         class="form-control form-control-sm" placeholder="Téléphone" autocomplete="off">
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <label for="status" class="form-label small">Statut</label>
+                                    <label for="statut" class="form-label small">Statut</label>
                                     <select name="statut" id="statut" class="form-select form-select-sm">
-                                        <option value="" {{ !$statut ? 'selected' : '' }}>-- Tous --</option>                                        option value="" {{ !$statut ? 'selected' : '' }}>-- Tous --</option>
+                                        <option value="" {{ !$statut ? 'selected' : '' }}>-- Tous --</option>
                                         <option value="pending" {{ request('statut')=='pending' ? 'selected' : '' }}>En attente</option>
                                         <option value="confirmed" {{ request('statut')=='confirmed' ? 'selected' : '' }}>Confirmé</option>
                                         <option value="cancelled" {{ request('statut')=='cancelled' ? 'selected' : '' }}>Annulé</option>
@@ -38,11 +38,11 @@
                                 <div class="col-md-3 col-sm-6">
                                     <label for="prestataire" class="form-label small">Prestataire</label>
                                     <select name="prestataire" id="prestataire" class="form-select form-select-sm">
-                                        <option value="" {{ !$prestataire ? 'selected' : '' }}>-- Tous --</option>
-                                        @foreach($prestataires as $prestataire)
-                                            <option value="{{ $prestataire->id }}" 
-                                                {{ request('prestataire') == $prestataire->id ? 'selected' : '' }}>
-                                                {{ $prestataire->name }}
+                                        <option value="" {{ !isset($prestataire_selected) ? 'selected' : '' }}>-- Tous --</option>
+                                        @foreach($prestataires as $prest)
+                                            <option value="{{ $prest->id }}" 
+                                                {{ request('prestataire') == $prest->id ? 'selected' : '' }}>
+                                                {{ $prest->name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -111,7 +111,7 @@
 
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
-                                <thead class="table-light ">
+                                <thead class="table-light">
                                     <tr>
                                         <th>Client</th>
                                         <th>Formule</th>
@@ -124,6 +124,8 @@
                                         <th>Abonnement</th>
                                         <th>Statut</th>
                                         <th class="text-end">Actions</th>
+                                        <th>Mise à jour</th>
+                                        <th>Paiement</th>
                                     </tr>
                                 </thead>
                                 <tbody class="small">
@@ -147,7 +149,6 @@
                                                     -
                                                 @endif
                                             </td>
-
 
                                             <td>
                                                 {{ \Carbon\Carbon::parse($appointment->date_reserver)->format('d/m/Y H:i') }}
@@ -188,12 +189,95 @@
                                                     </form>
                                                 </div>
                                             </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-warning" title="Reporter la date de rdv"
+                                                    data-bs-toggle="modal" data-bs-target="#postponeModal-{{ $appointment->idrdv }}">
+                                                   Modifier
+                                                </button>
+                                            </td>
+                                            <td>
+                                                @if($appointment->is_paid == 0)
+                                                    <form action="{{ route('payer') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="appointment_id" value="{{ $appointment->idrdv }}">
+                                                        <input type="hidden" name="subscription_id" value="{{ $appointment->subscription_id }}">
+                                                        <input type="hidden" name="client_id" value="{{ $appointment->client_id }}">
+                                                        <input type="hidden" name="total_amount" value="{{ $appointment->final_price }}">
+                                                        <input type="hidden" name="deposit" value="{{ $appointment->final_price }}">
+                                                        <input type="hidden" name="method" value="cash">
+
+                                                        <button type="submit" class="btn btn-sm btn-success" title="Valider le paiement">
+                                                            Payer
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <span class="text-success">Payé</span>
+                                                @endif
+                                            </td>
+
                                         </tr>
+
+                                        <!-- Modal Reporter RDV -->
+                                        <div class="modal fade postpone-modal" 
+                                            id="postponeModal-{{ $appointment->idrdv }}"  
+                                            data-service-id="{{ $appointment->service_id }}" 
+                                            tabindex="-1" 
+                                            aria-labelledby="postponeModalLabel-{{ $appointment->idrdv }}" 
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form action="{{ route('appointments.postpone', $appointment->idrdv) }}" method="POST">
+                                                        @csrf
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="postponeModalLabel-{{ $appointment->idrdv }}">
+                                                                Modifier le rendez-vous 
+                                                            </h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <!-- Ligne date + prestataire -->
+                                                            <div class="mb-3">
+                                                                <p><strong>Date actuelle :</strong> {{ \Carbon\Carbon::parse($appointment->date_reserver)->format('d/m/Y H:i') }}</p>
+                                                                <p><strong>Prestataire actuel :</strong> {{ $appointment->nomprestataire }}</p>
+                                                                <p><strong>Client :</strong> {{ $appointment->nomclient }}</p>
+                                                                <p><strong>Formule / Prestation :</strong> {{ $appointment->nomservice }} - {{ $appointment->typeprestation }}</p>
+                                                            </div>
+                                                            <div class="row mb-3 g-2">
+                                                                <div class="col">
+                                                                    <label for="date-{{ $appointment->idrdv }}" class="form-label">Nouvelle date</label>
+                                                                    <input type="date" class="form-control new-date" id="date-{{ $appointment->idrdv }}" name="new_date"
+                                                                        value="{{ \Carbon\Carbon::parse($appointment->date_reserver)->format('Y-m-d') }}" required>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <label for="prestataire-{{ $appointment->idrdv }}" class="form-label">Prestataire</label>
+                                                                    <select class="form-select employee-select" id="prestataire-{{ $appointment->idrdv }}" name="new_prestataire" required>
+                                                                        <option value="" selected disabled>-- Choisir prestataire --</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Créneaux -->
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Créneaux disponibles</label>
+                                                                <div class="d-flex flex-wrap gap-2 creneau-buttons" id="creneaux-{{ $appointment->idrdv }}">
+                                                                    <!-- Les boutons créneaux seront injectés ici via JS -->
+                                                                </div>
+                                                                <input type="hidden" name="new_creneau" id="selected-creneau-{{ $appointment->idrdv }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                            <button type="submit" class="btn btn-primary">Valider</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="d-flex justify-content-center mt-4">
                             {{ $appointments->links('pagination::bootstrap-5') }}
                         </div>
@@ -202,19 +286,63 @@
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function() {
-            $('#start_date').on('change', function() {
-                let startDate = $(this).val();
-                let endDateInput = $('#end_date');
-                endDateInput.attr('min', startDate);
-                if (!endDateInput.val() || endDateInput.val() < startDate) {
-                    endDateInput.val(startDate);
-                }
-                endDateInput.focus();
-                fetchAppointments();
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#start_date').on('change', function() {
+        let startDate = $(this).val();
+        let endDateInput = $('#end_date');
+        endDateInput.attr('min', startDate);
+        if (!endDateInput.val() || endDateInput.val() < startDate) {
+            endDateInput.val(startDate);
+        }
+        endDateInput.focus();
+    });
+
+    $('.postpone-modal').on('shown.bs.modal', function() {
+        var modal = $(this);
+        var serviceId = modal.data('service-id');
+        var dateInput = modal.find('.new-date');
+        var employeeSelect = modal.find('.employee-select');
+        var creneauxDiv = modal.find('.creneau-buttons');
+        var hiddenInput = modal.find('input[name="new_creneau"]');
+
+        function loadPrestataires() {
+            $.get('/service/' + serviceId + '/prestataires', function(data) {
+                employeeSelect.empty().append('<option value="" selected disabled>-- Choisir prestataire --</option>');
+                data.forEach(function(prest) {
+                    employeeSelect.append('<option value="'+prest.id+'">'+prest.name+'</option>');
+                });
             });
-            
-        });
-    </script>
+        }
+
+        function loadCreneaux() {
+            var employeeId = employeeSelect.val();
+            var date = dateInput.val();
+            if (!employeeId || !date) return;
+
+            $.get('/employee/' + employeeId + '/creneaux-disponibles', { date: date }, function(data) {
+                creneauxDiv.empty();
+                data.forEach(function(creneau) {
+                    if (!creneau.is_taken) {
+                        var btn = $('<button type="button" class="btn btn-outline-primary btn-sm"></button>');
+                        btn.text(creneau.time).data('creneau-id', creneau.id);
+                        btn.on('click', function() {
+                            hiddenInput.val($(this).data('creneau-id'));
+                            $(this).addClass('btn-primary').removeClass('btn-outline-primary')
+                                   .siblings().removeClass('btn-primary').addClass('btn-outline-primary');
+                        });
+                        creneauxDiv.append(btn);
+                    }
+                });
+            });
+        }
+
+        loadPrestataires();
+        dateInput.add(employeeSelect).on('change', loadCreneaux);
+    });
+
+});
+</script>
+
 @endsection
