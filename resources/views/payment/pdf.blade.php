@@ -2,71 +2,78 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Fiche Suivi Client</title>
+    <title>Fiche Client</title>
     <style>
         body { font-family: DejaVu Sans, sans-serif; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #000; padding: 5px; font-size: 12px; }
-        th { background-color: #f0f0f0; }
-        h5 { margin-bottom: 10px; }
+        th { border: 1px solid #ea9431ff; padding: 3px; font-size: 10px; }
+        td { border: 1px solid #ea9431ff; padding: 3px; font-size: 12px; }
+        h5 { margin-bottom: 5px; }
+        h3 { background-color: #ea9431ff; padding: 1px; font-size: 11px; text-align: center; }
+        .objectif-box {
+            border: 1px solid #ea9431ff;
+            padding: 10px 5px;
+            height: 60px; 
+        }
     </style>
 </head>
 <body>
-    <h5>FICHE SUIVI CLIENT</h5>
+    <h5>FICHE SUIVI CLIENT : <strong>MASSAGE / SOINS / SPORT</strong></h5>
 
+    <h3>Information client :</h3> 
     <table>
         <tr><th>Nom</th><td>{{ $client->name }}</td></tr>
-        <tr><th>Email</th><td>{{ $client->email }}</td></tr>
-        <tr><th>Tel</th><td>{{ $client->phone }}</td></tr>
+        <tr><th>Age</th><td></td></tr>
         <tr><th>Adresse</th><td>{{ $client->address }}</td></tr>
+        <tr><th>Contact</th><td>{{ $client->phone }}</td></tr>
+        <tr><th>Email</th><td>{{ $client->email }}</td></tr>
+        <tr><th>Sexe</th><td>{{ $client->gender }}</td></tr>
+        <tr><th>Taille</th><td>{{ $client->size }}</td></tr>
+        <tr><th>Poids de départ</th><td>{{ $client->weight }}</td></tr>
+        <tr><th>Problème de santé / autre</th><td></td></tr>
+        <tr><th>Date d'inscription</th><td></td></tr>
+        <tr><th>Autre</th><td></td></tr>
     </table>
 
-    <h5 class="mt-3">*SUIVI RÈGLEMENTS</h5>
-    <table>
-        <thead>
-            <tr>
-                <th>Dates</th>
-                <th>Formule</th>
-                <th>Prestation</th>
-                <th>Nb rdv</th>
-                <th>Nb rdv restant</th>
-                <th>Statut</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($appointments as $appoint)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($appoint->date)->format('d/m/Y') }}</td>
-                <td>{{ $appoint->prestation }}</td>
-                <td>{{ $appoint->formule }}</td>
-                <td>{{ $appoint->nb_rdv }}</td>
-                <td>{{ $appoint->nb_restant }}</td>
-                <td>{{ $appoint->statut }}</td>
-            </tr>
+    <h3>Type de prestation choisie :</h3>
+    @php
+        $linesPerColumn = 12;
+        $maxColumns = 3;        
+        $lineCount = 0;
+        $columnCount = 0;
+    @endphp
+    <table style="width:100%; border-collapse: collapse;">
+        <tr>
+            @foreach($prestations as $prestation)
+                @if($lineCount % $linesPerColumn == 0)
+                    @if($lineCount != 0)
+                    </td>
+                        @php $columnCount++; @endphp
+                    @endif
+                    @if($columnCount >= $maxColumns)
+                        @php break; @endphp
+                    @endif
+                    <td style="vertical-align: top; padding-right: 20px;">
+                @endif
+                <div style="margin-bottom: 5px;">
+                    <span style="display:inline-block; width:12px; height:12px; border:1px solid #000; margin-right:5px;"></span>
+                    {{ $prestation->serviceCategory->name ?? 'Sans catégorie' }} - {{ $prestation->title }}
+                </div>
+                @php $lineCount++; @endphp
             @endforeach
-        </tbody>
+            </td>
+        </tr>
+    </table>
+    <h3>Objectifs et attente :</h3>
+    <div class="objectif-box"></div>
+
+    <h3>Évaluation du soin :</h3>
+    <table>
+        <tr><th>Sedentary</th><td>Poids(kg)</td></tr>
+        <tr><th>Slightly active (1-3/week)</th><td></td></tr>
+        <tr><th>Moderately active (3-5/week)</th><td></td></tr>
+        <tr><th>Very active (6-7/week)</th><td></td></tr>
     </table>
 
-    <h5 class="mt-3">Détails Paiement</h5>
-    <table>
-        <thead>
-            <tr>
-                <th>Formule/Prestation</th>
-                <th>Date et Lieu</th>
-                <th>Type de paiement</th>
-                <th>Montant</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($paymentsClients as $pay)
-            <tr>
-                <td>{{ $pay->prestation }} / {{ $pay->formule }}</td>
-                <td>{{ \Carbon\Carbon::parse($pay->date_de_paiement)->format('d/m/Y') }}</td>
-                <td>{{ $pay->methodes_utilisees }}</td>
-                <td>{{ $pay->total_paye }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
 </body>
 </html>

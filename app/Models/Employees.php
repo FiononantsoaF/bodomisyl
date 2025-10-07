@@ -72,8 +72,8 @@ class Employees extends Model
 
         return $creneaux->map(function($c) use ($creneauxPris) {
             return [
-                'id'       => $c->id,              // id de employees_creneau
-                'time'     => $c->creneau,                // heure du créneau (vient de la table creneau)
+                'id'       => $c->id,   
+                'time'     => $c->creneau,                
                 'is_taken' => in_array($c->creneau, $creneauxPris),
             ];
         });

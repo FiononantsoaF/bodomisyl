@@ -7,6 +7,7 @@ use App\Models\Subscription;
 use App\Models\EmployeesCreneau;
 use App\Models\Clients;
 use App\Models\Employees;
+use App\Models\Payment;
 use App\Models\Creneau;
 use App\Models\Services;
 use App\Http\Requests\AppointmentRequest;
@@ -59,6 +60,10 @@ class AppointmentdbController extends Controller
                 "s.duration_minutes as duree_minute",
                 "ap.subscription_id",
                 "ap.promotion_id",
+                "ap.is_paid",
+                "ap.client_id",
+                "ap.employee_id",
+                "ap.service_id",
                 DB::raw("DATE_FORMAT(ap.start_times,'%d-%m-%Y %H:%i') as date_reserver"),
                 DB::raw("DATE_FORMAT(DATE_ADD(ap.start_times, INTERVAL s.duration_minutes MINUTE),'%d-%m-%Y %H:%i') as fin_prestation"),
                 DB::raw("DATE_FORMAT(ap.created_at,'%d-%m-%Y %H:%i') as date_creation")
@@ -246,6 +251,52 @@ class AppointmentdbController extends Controller
         return redirect()->back()->with('error', 'Aucune action valide détectée.');
     }
 
+    public function payer(Request $request)
+    {
+        $appointment = appointments::find($request->appointment_id);
+        if (!$appointment) {
+            return redirect()->back()->with('error', 'Rendez-vous introuvable.');
+        }
+        $appointment->is_paid = 1;
+        $appointment->save();
+        if ($appointment->subscription_id) {
+            $subscription = Subscription::find($appointment->subscription_id);
+            if ($subscription) {
+                $subscription->is_paid = 1;
+                $subscription->save();
+            }
+        }
+        Payment::create([
+            'appointment_id'  => $appointment->id,
+            'subscription_id' => $appointment->subscription_id,
+            'client_id'       => $appointment->client_id,
+            'total_amount'    => $request->total_amount,
+            'deposit'         => $request->total_amount,
+            'method'          => $request->method,
+            'status'          => 'paid',
+            'paid_at'         => Carbon::now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Paiement enregistré');
+    }
+
+    // public function payer(Request $request)
+    // {
+    //     $appointment = appointments::find($request->appointment_id);
+    //     if (!$appointment) {
+    //         return redirect()->back()->with('error', 'Rendez-vous introuvable.');
+    //     }
+    //     $appointment->is_paid = 1;
+    //     if ($appointment->subscription_id) {
+    //         $subscription = Subscription::find($appointment->subscription_id);
+    //         if ($subscription) {
+    //             $subscription->is_paid = 1;
+    //             $subscription->save();
+    //         }
+    //     }
+    //     $appointment->save();
+    //     return redirect()->back()->with('success', 'Paiement validé et subscription mise à jour.');
+    // }
 
     /**
      * Display the specified resource.
@@ -285,6 +336,50 @@ class AppointmentdbController extends Controller
         return redirect()->route('appointments.index')
             ->with('success', 'Appointment deleted successfully');
     }
+
+    public function getPrestatairesByService($service_id)
+    {
+        $prestataires = Employees::where('is_active', 1)
+            ->whereHas('services', fn($q) => $q->where('services.id', $service_id))
+            ->get(['id','name']);
+        return response()->json($prestataires);
+    }
+
+    public function getCreneauxDisponibles($id, Request $request)
+    {
+        $date = $request->query('date');
+        $employee = Employees::find($id);
+        if (!$employee) {
+            return response()->json([], 404);
+        }
+        $creneaux = $employee->creneauxDisponibles($date);
+        return response()->json($creneaux);
+    }
+
+    public function postpone(Request $request, $id)
+    {
+        $appointment = appointments::find($id);
+        if (!$appointment) {
+            return redirect()->back()->with('error', 'Rendez-vous introuvable.');
+        }
+        $request->validate([
+            'new_date' => 'required|date',
+            'new_prestataire' => 'required|exists:employees,id',
+            'new_creneau' => 'required',
+        ]);
+        $times = Creneau::find($request->new_creneau);
+        if (!$times) {
+            return redirect()->route('appointments.index')
+                            ->with('error', 'Créneau invalide.');
+        }
+        
+        $appointment->start_times = \Carbon\Carbon::parse($request->new_date . ' ' . $times->creneau);
+        $appointment->employee_id = $request->new_prestataire;
+        $appointment->save();
+        return redirect()->route('appointmentsdb')
+                 ->with('success', 'Rendez-vous reporté avec succès !');
+    }
+
     private  $daysMapping = [
         1 => 'Lundi',
         2 => 'Mardi', 

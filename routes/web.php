@@ -52,6 +52,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/appointmentsdb', [AppointmentdbController::class, 'index'])->name('appointmentsdb');
     Route::post('/appointmentsdb/changestate/{id}', [AppointmentdbController::class, 'changestate'])->name('appointmentsdb.changestate');
     Route::post('/appointmentsdb/creation', [AppointmentdbController::class, 'creation'])->name('appointmentsdb.creation');
+
+    Route::get('/service/{service_id}/prestataires', [AppointmentdbController::class, 'getPrestatairesByService']);
+    Route::get('/employee/{id}/creneaux-disponibles', [AppointmentdbController::class, 'getCreneauxDisponibles']);
+
+    Route::post('/appointments/{id}/postpone', [AppointmentdbController::class, 'postpone'])
+    ->name('appointments.postpone');
     
     //session
     Route::get('/session', [SessiondbController::class, 'index'])->name('sessiondb');
@@ -153,6 +159,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/fiche/{id}', [PaymentdbController::class, 'index'])->name('fichedb');
     Route::post('/fiche-create', [PaymentdbController::class, 'createfiche'])->name('create-fichedb');
     Route::get('/payment/payment', [PaymentdbController::class, 'payment'])->name('paymentdb');
+    Route::post('/payer', [AppointmentdbController::class, 'payer'])->name('payer');
     
     //currency
     Route::get('/currency', [CurrencydbController::class, 'index'])->name('currencydb');
@@ -165,6 +172,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/export-subscriptions', [ExportController::class, 'exportSubscriptions'])->name('export.subscriptions');
     Route::get('/export-appointments', [ExportController::class, 'exportAppointments'])->name('export.appointments');
     Route::get('/export-appointmentsday', [ExportController::class, 'exportAppointmentsDay'])->name('export.appointmentsday');
+   
     Route::get('/export-employees', [ExportController::class, 'exportEmployees'])->name('export.employees');
     Route::get('/clients/{id}/export-pdf', [PaymentdbController::class, 'exportPdf'])->name('export.pdf');
     // Route::get('/export-appointments-range', [ExportController::class, 'exportAppointmentsRange'])->name('export.appointments.range');
@@ -177,12 +185,6 @@ Route::middleware(['auth'])->group(function () {
         return view('mvola/success');
     });
 
-    // Route::prefix('mvola-test')->group(function () {
-    // Route::get('/env', [\App\Http\Controllers\MvolaTestController::class, 'checkEnv']);
-    // Route::get('/correlation-id', [\App\Http\Controllers\MvolaTestController::class, 'generateCorrelationId']);
-    // Route::get('/token', [\App\Http\Controllers\MvolaTestController::class, 'getToken']);
-    // Route::post('/pay', [\App\Http\Controllers\MvolaTestController::class, 'testPaiement']);
-    // });
 
 
 });
