@@ -23,8 +23,6 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PromotiondbController;
 use App\Http\Controllers\JobCategoryController;
 
-
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -65,6 +63,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/session/store', [SessiondbController::class, 'store'])->name('sessiondb.store');
     Route::get('/session/edit/{id}', [SessiondbController::class, 'edit'])->name('sessiondb.edit');
     Route::patch('/session/update/{id}', [SessiondbController::class, 'update'])->name('sessiondb.update');
+
+
     //service
     Route::get('/services', [ServicedbController::class, 'index'])->name('servicedb');
     Route::get('/services/create', [ServicedbController::class, 'create'])->name('servicedb.create');
@@ -188,4 +188,10 @@ Route::middleware(['auth'])->group(function () {
 
 
 });
+
+Route::middleware(['auth', 'prestataire.backoffice'])->group(function () {
+    Route::get('/dashboardprestataire', [AppointmentdbController::class, 'index'])->name('dashboard.prestataire');
+    Route::get('/calendarprestataire', [GoogleCalendarController::class, 'index'])->name('calendar.prestataire');
+});
+
 

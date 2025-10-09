@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */
+    */
     public function index()
     {
         $users = User::paginate();
@@ -31,21 +31,22 @@ class UserController extends Controller
     {
         $user = new User();
         $menuuser = 1;
-        return view('user.create', compact('user','menuuser'));
+        $roles = ['admin'=>'admin','prestataire'=>'prestataire'];
+        return view('user.create', compact('user','menuuser','roles'));
     }
 
     /**
      * Store a newly created resource in storage.
-     */
+    */
     public function store(Request $request)
     {
         $param = $request->all();
-       
         // User::create($request->validated());
-         $user = User::create([
+        $user = User::create([
             'name'=>$param['name'],
             'email' => $param['email'],
-            'password' =>bcrypt($param['password'])
+            'password' =>bcrypt($param['password']),
+            'role' => $param['role'] ?? 'null'
         ]);
 
         return redirect()->route('userdb')
@@ -54,11 +55,10 @@ class UserController extends Controller
 
     /**
      * Display the specified resource.
-     */
+    */
     public function show($id)
     {
         $user = User::find($id);
-
         return view('user.show', compact('user'));
     }
 
@@ -69,7 +69,8 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $menuuser = 1;
-        return view('user.edit', compact('user','menuuser'));
+        $roles = ['admin'=>'admin','prestataire'=>'prestataire'];
+        return view('user.edit', compact('user','menuuser','roles'));
     }
 
     /**
@@ -83,7 +84,8 @@ class UserController extends Controller
         User::where('id', $id)->first()
         ->update([
             'name'=>$param['name'],
-            'email' => $param['email']
+            'email' => $param['email'],
+            'role' => $param['role'] ?? 'NULL'
         ]);
 
         if($param['password'])

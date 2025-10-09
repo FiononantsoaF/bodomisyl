@@ -67,4 +67,9 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'cors' => \App\Http\Middleware\Cors::class, // new ligne
     ];
+
+    protected $routeMiddleware = [
+          'prestataire.backoffice' => \App\Http\Middleware\PrestataireBackoffice::class,
+    ];
+
 }

@@ -108,11 +108,15 @@ class AppointmentsController extends Controller
         $promotions = new Promotion();
         $promotion =$promotions->getPromoPrice($service->id);
 
+        $formattedDate = $start_time instanceof \DateTime 
+        ? $start_time->format('d/m/Y H:i') 
+        : $start_time;
+
         if ($isFromSubscription) {
             $appointment = appointments::createFromRequest($request);
             $appointment->changeActive();
 
-            return $this->apiResponse(true, "Réservation réussie", [
+            return $this->apiResponse(true, "🎉 Félicitations ! Votre rendez-vous pour la prestation « {$service->title} » le {$formattedDate} a été confirmé avec succès.", [
                 'appointment_id'  => $appointment->id,
                 'subscription_id' => $appointment->subscription_id,
                 'price'           => $service->price ?? $appointment->prixservice ?? null,
@@ -147,17 +151,40 @@ class AppointmentsController extends Controller
             return $this->apiResponse(false, "Vous avez déjà un rendez-vous à cette date.", null, 400);
         }
 
+        // $existingSubscription = Subscription::getExistSubscription($service->id, $existingClient->id, $param['start_times']);
+        // if ($existingSubscription) {
+        //     $remainingSessions = $existingSubscription->total_session - $existingSubscription->used_session ;
+        //     $message = "Vous avez déjà un abonnement actif pour la prestation « {$service->title} »";
+            
+        //     if ($remainingSessions !== null) {
+        //         $message .= " — il vous reste {$remainingSessions} séance" . ($remainingSessions > 1 ? 's' : '') . " à effectuer.";
+        //     }
+
+        //     return $this->apiResponse(false, $message, null, 400);
+        // }
+
         $existingSubscription = Subscription::getExistSubscription($service->id, $existingClient->id, $param['start_times']);
         if ($existingSubscription) {
-            $remainingSessions = $existingSubscription->total_session - $existingSubscription->used_session ;
+            $remainingSessions = $existingSubscription->total_session - $existingSubscription->used_session;
+            if ($remainingSessions > 0) {
+                $request->merge(['sub_id' => $existingSubscription->id]);
+                $appointment = appointments::createFromRequest($request);
+                $appointment->changeActive();
 
-            $message = "Vous avez déjà un abonnement actif pour la prestation « {$service->title} »";
-            
-            if ($remainingSessions !== null) {
-                $message .= " — il vous reste {$remainingSessions} séance" . ($remainingSessions > 1 ? 's' : '') . " à effectuer.";
+                $formattedDate = $start_time->format('d/m/Y H:i');
+
+                return $this->apiResponse(true, "🎉 Félicitations ! Votre rendez-vous pour la prestation « {$service->title} » le {$formattedDate} a été confirmé avec succès. Il vous reste désormais " . ($remainingSessions - 1) . " séance" . (($remainingSessions - 1) > 1 ? 's' : '') . " sur votre abonnement.", [
+                    'appointment_id'  => $appointment->id,
+                    'subscription_id' => $appointment->subscription_id,
+                    'remaining_sessions' => $remainingSessions - 1,
+                    'price'           => 0, 
+                    'price_promo'     => isset($promotion['price_promo']) ? number_format($promotion['price_promo']) : null,
+                    'client_phone'    => $clientInfo['phone'] ?? null,
+                    'already_paid'    => true
+                ], 200);
+            } else {
+                return $this->apiResponse(false, "Votre abonnement pour la prestation « {$service->title} » est épuisé. Merci de le renouveler pour continuer.", null, 400);
             }
-
-            return $this->apiResponse(false, $message, null, 400);
         }
 
         $newSubscription = Subscription::createSubscription($param, $existingClient, $service);
@@ -187,12 +214,6 @@ class AppointmentsController extends Controller
 
         $calendarService = app(\App\Services\GoogleCalendarService::class);
         $calendarService->syncAppointment($appoint);
-
-        // if ($conflictingAppointment) {
-        //     $waitlist = new WaitingList();
-        //     $waitlist->appointment_id = $appoint->id;
-        //     $waitlist->save();
-        // }
 
         return $this->apiResponse(true, "Félicitations ! Votre réservation a été effectuée avec succès.", [
             'appointment_id'  => $appoint->id,

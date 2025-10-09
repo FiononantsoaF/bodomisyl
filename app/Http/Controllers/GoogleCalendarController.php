@@ -10,47 +10,80 @@ use Google\Service\Calendar\Event;
 use Google\Service\Calendar\EventDateTime;
 use Carbon\Carbon;
 use App\Services\GoogleCalendarService;
+use App\Models\Employees;
 
 class GoogleCalendarController extends Controller
 {
-    
-    // public function __construct()
-    // {
-    //     $this->client = new Client();
-    //     $this->client->setApplicationName('domisyl');
-    //     $this->client->setScopes(Calendar::CALENDAR);
-    //     $this->client->setAuthConfig(storage_path('app/google-service-account.json'));
-    //     $this->client->setAccessType('offline');
-    //     $this->service = new Calendar($this->client);
-    // }
 
     public function index()
     {
-        $appointments = appointments::with(['client', 'employee', 'service'])
-            ->where('status', '!=', 'cancelled')
-            ->get()
-            ->map(function ($appointment) {
-                return [
-                    'id' => $appointment->id,
-                    'title' => $appointment->client->name . ' - ' . $appointment->service->title,
-                    'start' => \Carbon\Carbon::parse($appointment->start_times)->format('Y-m-d H:i:s'),
-                    'end'   => \Carbon\Carbon::parse($appointment->end_times)->format('Y-m-d H:i:s'),
-                    'color' => $appointment->status === 'confirmed' ? '#10B981' : '#F59E0B',
-                    'extendedProps' => [
-                        'client' => $appointment->client->name,
-                        'employee' => $appointment->employee->name,
-                        'service' => $appointment->service->title,
-                        'status' => $appointment->status,
-                        'notes' => $appointment->notes
-                    ]
-                ];
-            });
+        $userEmail = auth()->user()->email;
+        $prestataireUser = Employees::where('email', $userEmail)->first();
+        
+        $query = appointments::with(['client', 'employee', 'service'])
+            ->where('status', '!=', 'cancelled');
+
+        if ($prestataireUser) {
+            $query->where('employee_id', $prestataireUser->id);
+        }
+
+        $appointments = $query->get()->map(function ($appointment) {
+            return [
+                'id' => $appointment->id,
+                'title' => $appointment->client->name . ' - ' . $appointment->service->title,
+                'start' => \Carbon\Carbon::parse($appointment->start_times)->format('Y-m-d H:i:s'),
+                'end'   => \Carbon\Carbon::parse($appointment->end_times)->format('Y-m-d H:i:s'),
+                'color' => $appointment->status === 'confirmed' ? '#10B981' : '#F59E0B',
+                'extendedProps' => [
+                    'client' => $appointment->client->name,
+                    'employee' => $appointment->employee->name,
+                    'service' => $appointment->service->title,
+                    'status' => $appointment->status,
+                    'notes' => $appointment->notes
+                ]
+            ];
+        });
 
         return view('calendar.index', [
             'appointments' => $appointments,
             'google_email' => env('GOOGLE_CALENDAR_ID')
         ]);
     }
+
+    
+    // public function index()
+    // {
+    //     $userEmail = auth()->user()->email;
+    //     $prestataireUser = Employees::where('email', $userEmail)->first();
+    //     if ($prestataireUser) {
+    //         $param['prestataire'] = $prestataireUser->id;
+    //     }
+
+    //     $appointments = appointments::with(['client', 'employee', 'service'])
+    //         ->where('status', '!=', 'cancelled')
+    //         ->get()
+    //         ->map(function ($appointment) {
+    //             return [
+    //                 'id' => $appointment->id,
+    //                 'title' => $appointment->client->name . ' - ' . $appointment->service->title,
+    //                 'start' => \Carbon\Carbon::parse($appointment->start_times)->format('Y-m-d H:i:s'),
+    //                 'end'   => \Carbon\Carbon::parse($appointment->end_times)->format('Y-m-d H:i:s'),
+    //                 'color' => $appointment->status === 'confirmed' ? '#10B981' : '#F59E0B',
+    //                 'extendedProps' => [
+    //                     'client' => $appointment->client->name,
+    //                     'employee' => $appointment->employee->name,
+    //                     'service' => $appointment->service->title,
+    //                     'status' => $appointment->status,
+    //                     'notes' => $appointment->notes
+    //                 ]
+    //             ];
+    //         });
+
+    //     return view('calendar.index', [
+    //         'appointments' => $appointments,
+    //         'google_email' => env('GOOGLE_CALENDAR_ID')
+    //     ]);
+    // }
 
 
     // private function syncWithGoogleCalendar(appointments $appointment)

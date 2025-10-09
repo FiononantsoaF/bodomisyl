@@ -38,6 +38,7 @@
                                         
 										<th>Nom</th>
 										<th>Email</th>
+                                        <th>Role</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -48,6 +49,8 @@
                                             
 											<td>{{ $user->name }}</td>
 											<td>{{ $user->email }}</td>
+											<td>{{ $user->role }}</td>
+
 
                                             <td>
                                                 <a class="btn btn-sm btn-success" href="{{ route('userdb.edit',$user->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Modifier') }}</a>
