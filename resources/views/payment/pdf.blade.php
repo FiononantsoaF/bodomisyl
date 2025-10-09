@@ -15,11 +15,28 @@
             padding: 10px 5px;
             height: 60px; 
         }
+        .ehr-box {
+            border: 1px solid white;
+            padding: 10px 5px;
+            height: 60px; 
+        }
+        #objectives th {
+                    border: 1px solid #ea9431ff;
+                    padding: 5px;
+                    text-align: left;
+                    width: 20%;
+                    height: 40px;
+        }
+        #objectives td {
+                    border: 1px solid #ea9431ff;
+                    padding: 5px;
+                    text-align: left;
+        }
     </style>
 </head>
 <body>
+    <img src="{{ public_path('images/LOGODOMISYL_mobile.png') }}" alt="Logo Domisyl" style="width:120px; height:auto;">
     <h5>FICHE SUIVI CLIENT : <strong>MASSAGE / SOINS / SPORT</strong></h5>
-
     <h3>Information client :</h3> 
     <table>
         <tr><th>Nom</th><td>{{ $client->name }}</td></tr>
@@ -30,9 +47,9 @@
         <tr><th>Sexe</th><td>{{ $client->gender }}</td></tr>
         <tr><th>Taille</th><td>{{ $client->size }}</td></tr>
         <tr><th>Poids de départ</th><td>{{ $client->weight }}</td></tr>
-        <tr><th>Problème de santé / autre</th><td></td></tr>
+        <tr><th style="height:40px;">Problème de santé / autre</th><td></td></tr>
         <tr><th>Date d'inscription</th><td></td></tr>
-        <tr><th>Autre</th><td></td></tr>
+        <tr><th style="height:40px;">Autre</th><td></td></tr>
     </table>
 
     <h3>Type de prestation choisie :</h3>
@@ -64,16 +81,59 @@
             </td>
         </tr>
     </table>
+
+    @for ($i = 1; $i <= 5; $i++)
+      <br>
+    @endfor
+
+    <img src="{{ public_path('images/LOGODOMISYL_mobile.png') }}" alt="Logo Domisyl" style="width:120px; height:auto;">
     <h3>Objectifs et attente :</h3>
-    <div class="objectif-box"></div>
+    <table id="objectives" style="width:100%; border-collapse: collapse;">
+        <tr><th>Perte de poids</th><td></td></tr>
+        <tr><th>Prise de masse musculaire</th><td></td></tr>
+        <tr><th>Amélioration de l'endurance</th><td></td></tr>
+        <tr><th>Renforcement musculaire </th><td></td></tr>
+        <tr><th>Autre :</th><td></td></tr>
+    </table>
 
     <h3>Évaluation du soin :</h3>
+    <h4>ALF</h4>
     <table>
         <tr><th>Sedentary</th><td>Poids(kg)</td></tr>
         <tr><th>Slightly active (1-3/week)</th><td></td></tr>
         <tr><th>Moderately active (3-5/week)</th><td></td></tr>
         <tr><th>Very active (6-7/week)</th><td></td></tr>
     </table>
+
+    <h4>EHR Max /bpm :</h4>
+    <div class="ehr-box"></div>
+
+    <h4>Suivi mensuel :</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Semaine</th>
+                <th>Poids (kg)</th>
+                <th>Tour de taille (cm)</th>
+                <th>Tour de hanche (cm)</th>
+                <th>Tour de poitrine (cm)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for ($i = 1; $i <= 4; $i++)
+                <tr>
+                    <td>{{ $i }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            @endfor
+        </tbody>
+    </table>
+
+
+
 
 </body>
 </html>

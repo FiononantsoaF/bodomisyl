@@ -1,21 +1,20 @@
 @extends('layouts.app')
 
 @section('title', 'Dashboard')
-
 @section('content')
-    <div class="container-fluid small mb-2 py-3 p-0">
+    <div class="container-fluid small mb-2 py-1 p-0">
         <div class="row">
             <div class="col-12">
-                <div class="card shadow-sm mb-2">
+                <div class="card shadow-sm mb-1">
                     <div class="card-header bg-white border-bottom-0 py-3">
                         <h5 class="mb-0">
                             <i class="fas fa-search me-2"></i> Recherche de rendez-vous
                         </h5>
                     </div>                  
                     <div class="card-body p-1 py-1 border-0">
-                        <form method="GET" class="row g-3">
+                        <form method="GET" class="row g-1">
                             <!-- Ligne 1 -->
-                            <div class="row align-items-end mb-2">
+                            <div class="row align-items-end mb-1 g-1">
                                 <div class="col-md-3 col-sm-6">
                                     <label for="name" class="form-label small">Nom</label>
                                     <input type="text" id="name" name="name" value="{{ $name ?? '' }}" 
@@ -48,9 +47,8 @@
                                     </select>
                                 </div>
                             </div>
-
                             <!-- Ligne 2 -->
-                            <div class="row g-3 align-items-end">
+                            <div class="row g-1 align-items-end">
                                 <div class="col-md-3 col-sm-6">
                                     <label for="email" class="form-label small">Email</label>
                                     <input type="email" id="email" name="email" value="{{ $email ?? '' }}" 
@@ -80,7 +78,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -108,7 +105,6 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
-
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
@@ -123,9 +119,11 @@
                                         <th>Durée</th>
                                         <th>Abonnement</th>
                                         <th>Statut</th>
+                                        @if($showActions) 
                                         <th class="text-end">Actions</th>
                                         <th>Mise à jour</th>
                                         <th>Paiement</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody class="small">
@@ -173,6 +171,8 @@
                                                     </span>    
                                                 @endif
                                             </td>
+
+                                            @if($showActions)
                                             <td class="text-end">
                                                 <div>
                                                     <form class="btn-group btn-group-sm" role="group" action="{{ route('appointmentsdb.changestate',$appointment->idrdv) }}" method="POST">
@@ -205,8 +205,7 @@
                                                         <input type="hidden" name="total_amount" value="{{ $appointment->final_price }}">
                                                         <input type="hidden" name="deposit" value="{{ $appointment->final_price }}">
                                                         <input type="hidden" name="method" value="cash">
-
-                                                        <button type="submit" class="btn btn-sm btn-success" title="Valider le paiement">
+                                                        <button type="submit" class="btn btn-sm btn-success" title="Valider le paiement" onClick="return confirm('Confirmer le paiement de ce rendez-vous ?')">
                                                             Payer
                                                         </button>
                                                     </form>
@@ -214,6 +213,7 @@
                                                     <span class="text-success">Payé</span>
                                                 @endif
                                             </td>
+                                            @endif
 
                                         </tr>
 
@@ -230,44 +230,55 @@
                                                         @csrf
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="postponeModalLabel-{{ $appointment->idrdv }}">
-                                                                Modifier le rendez-vous 
+                                                                Modification du  rendez-vous 
                                                             </h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <!-- Ligne date + prestataire -->
-                                                            <div class="mb-3">
-                                                                <p><strong>Date actuelle :</strong> {{ \Carbon\Carbon::parse($appointment->date_reserver)->format('d/m/Y H:i') }}</p>
-                                                                <p><strong>Prestataire actuel :</strong> {{ $appointment->nomprestataire }}</p>
-                                                                <p><strong>Client :</strong> {{ $appointment->nomclient }}</p>
-                                                                <p><strong>Formule / Prestation :</strong> {{ $appointment->nomservice }} - {{ $appointment->typeprestation }}</p>
+                                                            <div class="card shadow-sm border-4 mb-7">
+                                                                <div class="card-body">
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-4 "><strong>Date </strong></div>
+                                                                        <div class="col-8">{{ \Carbon\Carbon::parse($appointment->date_reserver)->format('d/m/Y H:i') }}</div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-4 "><strong>Prestataire </strong></div>
+                                                                        <div class="col-8">{{ $appointment->nomprestataire }}</div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-4 "><strong>Client </strong></div>
+                                                                        <div class="col-8">{{ $appointment->nomclient }}</div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-4"><strong>Prestation </strong></div>
+                                                                        <div class="col-8">{{ $appointment->nomservice }} - {{ $appointment->typeprestation }}</div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <div class="row mb-3 g-2">
+                                                            <div class="row mb-2 g-2">
                                                                 <div class="col">
                                                                     <label for="date-{{ $appointment->idrdv }}" class="form-label">Nouvelle date</label>
                                                                     <input type="date" class="form-control new-date" id="date-{{ $appointment->idrdv }}" name="new_date"
                                                                         value="{{ \Carbon\Carbon::parse($appointment->date_reserver)->format('Y-m-d') }}" required>
                                                                 </div>
                                                                 <div class="col">
-                                                                    <label for="prestataire-{{ $appointment->idrdv }}" class="form-label">Prestataire</label>
+                                                                    <label for="prestataire-{{ $appointment->idrdv }}" class="form-label">Nouvelle prestataire</label>
                                                                     <select class="form-select employee-select" id="prestataire-{{ $appointment->idrdv }}" name="new_prestataire" required>
                                                                         <option value="" selected disabled>-- Choisir prestataire --</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
-
                                                             <!-- Créneaux -->
-                                                            <div class="mb-3">
+                                                            <div class="mb-2">
                                                                 <label class="form-label">Créneaux disponibles</label>
                                                                 <div class="d-flex flex-wrap gap-2 creneau-buttons" id="creneaux-{{ $appointment->idrdv }}">
-                                                                    <!-- Les boutons créneaux seront injectés ici via JS -->
                                                                 </div>
                                                                 <input type="hidden" name="new_creneau" id="selected-creneau-{{ $appointment->idrdv }}" required>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                            <button type="submit" class="btn btn-primary">Valider</button>
+                                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                            <button type="submit" class="btn btn-sm btn-success">Valider</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -340,6 +351,14 @@ $(document).ready(function() {
 
         loadPrestataires();
         dateInput.add(employeeSelect).on('change', loadCreneaux);
+    });
+
+    $('.postpone-modal').on('hidden.bs.modal', function() {
+        var modal = $(this);
+            modal.find('.creneau-buttons').empty(); 
+            modal.find('input[name="new_creneau"]').val('');
+            modal.find('.employee-select').val(''); 
+            modal.find('.new-date').val('');
     });
 
 });

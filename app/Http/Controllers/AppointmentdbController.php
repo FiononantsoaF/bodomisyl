@@ -16,6 +16,7 @@ use DB;
 use DateTime;
 use Mail;
 use App\Mail\ValidateAppointment;
+use App\Mail\ReconfirmAppointment;
 use Carbon\Carbon;
 use App\Exports\AppointmentsDayExport;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -38,6 +39,13 @@ class AppointmentdbController extends Controller
     {
         $param = $request->all();
         $prestataires=Employees::all();
+
+        $userEmail = auth()->user()->email;
+        $prestataireUser = Employees::where('email', $userEmail)->first();
+        
+        if ($prestataireUser) {
+            $param['prestataire'] = $prestataireUser->id;
+        }
         $phone = (isset($param['phone']) && !isset($param['reset'])) ? $param['phone'] : null;
         $email = (isset($param['email']) && !isset($param['reset'])) ? $param['email'] : null;
         $name  = (isset($param['name']) && !isset($param['reset']))  ? $param['name']  : null;
@@ -121,6 +129,7 @@ class AppointmentdbController extends Controller
         }
         $appointments = $query->paginate(10);
         $activemenuappoint = 1;
+        $showActions = in_array(auth()->user()->role, ['null', 'admin']);
         return view('appointment.index', compact(
             'appointments',
             'activemenuappoint',
@@ -131,7 +140,8 @@ class AppointmentdbController extends Controller
             'end_date',
             'prestataires',
             'prestataire',
-            'statut'
+            'statut',
+            'showActions'
         ))->with('i', (request()->input('page', 1) - 1) * $appointments->perPage());
     }
 
@@ -372,12 +382,42 @@ class AppointmentdbController extends Controller
             return redirect()->route('appointments.index')
                             ->with('error', 'Créneau invalide.');
         }
+
+        $oldDateTime = $appointment->start_times;
         
+        $oldPrestataire = $appointment->employee_id;
+        $email = $appointment->client->email;
+
+        $newDateTime = Carbon::parse($request->new_date . ' ' . $times->creneau);
+        if ($newDateTime->isPast()) {
+            return redirect()->back()->with('error', 'La nouvelle date doit être dans le futur.');
+        }
         $appointment->start_times = \Carbon\Carbon::parse($request->new_date . ' ' . $times->creneau);
         $appointment->employee_id = $request->new_prestataire;
         $appointment->save();
+
+        $client = $appointment->client;
+        $service = $appointment->service ?? null;
+        $email = $client->email ?? null;
+        $formattedDate = $newDateTime->format('d/m/Y H:i');
+        $statusText = 'reporté';
+        
+        if ($oldDateTime != $newDateTime) {
+            $prefix = 'Bonjour';
+            if (!empty($client->gender)) {
+                if ($client->gender === 'Femme') $prefix = 'Bonjour Madame';
+                elseif ($client->gender === 'Homme') $prefix = 'Bonjour Monsieur';
+            }
+            $serviceText = $service ? "pour la prestation : {$service->title}" : "";
+            Mail::to($email)->send(new ReconfirmAppointment([
+                'title'   => 'Mise à jour de votre rendez-vous',
+                'body'    => "{$prefix} {$client->name},",
+                'service' => "Votre rendez-vous {$serviceText} a été {$statusText} au {$formattedDate}."
+            ]));
+        }
+
         return redirect()->route('appointmentsdb')
-                 ->with('success', 'Rendez-vous reporté avec succès !');
+                 ->with('success', 'Rendez-vous mis à jour avec succès !');
     }
 
     private  $daysMapping = [

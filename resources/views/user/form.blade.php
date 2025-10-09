@@ -16,6 +16,18 @@
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" value="" id="password" placeholder="password">
             {!! $errors->first('password', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
+        <div class="form-group mb-2 mb20">
+            <label for="role" class="form-label">{{ __('Rôle') }}</label>
+            <select name="role" id="role" class="form-control @error('role') is-invalid @enderror">
+                <option value="">-- Sélectionner un rôle --</option>
+                @foreach($roles as $key => $value)
+                    <option value="{{ $key }}" {{ old('role', $user->role ?? '') == $key ? 'selected' : '' }}>
+                        {{ ucfirst($value) }}
+                    </option>
+                @endforeach
+            </select>
+            {!! $errors->first('role', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
         {{-- <div class="form-group mb-2 mb20">
             <label for="update_at" class="form-label">{{ __('Modifié le ') }}</label>
             <input type="text" name="update_at" class="form-control @error('update_at') is-invalid @enderror" value="{{ old('update_at', $user?->update_at) }}" id="update_at">

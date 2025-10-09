@@ -5,9 +5,9 @@
 @endsection
 
 @section('content')
-<div class="container-fluid small">
+<div class="container-fluid px-3 py-3">
     <div class="row">
-        <div class="container px-4 py-4">
+        <div class="col-12">
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
@@ -16,67 +16,59 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
 
-            <h2 class="mb-4 fw-bold">📅 Calendrier des Rendez-vous</h2>
+            <h2 class="fw-bold mb-4 text-center text-md-start">📅 Calendrier des Rendez-vous</h2>
 
-            <div class="bg-white p-3 shadow rounded">
-                <div id="calendar"></div>
+            <div class="bg-white p-2 p-md-4 shadow rounded">
+                <div id="calendar" class="w-100"></div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade small " id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+<!-- Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm modal-md modal-lg">
     <div class="modal-content">
       <div class="modal-header text-white p-2" style="background-color:rgb(252, 171, 31)">
-        <h5 class="modal-title " id="appointmentModalLabel">🗓️ Détails du Rendez-vous</h5>
+        <h5 class="modal-title" id="appointmentModalLabel">🗓️ Détails du Rendez-vous</h5>
         <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Fermer"></button>
       </div>
-      <div class="modal-body">
-            <div class="table-responsive small">
-                <table class="table small">
-                    <tbody>
-                        <tr>
-                            <th scope="row" class="col-md-3">Client</th>
-                            <td class="col-md-9"><span id="modalClient"></span></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Prestataire</th>
-                            <td><span id="modalEmployee"></span></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Service</th>
-                            <td><span id="modalService"></span></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Statut</th>
-                            <td><span id="modalStatus"></span></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Date</th>
-                            <td><span id="modalDate"></span></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Heure</th>
-                            <td><span id="modalTime"></span></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Notes</th>
-                            <td><span id="modalNotes"></span></td>
-                        </tr>
-                </tbody>
-                </table>
-            </div>
+      <div class="modal-body small">
+          <div class="table-responsive">
+              <table class="table table-sm">
+                  <tbody>
+                      <tr>
+                          <th scope="row" class="w-25">Client</th>
+                          <td><span id="modalClient"></span></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">Prestataire</th>
+                          <td><span id="modalEmployee"></span></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">Service</th>
+                          <td><span id="modalService"></span></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">Statut</th>
+                          <td><span id="modalStatus"></span></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">Date</th>
+                          <td><span id="modalDate"></span></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">Heure</th>
+                          <td><span id="modalTime"></span></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">Notes</th>
+                          <td><span id="modalNotes"></span></td>
+                      </tr>
+                  </tbody> 
+              </table>
+          </div>
       </div>
-      <!-- <div class="modal-body">
-        <p><strong>Client:</strong> <span id="modalClient"></span></p>
-        <p><strong>Prestataire:</strong> <span id="modalEmployee"></span></p>
-        <p><strong>Service:</strong> <span id="modalService"></span></p>
-        <p><strong>Statut:</strong> <span id="modalStatus"></span></p>
-        <p><strong>Date:</strong> <span id="modalDate"></span></p>
-        <p><strong>Heure:</strong> <span id="modalTime"></span></p>
-        <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
-      </div> -->
       <div class="modal-footer">
         <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
       </div>
@@ -89,12 +81,30 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<style>
+    @media (max-width: 768px) {
+        #calendar {
+            font-size: 12px;
+        }
+        .fc-toolbar-title {
+            font-size: 16px !important;
+        }
+        .fc-header-toolbar {
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        th, td {
+            font-size: 11px !important;
+        }
+    }
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+        initialView:'dayGridMonth',
         locale: 'fr',
         firstDay: 1,
         headerToolbar: {
@@ -106,8 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
             today: "Aujourd'hui",
             day: 'Jour',
             week:'Semaine',
-            month:'Mois',
-            list:'Liste'
+            month:'Mois'
         },
         events: @json($appointments),
         eventClick: function (info) {
@@ -118,14 +127,12 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('modalEmployee').textContent = props.employee || 'N/A';
             document.getElementById('modalService').textContent = props.service || 'N/A';
             document.getElementById('modalStatus').textContent = 
-                    props.status === 'pending' ? 'En attente':
-                    status === 'confirmed' ? 'Confirmé' : 
-                    (props.status || 'N/A');
+                props.status === 'pending' ? 'En attente' :
+                props.status === 'confirmed' ? 'Confirmé' : 
+                (props.status || 'N/A');
 
             const start = new Date(event.start);
             const end = new Date(event.end);
-
-            console.log(end);
 
             document.getElementById('modalDate').textContent = start.toLocaleDateString('fr-FR');
             document.getElementById('modalTime').textContent =
