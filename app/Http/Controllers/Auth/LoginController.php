@@ -24,7 +24,12 @@ class LoginController extends Controller
         if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::login($user);
             $request->session()->regenerate();
-            return redirect()->route('dashboard');
+            
+            if ($user->role === 'prestataire') {
+                return redirect()->route('dashboard.prestataire');
+            } else {
+                return redirect()->route('dashboard');
+            }
         }
         return back()->withErrors([
             'email' => 'Les identifiants ne correspondent pas.',
