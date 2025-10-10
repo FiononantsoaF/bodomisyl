@@ -115,16 +115,19 @@ class AppointmentsController extends Controller
         if ($isFromSubscription) {
             $appointment = appointments::createFromRequest($request);
             $appointment->changeActive();
-
-            return $this->apiResponse(true, "🎉 Félicitations ! Votre rendez-vous pour la prestation « {$service->title} » le {$formattedDate} a été confirmé avec succès.", [
-                'appointment_id'  => $appointment->id,
-                'subscription_id' => $appointment->subscription_id,
-                'price'           => $service->price ?? $appointment->prixservice ?? null,
-                'price_promo'     => isset($promotion['price_promo']) 
-                        ? number_format($promotion['price_promo']): null,
-                'client_phone'    => $clientInfo['phone'] ?? null,
-                'already_paid'    => true
-            ], 200);
+            $existSub= Subscription::find($appointment->subscription_id);
+            $remainingSessions = $existSub->total_session - $existSub->used_session;
+            if($remainingSessions >= 0){
+                return $this->apiResponse(true, "🎉 Félicitations ! Votre rendez-vous pour la prestation « {$service->title} » le {$formattedDate} a été confirmé avec succès.", [
+                    'appointment_id'  => $appointment->id,
+                    'subscription_id' => $appointment->subscription_id,
+                    'price'           => $service->price ?? $appointment->prixservice ?? null,
+                    'price_promo'     => isset($promotion['price_promo']) 
+                            ? number_format($promotion['price_promo']): null,
+                    'client_phone'    => $clientInfo['phone'] ?? null,
+                    'already_paid'    => true
+                ], 200);
+            }
         }
         $existingClient = Clients::where('email', $clientInfo['email'])
             ->orWhere('phone', $clientInfo['phone'])
@@ -170,9 +173,7 @@ class AppointmentsController extends Controller
                 $request->merge(['sub_id' => $existingSubscription->id]);
                 $appointment = appointments::createFromRequest($request);
                 $appointment->changeActive();
-
                 $formattedDate = $start_time->format('d/m/Y H:i');
-
                 return $this->apiResponse(true, "🎉 Félicitations ! Votre rendez-vous pour la prestation « {$service->title} » le {$formattedDate} a été confirmé avec succès. Il vous reste désormais " . ($remainingSessions - 1) . " séance" . (($remainingSessions - 1) > 1 ? 's' : '') . " sur votre abonnement.", [
                     'appointment_id'  => $appointment->id,
                     'subscription_id' => $appointment->subscription_id,
@@ -182,8 +183,7 @@ class AppointmentsController extends Controller
                     'client_phone'    => $clientInfo['phone'] ?? null,
                     'already_paid'    => true
                 ], 200);
-            } else {
-                return $this->apiResponse(false, "Votre abonnement pour la prestation « {$service->title} » est épuisé. Merci de le renouveler pour continuer.", null, 400);
+
             }
         }
 

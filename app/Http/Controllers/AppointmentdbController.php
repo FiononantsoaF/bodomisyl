@@ -42,7 +42,6 @@ class AppointmentdbController extends Controller
 
         $userEmail = auth()->user()->email;
         $prestataireUser = Employees::where('email', $userEmail)->first();
-        
         if ($prestataireUser) {
             $param['prestataire'] = $prestataireUser->id;
         }

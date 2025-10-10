@@ -1,7 +1,14 @@
     <body class="sb-nav-fixed">
+        @php
+                $user = auth()->user();
+        @endphp
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="{{ route('dashboard') }}">Domisyl</a>
+             @if($user->role === 'prestataire')
+               <a class="navbar-brand ps-3" href="{{ route('dashboard.prestataire') }}">Domisyl</a>
+            @else
+               <a class="navbar-brand ps-3" href="{{ route('dashboard') }}">Domisyl</a>
+            @endif
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -12,6 +19,7 @@
                 </div>
             </form>
             <!-- Navbar-->
+
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -34,9 +42,7 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading"></div>
-                            @php
-                                $user = auth()->user();
-                            @endphp
+
                             @if($user->role === 'null' || $user->role === 'admin')
                                 <a class="nav-link" href="{{ route('dashboard') }}">
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
