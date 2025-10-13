@@ -4,7 +4,7 @@
         @endphp
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-             @if($user->role === 'prestataire')
+            @if($user->role === 'prestataire')
                <a class="navbar-brand ps-3" href="{{ route('dashboard.prestataire') }}">Domisyl</a>
             @else
                <a class="navbar-brand ps-3" href="{{ route('dashboard') }}">Domisyl</a>

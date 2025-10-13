@@ -21,53 +21,54 @@
                                 </a>
                               </div>--}}
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <form method="GET" class="mb-4">
-                                <div class="row g-3 align-items-end">  
-                                    <div class="col-md-4 col-lg-3">
-                                        <label for="phone" class="form-label">Téléphone</label>
-                                        <input type="phone" id="phone" name="phone" value="{{ $phone }}" class="form-control" placeholder="Rechercher par téléphone">
-                                    </div>
-                                    
-                                    <div class="col-md-4 col-lg-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" id="email" name="email" value="{{ $email }}" class="form-control" placeholder="Rechercher par email">
-                                    </div>
-                                    
-                                    <div class="col-md-4 col-lg-6">
-                                        <div class="d-flex gap-2 mt-1"> 
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-search me-1"></i> Rechercher
-                                            </button>
-                                            <button type="submit" class="btn btn-outline-secondary" name="reset" value="1">
-                                                <i class="fas fa-eraser me-1"></i> Effacer
-                                            </button>
+                        </div>       
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-white border-bottom-0 py-3">
+                                <form method="GET" class="mb-4">
+                                    <div class="row g-3 align-items-end">  
+                                        <div class="col-md-4 col-lg-3">
+                                            <label for="phone" class="form-label">Téléphone</label>
+                                            <input type="phone" id="phone" name="phone" value="{{ $phone }}" class="form-control" placeholder="Rechercher par téléphone">
+                                        </div>
+                                        
+                                        <div class="col-md-4 col-lg-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" id="email" name="email" value="{{ $email }}" class="form-control" placeholder="Rechercher par email">
+                                        </div>
+                                        
+                                        <div class="col-md-4 col-lg-6">
+                                            <div class="d-flex gap-2 mt-1"> 
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-search me-1"></i> Rechercher
+                                                </button>
+                                                <button type="submit" class="btn btn-outline-secondary" name="reset" value="1">
+                                                    <i class="fas fa-eraser me-1"></i> Effacer
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
-                    
+                                </form>
+                            </div>
+                        </div>
                         @if ($message = Session::get('success'))
                             <div class="alert alert-success m-4">
                                 <p>{{ $message }}</p>
                             </div>
                         @endif
 
-
                         <div class="card-body bg-white">
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <thead class="thead small">
                                         <tr>
-                                            <th>Numero</th>
+                                            <th>Num</th>
                                             <th>Nom</th>
                                             <th>Email</th>
-                                            <th>Phone</th>
-                                            <th>Addresse</th>
-                                            <th>Nombre abonnement</th>
-                                            <th>Nombre rendez-vous</th>
-                                            <th>Fiche suivi client</th>
+                                            <th>Téléphone</th>
+                                            <th>Adresse</th>
+                                            <th>Nombre d’abonnements</th>
+                                            <th>Nombre de rendez-vous</th>
+                                            <th>Fiche de suivi client</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>

@@ -6,6 +6,7 @@ use App\Models\Services;
 use App\Models\Employees;
 use App\Http\Requests\ServiceRequest;
 use App\Models\ServiceCategory;
+use App\Models\ServiceSession;
 use Illuminate\Http\Request;
 
 /**
@@ -58,6 +59,10 @@ class ServicedbController extends Controller
                 ->withErrors(['erreur' => "Echec de la mise à jour"])
                 ->withInput();
         }
+        if($alldata['session']<0){
+            return redirect()->route('servicedb')
+            ->with('success', 'Service créer avec success. Mais vous devez ajouter un nombre de séance valide');
+        }
         Services::create([
             "title"=>$alldata['title'],
             "description"=>$alldata['description'],
@@ -68,7 +73,18 @@ class ServicedbController extends Controller
             "duration_minutes"=>$alldata['duration_minutes'],
             "validity_days"=>$alldata['validity_days']
         ]);
-        
+
+        if($alldata['session']>1){
+            $lastservice=Services::latest()->first();
+            ServiceSession::create([
+                            "services_id"=>$lastservice->id,
+                            "session_id"=>1,
+                            "total_session"=>$alldata['session'],
+                            "session_per_period"=>1,
+                            "period_type"=>"week"
+                        ]);
+        }
+      
         return redirect()->route('servicedb')
             ->with('success', 'Service créer avec success.');
     }
@@ -79,8 +95,10 @@ class ServicedbController extends Controller
     public function show($id)
     {
         $service = Services::find($id);
+        $sessions = ServiceSession::where('services_id',$id)->get();
+        $total_session=$sessions->first()->total_session;
         $activemenuservices = 1;
-        return view('service.show', compact('service','activemenuservices'));
+        return view('service.show', compact('service','activemenuservices','total_session'));
     }
 
     /**
@@ -91,7 +109,9 @@ class ServicedbController extends Controller
         $service = Services::find($id);
          $categories = ServiceCategory::all();
          $activemenuservices = 1;
-        return view('service.edit', compact('service','categories','activemenuservices'));
+        $sessions = ServiceSession::where('services_id',$id)->get();
+        $total_session=$sessions->first()->total_session;
+        return view('service.edit', compact('service','categories','activemenuservices','total_session'));
     }
 
     public function update(Request $request, Services $service)
@@ -112,6 +132,15 @@ class ServicedbController extends Controller
                                                     "price"=>$alldata['price'],
                                                     "validity_days"=>$alldata['validity_days']
                                                     ]);
+        if($alldata['session']>1){
+            $lastservice=Services::where('id', $alldata['id'])->first();
+            $sessionexist=ServiceSession::where('services_id',$lastservice->id)->first();
+            if($sessionexist){
+                $sessionexist->update([
+                    "total_session"=>$alldata['session']
+                ]);
+            }
+        }
 
         return redirect()->route('servicedb')
             ->with('success', 'Service modifier avec succès');
