@@ -307,7 +307,7 @@ $(document).ready(function() {
         if (!endDateInput.val() || endDateInput.val() < startDate) {
             endDateInput.val(startDate);
         }
-        endDateInput.focus();
+        // endDateInput.focus();
     });
 
     $('.postpone-modal').on('shown.bs.modal', function() {

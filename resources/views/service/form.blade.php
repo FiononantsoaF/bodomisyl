@@ -58,6 +58,12 @@
             {!! $errors->first('duration_minutes', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="form-group mb-2 mb20">
+            <label for="session" class="form-label">{{ __('Nombre de séance') }}</label>
+            <input type="text" name="session" class="form-control @error('session') is-invalid @enderror" value="{{ old('session', $total_session) }}" id="session" placeholder="Nombre de séances">
+            {!! $errors->first('session', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+
+        <div class="form-group mb-2 mb20">
             <label for="validity_days" class="form-label">{{ __('Validité') }}</label>
             <input type="text" name="validity_days" class="form-control @error('validity_days') is-invalid @enderror" value="{{ old('validity_days', $service?->validity_days) }}" id="validity_days" placeholder="Nombre de jour de validité">
             {!! $errors->first('validity_days', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}

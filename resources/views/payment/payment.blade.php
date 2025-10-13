@@ -77,7 +77,7 @@
                             <tr>
                                 <th>Date de paiement</th>
                                 <th>Type de paiement</th>
-                                <th>Numéro téléphone</th>
+                                <th>Téléphone</th>
                                 <th>Montant (En Ariary)</th>
                                 <th>Client</th>
                             </tr>
