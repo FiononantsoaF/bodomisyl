@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use DB;
 use Response;
 use DateTime;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminAppointmentNotificationMail;
 
 class appointments extends Model
 {
@@ -91,6 +92,8 @@ class appointments extends Model
 
         $calendarService = app(\App\Services\GoogleCalendarService::class);
         $googleEventId = $calendarService->syncAppointment($appointment); 
+        Mail::to('fy.rakotojaona@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appointment));
+        // Mail::to('contact@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appointment));
 
         if ($googleEventId) {
             $appointment->update(['google_event_id' => $googleEventId]);
@@ -126,6 +129,9 @@ class appointments extends Model
         $calendarService = app(\App\Services\GoogleCalendarService::class);
         $googleEventId = $calendarService->syncAppointment($appointment); 
 
+        Mail::to('fy.rakotojaona@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appointment));
+        // Mail::to('contact@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appointment));
+
         if ($googleEventId) {
             $appointment->update(['google_event_id' => $googleEventId]);
         }
@@ -149,10 +155,6 @@ class appointments extends Model
                 'assistant_comment' => $assistant_comment
             ]);
         }
-        // $appointment->where('id', $id)->first()
-        //                             ->update(["assistant_comment"=>$alldata['title'],
-        //                             "category_id"=>$alldata['category_id'],
-        //                             ]);
     }
     public static function getValidateAppointment()
     {
@@ -205,6 +207,7 @@ class appointments extends Model
             ->orderByDesc('ap.id')
             ->get(); 
     }
+
 
 
 }

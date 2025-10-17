@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\PromotionsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OrangeMoneyController;
+use App\Http\Controllers\Api\ClientsFilesApiController;
 
 
 
@@ -71,4 +72,6 @@ Route::post('/payments/confirm-stripe', [StripeController::class, 'storeStripe']
 
 Route::post('/orangemoney/uuid', [OrangeMoneyController::class, 'uuid']);
 Route::post('/orangemoney/pocess-payement', [OrangeMoneyController::class, 'processPayement']);
+
+Route::get('/clientsfiles/{client_id}', [ClientsFilesApiController::class, 'show']);
 

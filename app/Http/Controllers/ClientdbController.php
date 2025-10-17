@@ -10,22 +10,20 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AppointmentRequest;
 use DB;
 use DateTime;
+use App\Services\GeocodingService;
 
 
 /**
  * Class ClientController
  * @package App\Http\Controllers
  */
+
 class ClientdbController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $clients = Clients::paginate();
         $param=$request->all();
-
         $phone = (isset($param['phone']) && !isset($param['reset'])) ?$param['phone']:'';
         $email = (isset($param['email']) && !isset($param['reset']))?$param['email']:'';
         $clients = DB::table('clients as cl')
@@ -138,5 +136,26 @@ class ClientdbController extends Controller
 
         return redirect()->route('clients.index')
             ->with('success', 'Client deleted successfully');
+    }
+
+    public function geocodeClientAddress($id)
+    {
+        $client = Client::findOrFail($id);
+
+        $geo = (new GeocodingService())->search($client->adresse);
+
+        if ($geo) {
+            $client->quartier = $geo['quartier'];
+            $client->ville = $geo['ville'];
+            $client->region = $geo['region'];
+            $client->latitude = $geo['latitude'];
+            $client->longitude = $geo['longitude'];
+            $client->save();
+        }
+
+        return response()->json([
+            'client' => $client,
+            'geodata' => $geo,
+        ]);
     }
 }

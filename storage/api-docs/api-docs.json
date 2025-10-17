@@ -238,6 +238,28 @@
                 }
             }
         },
+        "/api/clientsfiles/{client_id}": {
+            "get": {
+                "summary": "Vérification des fichiers clients pour un client spécifique",
+                "operationId": "84b8f7681217be968dbf5e70f121b671",
+                "parameters": [
+                    {
+                        "name": "client_id",
+                        "in": "path",
+                        "description": "ID du client",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/creneaus": {
             "get": {
                 "summary": "liste creneaus",
