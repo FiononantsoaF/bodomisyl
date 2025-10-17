@@ -118,19 +118,9 @@
                                                 <i class="fa-solid fa-file-pdf"></i>
                                                 PDF
                                             </a>
-
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="col-md-2 text-end">
-                                <button 
-                                    class="btn btn-success hover:bg-red-600 text-white  px-4 py-8 rounded-lg shadow flex items-center"
-                                    title="Version pdf"
-                                >
-                                    <i class="fa-solid fa-file-pdf"></i>
-                                    PDF
-                                </button>
-                                </div> -->
                             </div>
                         </div>
                     </div>

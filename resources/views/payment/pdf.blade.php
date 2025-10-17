@@ -12,13 +12,13 @@
         h3 { background-color: #ea9431ff; padding: 1px; font-size: 11px; text-align: center; }
         .objectif-box {
             border: 1px solid #ea9431ff;
-            padding: 10px 5px;
-            height: 60px; 
+            padding: 5px 5px;
+            height: 30px; 
         }
         .ehr-box {
             border: 1px solid white;
             padding: 10px 5px;
-            height: 60px; 
+            height: 30px; 
         }
         #objectives th {
                     border: 1px solid #ea9431ff;
@@ -44,7 +44,19 @@
         <tr><th>Adresse</th><td>{{ $client->address }}</td></tr>
         <tr><th>Contact</th><td>{{ $client->phone }}</td></tr>
         <tr><th>Email</th><td>{{ $client->email }}</td></tr>
-        <tr><th>Sexe</th><td>{{ $client->gender }}</td></tr>
+        <tr>
+            <th>Sexe</th>
+            <td style="font-size: 12px; padding: 2px 5px;">
+                <label style="margin-right: 10px; font-size: 12px;">
+                    <input type="checkbox" name="sexe[]" value="femme" style="width: 14px; height: 14px;">
+                    Femme
+                </label>
+                <label style="font-size: 12px;">
+                    <input type="checkbox" name="sexe[]" value="homme" style="width: 14px; height: 14px;">
+                    Homme
+                </label>
+            </td>
+        </tr>
         <tr><th>Taille</th><td>{{ $client->size }}</td></tr>
         <tr><th>Poids de départ</th><td>{{ $client->weight }}</td></tr>
         <tr><th style="height:40px;">Problème de santé / autre</th><td></td></tr>
@@ -72,7 +84,7 @@
                     @endif
                     <td style="vertical-align: top; padding-right: 20px;">
                 @endif
-                <div style="margin-bottom: 5px;">
+                <div style="margin-bottom: 3px;">
                     <span style="display:inline-block; width:12px; height:12px; border:1px solid #000; margin-right:5px;"></span>
                     {{ $prestation->serviceCategory->name ?? 'Sans catégorie' }} - {{ $prestation->title }}
                 </div>
@@ -95,18 +107,6 @@
         <tr><th>Renforcement musculaire </th><td></td></tr>
         <tr><th>Autre :</th><td></td></tr>
     </table>
-
-    <h3>Évaluation du soin :</h3>
-    <h4>ALF</h4>
-    <table>
-        <tr><th>Sedentary</th><td>Poids(kg)</td></tr>
-        <tr><th>Slightly active (1-3/week)</th><td></td></tr>
-        <tr><th>Moderately active (3-5/week)</th><td></td></tr>
-        <tr><th>Very active (6-7/week)</th><td></td></tr>
-    </table>
-
-    <h4>EHR Max /bpm :</h4>
-    <div class="ehr-box"></div>
 
     <h4>Suivi mensuel :</h4>
     <table>

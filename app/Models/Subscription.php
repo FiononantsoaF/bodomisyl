@@ -152,11 +152,31 @@ class Subscription extends Model
         }
     }
 
+    public function getSubscriptionByDateId(DateTime $debut, string $client_id = null)
+    {
+        $query = DB::table('subscription as sub')
+            ->select(
+                'sub.id as idsub',
+                'sub.status',
+                'sub.client_id',
+                'sub.services_id',
+                'c.name as nomclient',
+                'sub.period_start',
+                'sub.period_end'
+            )
+            ->join('clients as c', 'c.id', '=', 'sub.client_id')
+            ->join('employees as ep', 'ep.id', '=', 'sub.employee_id')
+            ->join('services as s', 's.id', '=', 'sub.service_id')
+            ->join('service_category as sc', 'sc.id', '=', 's.service_category_id')
+            ->whereDate('sub.period_start', '<=', $debut->format('Y-m-d'))
+            ->whereDate('sub.period_end', '>=', $debut->format('Y-m-d'))
+            ->orderByDesc('sub.id');
 
+        if ($client_id) {
+            $query->where('sub.client_id', $client_id);
+        }
 
-
-
-
-    
+        return $query->get();
+    }
 
 }

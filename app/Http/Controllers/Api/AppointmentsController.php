@@ -17,6 +17,9 @@ use App\Services\GoogleCalendarService;
 use DB;
 use Response;
 use DateTime;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminAppointmentNotificationMail;
+
 
 class AppointmentsController extends Controller
 {
@@ -68,6 +71,7 @@ class AppointmentsController extends Controller
         if (!isset($param['service_id'])) {
             return response()->json(['error' => 'Service ID manquant dans la requête'], 422);
         }
+
         $clientInfo = $param['clients'];
         $service = Services::find($param['service_id']);
         if (!$service) {
@@ -157,8 +161,7 @@ class AppointmentsController extends Controller
         // $existingSubscription = Subscription::getExistSubscription($service->id, $existingClient->id, $param['start_times']);
         // if ($existingSubscription) {
         //     $remainingSessions = $existingSubscription->total_session - $existingSubscription->used_session ;
-        //     $message = "Vous avez déjà un abonnement actif pour la prestation « {$service->title} »";
-            
+        //     $message = "Vous avez déjà un abonnement actif pour la prestation « {$service->title} »";   
         //     if ($remainingSessions !== null) {
         //         $message .= " — il vous reste {$remainingSessions} séance" . ($remainingSessions > 1 ? 's' : '') . " à effectuer.";
         //     }
@@ -186,7 +189,6 @@ class AppointmentsController extends Controller
 
             }
         }
-
         $newSubscription = Subscription::createSubscription($param, $existingClient, $service);
         if ($newSubscription) {
             $subscription_id = $newSubscription->id;
@@ -215,6 +217,9 @@ class AppointmentsController extends Controller
         $calendarService = app(\App\Services\GoogleCalendarService::class);
         $calendarService->syncAppointment($appoint);
 
+        // Mail::to('contact@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appoint));
+        Mail::to('fy.rakotojaona@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appointment));
+        
         return $this->apiResponse(true, "Félicitations ! Votre réservation a été effectuée avec succès.", [
             'appointment_id'  => $appoint->id,
             'subscription_id' => $appoint->subscription_id,

@@ -44,8 +44,9 @@ class ServicedbController extends Controller
     {
         $service = new Services();
         $categories = ServiceCategory::all();
+        $total_session=0;
         $activemenuservices = 1;
-        return view('service.create', compact('service','categories','activemenuservices'));
+        return view('service.create', compact('service','categories','activemenuservices','total_session'));
     }
 
     /**
@@ -96,7 +97,7 @@ class ServicedbController extends Controller
     {
         $service = Services::find($id);
         $sessions = ServiceSession::where('services_id',$id)->get();
-        $total_session=$sessions->first()->total_session;
+        $total_session=$sessions->first()->total_session ?? 0;
         $activemenuservices = 1;
         return view('service.show', compact('service','activemenuservices','total_session'));
     }
@@ -110,7 +111,7 @@ class ServicedbController extends Controller
          $categories = ServiceCategory::all();
          $activemenuservices = 1;
         $sessions = ServiceSession::where('services_id',$id)->get();
-        $total_session=$sessions->first()->total_session;
+        $total_session=$sessions->first()->total_session ?? 0;
         return view('service.edit', compact('service','categories','activemenuservices','total_session'));
     }
 

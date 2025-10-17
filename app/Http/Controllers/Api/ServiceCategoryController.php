@@ -31,6 +31,10 @@ class ServiceCategoryController extends Controller
         }])
         ->where('is_active', 1)
         ->get();
+        $category5 = $categories->firstWhere('id', 5);
+        if ($category5) {
+            $category5->setRelation('services', $category5->services->sortBy('title')->values());
+        }
         $scat = new Employees();
         $prestataires = Employees::where('is_active', 1)
             ->with(['creneaux' => function ($query) {
