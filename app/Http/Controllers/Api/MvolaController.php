@@ -88,7 +88,13 @@ class MvolaController extends Controller
                     [
                         "key" => "amountFc", 
                         "value" => "1"
-                    ]
+                    ],
+                    "metadata" => [
+                        ["key" => "partnerName", "value" => "Domisyl"],
+                        ["key" => "fc", "value" => "USD"],
+                        ["key" => "amountFc", "value" => "1"]
+                    ],
+                    "callbackUrl" => env('MVOLA_CALLBACK_URL', 'https://domisyl.groupe-syl.com/api/mvola/callback'),
                 ]
             ];
             $response = $this->mvolaService->payIn($token, $correlationId, $payload);
@@ -115,8 +121,7 @@ class MvolaController extends Controller
                 Subscription::changePaid($validated['subscription_id'], $validated['appointment_id']);
 
             }
-
-            return $this->apiResponse(true, "Paiement réussi", $response, 200);
+            return $this->apiResponse(true, "Félicitations ! Votre paiement a été effectué avec succès.", $response, 200);
             
         } catch (\Exception $e) {
             return response()->json([
@@ -126,7 +131,30 @@ class MvolaController extends Controller
         }
     }
 
- 
+    public function callback(Request $request)
+    {
+        $data = $request->all();
+        Log::info('Callback MVola reçu :', $data);
+
+        $reference = $data['requestingOrganisationTransactionReference'] ?? null;
+        $status = $data['status'] ?? 'unknown';
+
+        if ($reference) {
+            $transaction = MvolaTransaction::where('reference', $reference)->first();
+            if ($transaction) {
+                $transaction->update([
+                    'data_status' => json_encode($data),
+                    'status' => $status,
+                ]);
+                if ($status === 'successful') {
+                    Payment::where('reference', $reference)->update(['status' => 'paid']);
+                    Subscription::changePaid($transaction->subscription_id ?? null, $transaction->appointment_id ?? null);
+                }
+            }
+        }
+
+        return response()->json(['message' => 'Callback reçu'], 200);
+    }
 
     private function apiResponse($success, $message, $data = null, $status = 200) {
         return response()->json([

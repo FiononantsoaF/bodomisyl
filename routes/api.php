@@ -66,6 +66,8 @@ Route::post('/user/update',[ClientsController::class, 'update']);
 
 // paiement mvola 
 Route::post('/mvola', [MvolaController::class, 'payIn']);
+Route::post('/mvola/callback', [MvolaController::class, 'callback']);
+
 
 Route::post('/stripe/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
 Route::post('/payments/confirm-stripe', [StripeController::class, 'storeStripe']);

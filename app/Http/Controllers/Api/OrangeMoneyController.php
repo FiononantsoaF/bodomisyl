@@ -71,17 +71,17 @@ class OrangeMoneyController extends Controller
         ]);
         $restoken = json_decode($responseToken->getBody()->getContents(),true)['access_token'];
 
-/*print_r(json_encode([
-                'merchant_key' => $this->merchant_key,
-                'amount' => $amounts,
-                'currency' => 'OUV',
-                'order_id' => $this->mvolaService->uuid(),
-                'return_url' => 'https://domisyl.groupe-syl.com/success',
-                'cancel_url' => 'https://domisyl.groupe-syl.com/cancel',
-                'notif_url' => 'https://domisyl.groupe-syl.com/notif',
-                'lang' => 'fr',
-                'refrence' => $this->mvolaService->uuid()
-            ]));die();*/
+        /*print_r(json_encode([
+                        'merchant_key' => $this->merchant_key,
+                        'amount' => $amounts,
+                        'currency' => 'OUV',
+                        'order_id' => $this->mvolaService->uuid(),
+                        'return_url' => 'https://domisyl.groupe-syl.com/success',
+                        'cancel_url' => 'https://domisyl.groupe-syl.com/cancel',
+                        'notif_url' => 'https://domisyl.groupe-syl.com/notif',
+                        'lang' => 'fr',
+                        'refrence' => $this->mvolaService->uuid()
+        ]));die();*/
 
         $responsePaiement = $this->client->post($this->base_url."/orange-money-webpay/dev/v1/webpayment", [
             'headers' => [
