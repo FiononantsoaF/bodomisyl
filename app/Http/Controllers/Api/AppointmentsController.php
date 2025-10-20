@@ -218,7 +218,7 @@ class AppointmentsController extends Controller
         $calendarService->syncAppointment($appoint);
 
         // Mail::to('contact@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appoint));
-        Mail::to('fy.rakotojaona@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appointment));
+        Mail::to('fy.rakotojaona@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appoint));
         
         return $this->apiResponse(true, "Félicitations ! Votre réservation a été effectuée avec succès.", [
             'appointment_id'  => $appoint->id,

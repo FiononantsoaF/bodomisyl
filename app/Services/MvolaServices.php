@@ -211,7 +211,6 @@ class MvolaServices
         if ($httpCode >= 400) {
             throw new \Exception("Erreur HTTP {$httpCode} lors de la récupération de la transaction. Réponse : $response");
         }
-
         $decoded = json_decode($response, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {

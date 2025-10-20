@@ -40,16 +40,15 @@ class ClientsFilesApiController extends Controller
             $success = true;
             $message = "Aucun fichier trouvé pour ce client avec une souscription active.";
             $data = null;
-
         } else {
             $success = true;
             $message = "Fichiers récupérés avec succès.";
             $data = $clientFiles;
         }
+
         $clientFile = ClientsFiles::where('client_id', $client_id)->first();
         if ($clientFile) {
             $privateLink = $this->googleDriveService->getPrivateLink($clientFile->file_path);
-
             return response()->json([
                 'success' => true,
                 'link' => $privateLink
