@@ -11,7 +11,7 @@ class ServicesController extends Controller
     
     /**
      * @OA\Get(
-     *     path="/api/services",
+     *     path="/api/service",
      *     summary="liste services",
      *     @OA\Response(response="200", description="Success"),
       *    @OA\Parameter(

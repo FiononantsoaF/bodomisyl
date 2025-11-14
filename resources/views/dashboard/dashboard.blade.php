@@ -92,10 +92,12 @@
         @endif
     </div>
 </div>
+
 <p></p>
 <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom" style="letter-spacing: 1px;">
     <i class="far fa-clock me-2"></i>Rendez-vous confirmé
 </h5>
+
 <div class="card shadow-sm g-1">
     <div class="card-body p-0">
         @if ($confirmed->count() > 0)
@@ -163,6 +165,7 @@
 <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom" style="letter-spacing: 1px;">
     <i class="far fa-clock me-2"></i>Rendez-vous en annulé
 </h5>
+
 <div class="card shadow-sm g-1">
     <div class="card-body p-0">
         @if ($cancelled->count() > 0)

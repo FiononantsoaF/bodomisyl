@@ -9,7 +9,9 @@ use App\Models\Clients;
 use App\Models\Employees;
 use App\Models\Payment;
 use App\Models\Creneau;
+use App\Models\Promotion;
 use App\Models\Services;
+use App\Models\ServiceCategory;
 use App\Http\Requests\AppointmentRequest;
 use App\Services\GoogleCalendarService;
 use DB;
@@ -148,21 +150,138 @@ class AppointmentdbController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($id)
     {
-        $appointment = new Appointment();
-        return view('appointment.create', compact('appointment'));
+        $appointment = new appointments();
+        $client = Clients::find($id);
+        if (!$client) {
+            return redirect()->back()->with('error', 'Client introuvable.');
+        }
+        $categories = ServiceCategory::with(['services' => function($query) {
+            $query->where('is_active', 1);
+        }])
+        ->where('is_active', 1)
+        ->get();
+        return view('appointment.create', compact('appointment','categories','client'));
     }
+    public function getServicesByCategory($category_id)
+    {
+        $services = Services::where('service_category_id', $category_id)
+            ->where('is_active', 1)
+            ->get(['id', 'title']);
+        return response()->json($services);
+    }
+    public function getEmployeesByService($service_id)
+    {
+        $employees = Employees::where('is_active', 1)
+            ->whereHas('services', fn($q) => $q->where('services.id', $service_id))
+            ->get(['id','name']);
+        return response()->json($employees);
+    }
+
+    public function getCreneauxByEmployee(Request $request, $employee_id)
+    {
+        $date = $request->query('date');
+
+        $creneaux = Creneau::where('creneau.is_active', 1)
+            ->whereHas('employeesCreneaux', function($q) use ($employee_id) {
+                $q->where('employees_creneau.employee_id', $employee_id)
+                ->where('employees_creneau.is_active', 1);
+            })
+            ->with(['employeesCreneaux' => function($q) use ($employee_id) {
+                $q->where('employees_creneau.employee_id', $employee_id);
+            }])
+            ->get()
+            ->filter(function($creneau) use ($employee_id, $date) {
+                $exists = \App\Models\appointments::where('employee_id', $employee_id)
+                            ->whereTime('start_times', '=', $creneau->creneau) 
+                            ->whereDate('start_times', '=', $date)
+                            ->exists();
+
+                return !$exists;
+            })
+            ->map(function($creneau) use ($employee_id) {
+                $pivot = $creneau->employeesCreneaux->first(); // pivot déjà chargé avec with()
+                return [
+                    'id' => $creneau->id,
+                    'creneau' => $creneau->creneau,
+                    'jour' => $pivot->jour ?? '',
+                ];
+            })
+            ->sortBy('creneau')
+            ->values();
+
+        return response()->json($creneaux);
+    }
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(AppointmentRequest $request)
-    {
-        Appointment::create($request->validated());
+    // public function store(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'client_id' => 'required|integer|exists:clients,id',
+    //         'employee_id' => 'required|integer|exists:employees,id',
+    //         'service_id' => 'required|integer|exists:services,id',
+    //         'creneau_id' => 'integer',
+    //         'appointment_date'=> 'required|date',
+    //         'creneau_id' => 'required|integer',
+    //         'comment' => 'nullable|string',
+    //     ]);
+    //     $creneau = Creneau::find($validatedData['creneau_id']);
+    //     if (!$creneau) {
+    //         return back()->withErrors(['creneau_id' => 'Créneau invalide.']);
+    //     }
+    //     $validatedData['status'] = 'pending';
+    //     $validatedData['start_times'] = date('Y-m-d H:i:s', strtotime($validatedData['appointment_date'].' '.$creneau->creneau));
+    //     $services = Services::find($validatedData['service_id']);
+    //     $clients = Clients::find($validatedData['client_id']);
+    //     $promotions = new Promotion();
+    //     $promotion = $promotions->getPromoPrice($service->id);
+    //     $validatedData['promotion_id']=$promotion->id ?? null;
+        
+    //     $newSubscription = Subscription::createSubscription($validatedData, $clients, $services);
+    //     $validatedData['subscription_id']=$newSubscription->id ?? null;
 
-        return redirect()->route('appointments.index')
-            ->with('success', 'Appointment created successfully.');
+    //     dd($validatedData);
+    //     appointments::create($validatedData);
+    //     return redirect()->route('appointmentsdb')
+    //         ->with('success', 'Rendez-vous créé avec succès.');
+    // }
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'client_id' => 'required|integer|exists:clients,id',
+            'employee_id' => 'required|integer|exists:employees,id',
+            'service_id' => 'required|integer|exists:services,id',
+            'creneau_id' => 'required|integer|exists:creneau,id',
+            'appointment_date' => 'required|date',
+            'comment' => 'nullable|string',
+        ]);
+        $creneau = Creneau::find($validatedData['creneau_id']);
+        if (!$creneau) {
+            return back()->withErrors(['creneau_id' => 'Créneau invalide.']);
+        }
+        $validatedData['status'] = 'pending';
+        $validatedData['start_times'] = date('Y-m-d H:i:s', strtotime($validatedData['appointment_date'].' '.$creneau->creneau));
+
+        $service = Services::find($validatedData['service_id']);
+        $client = Clients::find($validatedData['client_id']);
+
+        if (!$service || !$client) {
+            return back()->withErrors(['message' => 'Client ou prestation introuvable.']);
+        }
+        $promotion = (new Promotion())->getPromoPrice($service->id);
+        $validatedData['promotion_id'] = $promotion['id'] ?? null;
+        $newSubscription = Subscription::createSubscription($validatedData, $client, $service);
+        $validatedData['subscription_id'] = $newSubscription->id ?? null;
+        $validatedData['final_price'] = $promotion['price_promo'] ?? $service->price;
+
+        appointments::create($validatedData);
+
+        return redirect()->route('appointmentsdb')
+            ->with('success', 'Rendez-vous créé avec succès.');
     }
 
     public function creation(Request $request)
@@ -312,10 +431,11 @@ class AppointmentdbController extends Controller
      */
     public function show($id)
     {
-        $appointment = Appointment::find($id);
+        $appointment = appointments::with(['service.serviceCategory', 'employee'])->findOrFail($id);
 
         return view('appointment.show', compact('appointment'));
     }
+
 
     /**
      * Show the form for editing the specified resource.

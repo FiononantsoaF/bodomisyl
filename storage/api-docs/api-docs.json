@@ -130,6 +130,55 @@
                 }
             }
         },
+        "/api/cartecadeauservice": {
+            "get": {
+                "summary": "liste categories",
+                "operationId": "3e5d9d9c989905757d4116a99c45df73",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/cartecadeauservice/create": {
+            "post": {
+                "summary": "Achat carte cadeau",
+                "operationId": "fe9cbcbaa9265a0bc9d6fdf81ecab991",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "service_id": {
+                                        "type": "integer"
+                                    },
+                                    "amount": {
+                                        "type": "string"
+                                    },
+                                    "benefeciaire": {
+                                        "type": "string"
+                                    },
+                                    "contact": {
+                                        "type": "string"
+                                    },
+                                    "client_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/client/login": {
             "post": {
                 "summary": "Login client",
@@ -284,7 +333,7 @@
         },
         "/api/mvola": {
             "post": {
-                "summary": "Payer ",
+                "summary": "Initier un paiement MVola",
                 "operationId": "8c1dc05219375293f53a9bccc958d2e3",
                 "requestBody": {
                     "required": true,
@@ -293,19 +342,24 @@
                             "schema": {
                                 "properties": {
                                     "amount": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1000
                                     },
                                     "price": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1000
                                     },
                                     "client_phone": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "0340000000"
                                     },
                                     "appointment_id": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "subscription_id": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -315,7 +369,13 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "Transaction initiée"
+                    },
+                    "400": {
+                        "description": "Données invalides"
+                    },
+                    "500": {
+                        "description": "Erreur serveur"
                     }
                 }
             }
@@ -379,6 +439,17 @@
                 }
             }
         },
+        "/api/services": {
+            "get": {
+                "summary": "Liste des catégories de services avec leurs prestations actives",
+                "operationId": "8a2c42e9028cd20b1876742c50416aaf",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/checkcreneau": {
             "post": {
                 "summary": "Vérifier creneau",
@@ -411,10 +482,10 @@
                 }
             }
         },
-        "/api/services": {
+        "/api/service": {
             "get": {
                 "summary": "liste services",
-                "operationId": "ffb250894d9d1bcc6f0c957836a94f57",
+                "operationId": "047755c8af84519fc8294b1fbfdb5c32",
                 "parameters": [
                     {
                         "name": "idservicecateg",
@@ -545,6 +616,17 @@
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/temoignage": {
+            "get": {
+                "summary": "liste des temoignages",
+                "operationId": "94bed64d127a443109b18d469a7ff062",
                 "responses": {
                     "200": {
                         "description": "Success"

@@ -62,8 +62,6 @@ class Subscription extends Model
         if ($service && $service->validity_days != 0) {
 
             $total = Subscription::getTotalSession($service);
-            // print_r($total);
-            // die();
             $startDate = Carbon::parse($param['start_times']);
             if($service->validity_days > 0)
             {            

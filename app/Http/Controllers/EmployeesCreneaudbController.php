@@ -27,22 +27,77 @@ class EmployeesCreneaudbController extends Controller
             'appointments.client'
         ]);
 
+        $daysOfWeek = [
+            1 => 'Lundi',
+            2 => 'Mardi',
+            3 => 'Mercredi',
+            4 => 'Jeudi',
+            5 => 'Vendredi',
+            6 => 'Samedi',
+            7 => 'Dimanche'
+        ];
+
+        // Valeurs des filtres actuelles
+        $employeeName = $request->employee_name;
+        $phone = $request->phone;
+        $email = $request->email;
+        $selectedDay = $request->day;
+        $selectedHour = $request->hour;
+
+        // Filtrage employé
         if ($request->filled('employee_name')) {
-            $query->where('name', 'like', '%' . $request->employee_name . '%');
+            $query->where('name', 'like', '%' . $employeeName . '%');
         }
 
         if ($request->filled('phone')) {
-            $query->where('phone', '=', $request->phone);
+            $query->where('phone', '=', $phone);
         }
 
         if ($request->filled('email')) {
-            $query->where('email', '=', $request->email);
+            $query->where('email', '=', $email);
+        }
+
+        // Filtrer par jour
+        if ($request->filled('day')) {
+            $query->whereHas('creneaux', function ($q) use ($selectedDay) {
+                $q->where('employees_creneau.jour', $selectedDay);
+            });
+        }
+
+        // Filtrer par heure
+        if ($request->filled('hour')) {
+            $query->whereHas('creneaux', function ($q) use ($selectedHour) {
+                $q->whereRaw('CAST(creneau AS TIME) = ?', [$selectedHour]);
+            });
+        }
+
+        // Réinitialiser les filtres
+        if ($request->has('reset')) {
+            return redirect()->to(url()->current());
         }
 
         $employees = $query->get();
+
+        // 🔹 Extraire toutes les heures disponibles des employés filtrés
+        $availableHours = $employees->flatMap(function ($employee) {
+            return $employee->creneaux->pluck('creneau');
+        })->unique()->sort()->values();
+
         $menuemployee = 1;
-        return view('employees-creneau.index', compact('employees', 'menuemployee'));
+
+        return view('employees-creneau.index', compact(
+            'employees',
+            'menuemployee',
+            'daysOfWeek',
+            'availableHours',
+            'employeeName',
+            'phone',
+            'email',
+            'selectedDay',
+            'selectedHour'
+        ));
     }
+
 
 
     /**

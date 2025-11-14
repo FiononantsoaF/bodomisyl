@@ -50,5 +50,11 @@ class Creneau extends Model
 
         return $creneaux;
     }
+    public function employeesCreneaux()
+    {
+        return $this->belongsToMany(Employees::class, 'employees_creneau', 'creneau_id', 'employee_id')
+                    ->withPivot('is_active', 'jour');
+    }
+
 
 }

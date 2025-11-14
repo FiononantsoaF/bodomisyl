@@ -87,8 +87,47 @@ class ServiceCategoryController extends Controller
         'prestataires' => $prestataires,
         'logo'=> $logo,
         'back'=> $back
-    ]);
+     ]);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/services",
+     *     summary="Liste des catégories de services avec leurs prestations actives",
+     *     @OA\Response(response="200", description="Success"),
+     * )
+     */
+    public function services() {
+        $serviceCategories = ServiceCategory::with(['services' => function($query) {
+            $query->where('is_active', 1);
+        }])
+        ->where('is_active', 1)
+        ->get();
+
+        if ($serviceCategories->count() > 0) {
+            $serviceCategories->transform(function ($category) {
+                if ($category->image_url) {
+                    $category->image_url = asset('imageformule/' . ltrim($category->image_url, '/'));
+                }
+                return $category;
+            });
+
+            return $this->apiResponse(
+                true,
+                "Liste des catégories et prestations actives",
+                $serviceCategories,
+                200
+            );
+        } else {
+            return $this->apiResponse(
+                false,
+                "Aucune catégorie ou prestation active",
+                null,
+                200
+            );
+        }
+    }
+
 
     /**
      * @OA\Post(

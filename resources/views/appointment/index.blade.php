@@ -116,9 +116,10 @@
                                         <th>Prix</th>
                                         <th>Prix_promo</th>
                                         <th>Date RDV</th>
-                                        <th>Durée</th>
+                                        <!-- <th>Durée</th> -->
                                         <th>Abonnement</th>
                                         <th>Statut</th>
+                                        <th>Détails</th>
                                         @if($showActions) 
                                         <th class="text-end">Actions</th>
                                         <th>Mise à jour</th>
@@ -151,8 +152,8 @@
                                             <td>
                                                 {{ \Carbon\Carbon::parse($appointment->date_reserver)->format('d/m/Y H:i') }}
                                             </td>
-                                            <td>{{ ($appointment->dure_minute ?? 0) > 0 ? $appointment->dure_minute . ' min' : '-' }}
-                                            </td>
+                                             <!-- <td>{{ ($appointment->dure_minute ?? 0) > 0 ? $appointment->dure_minute . ' min' : '-' }}
+                                            </td> -->
                                             <td>
                                                 {{ $appointment->subscription_id ? 'oui' : 'non' }}
                                             </td>
@@ -171,7 +172,11 @@
                                                     </span>    
                                                 @endif
                                             </td>
-
+                                            <td>
+                                                <a href="{{ route('appointments.show', $appointment->idrdv) }}" class="btn btn-sm btn-info" title="Voir les détails du rendez-vous">
+                                                    <i class="fas fa-info-circle"></i> 
+                                                </a>
+                                            </td>
                                             @if($showActions)
                                             <td class="text-end">
                                                 <div>

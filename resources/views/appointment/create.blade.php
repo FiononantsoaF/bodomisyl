@@ -5,24 +5,24 @@
 @endsection
 
 @section('content')
-    <section class="content container-fluid">
+    <div class="container-fluid small mb-2 py-1 p-0">
         <div class="row">
             <div class="col-md-12">
-
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Appointment</span>
+                <div class="card mb-1">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-search me-2"></i> Nouveau rendez-vous pour : {{ $client->name }}
+                        </h5>
                     </div>
-                    <div class="card-body bg-white">
-                        <form method="POST" action=""  role="form" enctype="multipart/form-data">
+                </div>
+                <div class="card shadow-sm mb-1"> 
+                        <form method="POST" action="{{route('appointmentsdb/save')}}"  role="form" enctype="multipart/form-data" class="row g-1">
                             @csrf
 
                             @include('appointment.form')
-
                         </form>
-                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 @endsection
