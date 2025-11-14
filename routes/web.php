@@ -22,6 +22,10 @@ use App\Http\Controllers\CurrencydbController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PromotiondbController;
 use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\TestimonialdbController;
+use App\Http\Controllers\CarteCadeauServicedbController;
+use App\Http\Controllers\CarteCadeauClientdbController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,15 +45,26 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+// Route::get('/calendarprestataire',[GoogleCalendarController::class,'prestataire'])->name('calendar.prestataire');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/stat', [DashboardController::class, 'statistique'])->name('stat');
+
     Route::post('/dashboard/changestate/{id}', [DashboardController::class, 'changestate'])->name('dashboard.changestate');
 
     //appointment
     Route::get('/appointmentsdb', [AppointmentdbController::class, 'index'])->name('appointmentsdb');
     Route::post('/appointmentsdb/changestate/{id}', [AppointmentdbController::class, 'changestate'])->name('appointmentsdb.changestate');
     Route::post('/appointmentsdb/creation', [AppointmentdbController::class, 'creation'])->name('appointmentsdb.creation');
+    Route::get('/appointmentsdb/show/{id}', [AppointmentdbController::class, 'show'])->name('appointments.show'); 
+    Route::get('/appointmentsdb/create/{id}', [AppointmentdbController::class, 'create'])->name('appointmentsdb.create');
+
+    Route::get('/services-by-category/{category}', [AppointmentdbController::class, 'getServicesByCategory']);
+    Route::get('/employees-by-service/{service}', [AppointmentdbController::class, 'getEmployeesByService']);
+    Route::get('/creneaux-by-employee/{employee}', [AppointmentdbController::class, 'getCreneauxByEmployee']);
+    Route::post('/appointmentsdb/save', [AppointmentdbController::class, 'store'])->name('appointmentsdb/save');
 
     Route::get('/service/{service_id}/prestataires', [AppointmentdbController::class, 'getPrestatairesByService']);
     Route::get('/employee/{id}/creneaux-disponibles', [AppointmentdbController::class, 'getCreneauxDisponibles']);
@@ -119,10 +134,19 @@ Route::middleware(['auth'])->group(function () {
 
     // calendar
     Route::get('/calendar', [GoogleCalendarController::class, 'index'])->name('calendar.index');
+    Route::get('/calendar/prestataire',[GoogleCalendarController::class,'prestataire'])->name('calendar.prestataire');
     Route::post('/calendar', [GoogleCalendarController::class, 'store'])->name('calendar.store');
     Route::put('/calendar/{id}', [GoogleCalendarController::class, 'update'])->name('calendar.update');
     Route::delete('/calendar/{id}', [GoogleCalendarController::class, 'destroy'])->name('calendar.destroy');
     Route::post('/calendar/sync', [GoogleCalendarController::class, 'syncEvents'])->name('calendar.sync');
+
+
+    Route::get('/testimonial',[TestimonialdbController::class, 'index'])->name('testimonialdb');
+    Route::post('/testimonial/store',[TestimonialdbController::class, 'store'])->name('testimonialdb.store');
+    Route::post('/testimonialdb/{id}/toggle', [TestimonialdbController::class, 'toggle'])->name('testimonialdb.toggle');
+    Route::delete('/testimonialdb/{id}', [TestimonialdbController::class, 'destroy'])->name('testimonialdb.destroy');
+
+
 
     //client
     Route::get('/client', [ClientdbController::class, 'index'])->name('clientdb');
@@ -180,6 +204,24 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('/mvola-test-form', function () {
     //     return view('mvola/index');
     // });
+
+    Route::get('/cartecadeauservice', [CarteCadeauServicedbController::class, 'index'])->name('cartecadeauservicedb');
+    Route::get('/cartecadeauservice/create', [CarteCadeauServicedbController::class, 'create'])->name('cartecadeauservicedb.create');
+    Route::post('/cartecadeauservice/store', [CarteCadeauServicedbController::class, 'store'])
+        ->name('cartecadeauservicedb.store');
+
+    Route::get('/cartecadeauservice/edit/{id}',[CarteCadeauServicedbController::class, 'edit'])
+        ->name('cartecadeauservicedb.edit');
+
+    Route::get('/cartecadeauservice/search-all', [CarteCadeauServicedbController::class, 'searchAll'])
+        ->name('cartecadeauservicedb.searchAll');
+        
+    Route::get('/cartecadeauservice/search', [CarteCadeauServicedbController::class, 'search'])
+        ->name('cartecadeauservicedb.search');
+
+
+    Route::get('/cartecadeauclient', [CarteCadeauClientdbController::class, 'index'])->name('cartecadeauclientdb');
+
 
     Route::get('/success', function () {
         return view('mvola/success');

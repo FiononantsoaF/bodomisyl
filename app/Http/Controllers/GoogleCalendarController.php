@@ -49,8 +49,113 @@ class GoogleCalendarController extends Controller
             'google_email' => env('GOOGLE_CALENDAR_ID')
         ]);
     }
+    public function prestataire()
+    {
+        $employees = Employees::all();
 
-    
+        // 🔹 Liste des prestataires (pour le filtre)
+        $resources = $employees->map(function($employee) {
+            return [
+                'id' => $employee->id,
+                'title' => $employee->name,
+            ];
+        });
+
+        $events = [];
+
+        // 🗓️ Semaine actuelle (Lundi → Dimanche)
+        $startOfWeek = now()->startOfWeek(); // Lundi = jour 1
+
+        foreach ($employees as $employee) {
+            $creneaux = \DB::table('employees_creneau')
+                ->join('creneau', 'creneau.id', '=', 'employees_creneau.creneau_id')
+                ->where('employees_creneau.employee_id', $employee->id)
+                ->select('creneau.creneau', 'employees_creneau.is_active', 'employees_creneau.jour')
+                ->get();
+
+            foreach ($creneaux as $creneau) {
+                // Vérifie que le jour est valide entre 1 et 7
+                if ($creneau->jour < 1 || $creneau->jour > 7) {
+                    continue;
+                }
+                $dateJour = $startOfWeek->copy()->addDays($creneau->jour - 1);
+                $creneauTime = date('H:i:s', strtotime($creneau->creneau));
+                $endTime = date('H:i:s', strtotime('+0 hour', strtotime($creneau->creneau)));
+
+                $start = $dateJour->format('Y-m-d') . 'T' . $creneauTime;
+                $end = $dateJour->format('Y-m-d') . 'T' . $endTime;
+
+                $events[] = [
+                    'id' => $employee->id . '-' . $dateJour->format('Y-m-d') . '-' . $creneauTime,
+                    'title' => $employee->name,
+                    'start' => $start,
+                    'end' => $end,
+                    'backgroundColor' => $creneau->is_active ? '#10B981' : '#EF4444',
+                    'borderColor' => $creneau->is_active ? '#059669' : '#DC2626',
+                    'extendedProps' => [
+                        'status' => $creneau->is_active ? 'Actif' : 'Désactivé',
+                        'employeeName' => $employee->name,
+                        'creneau' => $creneau->creneau,
+                        'jour' => $creneau->jour,
+                    ],
+                ];
+            }
+        }
+
+        return view('calendar.prestataire', compact('resources', 'events'));
+    }
+
+    // public function prestataire()
+    // {
+    //     $employees = Employees::all();
+
+    //     $resources = $employees->map(function($employee) {
+    //         return [
+    //             'id' => $employee->id,
+    //             'title' => $employee->name,
+    //         ];
+    //     });
+
+    //     $events = [];
+        
+    //     // Générer les événements pour la semaine en cours
+    //     $startOfWeek = now()->startOfWeek();
+    //     $endOfWeek = now()->endOfWeek();
+
+    //     foreach ($employees as $employee) {
+    //         $creneaux = \DB::table('employees_creneau')
+    //             ->join('creneau', 'creneau.id', '=', 'employees_creneau.creneau_id')
+    //             ->where('employees_creneau.employee_id', $employee->id)
+    //             ->select('creneau.creneau', 'employees_creneau.is_active')
+    //             ->get();
+
+    //         foreach ($creneaux as $creneau) {
+    //             for ($date = $startOfWeek->copy(); $date <= $endOfWeek; $date->addDay()) {
+    //                 $creneauTime = date('H:i:s', strtotime($creneau->creneau));
+    //                 $start = $date->format('Y-m-d') . 'T' . $creneauTime;
+    //                 $end = $date->format('Y-m-d') . 'T' . $creneauTime;
+
+    //                 $events[] = [
+    //                     'id' => $employee->id.'-'.$date->format('Y-m-d').'-'.$creneauTime,
+    //                     'title' => $creneau->is_active ? '' : '',
+    //                     'start' => $start,
+    //                     'end' => $end,
+    //                     'resourceId' => $employee->id,
+    //                     'backgroundColor' => $creneau->is_active ? '#10B981' : '#EF4444',
+    //                     'borderColor' => $creneau->is_active ? '#059669' : '#DC2626',
+    //                     'extendedProps' => [
+    //                         'status' => $creneau->is_active ? 'Actif' : 'Désactivé',
+    //                         'employeeName' => $employee->name,
+    //                         'creneau' => $creneau->creneau,
+    //                     ]
+    //                 ];
+    //             }
+    //         }
+    //     }
+
+    //     return view('calendar.prestataire', compact('resources', 'events'));
+    // }
+
     // public function index()
     // {
     //     $userEmail = auth()->user()->email;

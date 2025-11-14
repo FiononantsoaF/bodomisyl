@@ -87,10 +87,6 @@ class MvolaServices
             throw new Exception("Token d'accès manquant.");
         }
         $url = $this->base_url . '/mvola/mm/transactions/type/merchantpay/1.0.0/';
-        // echo "URL de l'API: " . $url; 
-        // $correlationId = $this->uuid();
-        // echo "Correlation ID: $correlationId"; 
-
         $headers = [
             "Authorization: Bearer $access_token",
             "X-CorrelationID: $correlationId", 

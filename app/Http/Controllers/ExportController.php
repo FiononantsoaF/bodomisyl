@@ -38,12 +38,14 @@ class ExportController extends Controller
     }
 
 
-    public function exportEmployees()
+    public function exportEmployees(Request $request)
     {
         $now = Carbon::now()->format('dmY_H\hi');
         $fileName = "employees_créneaux_domisyl_{$now}.xlsx";
-        
-        return Excel::download(new EmployeesExport, $fileName);
+        $filters = $request->only(['employee_name', 'phone', 'email', 'day', 'hour']);
+
+        return Excel::download(new EmployeesExport($filters), $fileName);
+        // return Excel::download(new EmployeesExport, $fileName);
     }
 
     // public function exportFiltre(Request $request){

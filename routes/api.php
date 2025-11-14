@@ -15,7 +15,9 @@ use App\Http\Controllers\Api\PromotionsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OrangeMoneyController;
 use App\Http\Controllers\Api\ClientsFilesApiController;
-
+use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\TestimonialController;
+use App\Http\Controllers\Api\CarteCadeauServiceApiController;
 
 
 
@@ -36,7 +38,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('/service-category', ServiceCategoryController::class);
 // Route::apiResource('/services', ServicesController::class);
-Route::get('/services', [ServicesController::class, 'index']);
+// Route::get('/services', [ServicesController::class, 'index']);
+Route::get('/services', [ServiceCategoryController::class, 'services']);
+
 Route::get('/creneaus', [CreneauController::class, 'index']);
 
 Route::get('/employees', [EmployeesController::class, 'index']);
@@ -76,4 +80,14 @@ Route::post('/orangemoney/uuid', [OrangeMoneyController::class, 'uuid']);
 Route::post('/orangemoney/pocess-payement', [OrangeMoneyController::class, 'processPayement']);
 
 Route::get('/clientsfiles/{client_id}', [ClientsFilesApiController::class, 'show']);
+
+Route::get('/temoignage', [TestimonialController::class, 'index']);
+Route::get('/cartecadeauservice',[CarteCadeauServiceApiController::class, 'index']);
+Route::post('/cartecadeauservice/create',[CarteCadeauServiceApiController::class, 'create']);
+
+
+
+
+// Chatbot 
+Route::post('/chat', [ChatController::class, 'chat']);
 
