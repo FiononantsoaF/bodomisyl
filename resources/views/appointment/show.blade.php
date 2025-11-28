@@ -52,6 +52,12 @@
                                                 <strong>{{ $appointment->employee->name ?? 'Non assigné' }}</strong>
                                             </div>
                                         </div>
+                                        <div class="info-item d-flex align-items-start mb-3">
+                                            <i class="fas fa-gift text-muted mt-1 me-2"></i>
+                                            <div>
+                                                <div class="text-muted d-block"><strong>{{ $appointment->cartecadeauclient->code ?? '' }}</strong></div>  
+                                            </div>
+                                        </div>
 
                                     </div>
                                 </div>

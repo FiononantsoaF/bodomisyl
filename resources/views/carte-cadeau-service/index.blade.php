@@ -21,35 +21,37 @@
                 </div>
                 <div class="card-body p-2 border-0">
                     <form method="GET" class="row g-2">
-                        <div class="col-md-3 col-sm-6">
-                            <label for="service_id" class="form-label small">Prestation</label>
-                            <select name="service_id" id="service_id" class="form-select form-select-sm select2">
-                                <option value="">-- Sélectionner --</option>
-                                @foreach ($services as $service)
-                                    <option value="{{ $service->id }}" 
-                                        {{ request('service_id') == $service->id ? 'selected' : '' }}>
-                                        {{ $service->title }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 col-sm-6">
-                            <label for="date" class="form-label small">Date d'ajout</label>
-                            <input type="date" id="date" name="date" value="{{ request('date') }}" 
-                                class="form-control form-control-sm" autocomplete="off">
-                        </div>
-
-                        <div class="col-md-4 col-lg-6">
-                            <div class="d-flex gap-2 mt-1"> 
-                                <button type="submit" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-search me-1"></i> Rechercher
-                                </button>
-                                <a href="{{ route('cartecadeauservicedb') }}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-eraser me-1"></i> Effacer
-                                </a>
+                        <div class="row align-items-end mb-1 g-1">
+                            <div class="col-md-3 col-sm-6">
+                                <label for="service_id" class="form-label small">Prestation</label>
+                                <select name="service_id" id="service_id" class="form-select form-select-sm select2">
+                                    <option value="">-- Sélectionner --</option>
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}" 
+                                            {{ request('service_id') == $service->id ? 'selected' : '' }}>
+                                            {{ $service->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="date" class="form-label small">Date d'ajout</label>
+                                <input type="date" id="date" name="date" value="{{ request('date') }}" 
+                                    class="form-control form-control-sm" autocomplete="off">
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <label for="date" class="form-label small"></label>
+                                <div class="d-flex gap-2"> 
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-search me-1"></i> Rechercher
+                                    </button>
+                                    <a href="{{ route('cartecadeauservicedb') }}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-eraser me-1"></i> Effacer
+                                    </a>
+                                </div>
                             </div>
                         </div>
+
                     </form>
                 </div>
 
@@ -84,13 +86,19 @@
                                                 <span class="badge bg-secondary">Inactif</span>
                                             @endif
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" >
                                             <button class="btn btn-sm btn-outline-primary edit-btn" title="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-outline-danger delete-btn" title="Supprimer">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <form action="{{ route('cartecadeauservicedb.destroy', $carte->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger delete-btn" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+
+
                                         </td>
                                     </tr>
 
@@ -223,7 +231,6 @@
                                         class="form-control form-control-sm amount" 
                                         data-service="${service.id}"
                                         min="0" 
-                                        step="100"
                                         placeholder="Montant">
                                 </td>
                             `;
@@ -367,6 +374,8 @@
             });
         });
 
+        
+
         // Réinitialiser le formulaire à la fermeture du modal
         document.getElementById('addCarteModal').addEventListener('hidden.bs.modal', function() {
             carteForm.reset();
@@ -378,34 +387,51 @@
         document.querySelectorAll('.edit-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const row = this.closest('tr');
+                if (row.classList.contains('updating')) return;
+                row.classList.add('updating');
+
                 const reductionCell = row.querySelector('.reduction-cell');
                 const amountCell = row.querySelector('.amount-cell');
                 const reductionText = reductionCell.querySelector('.reduction-text');
                 const amountText = amountCell.querySelector('.amount-text');
+                const actionsCell = row.querySelector('td.text-center');
+                const editBtn = actionsCell.querySelector('.edit-btn');
+                const deleteBtn = actionsCell.querySelector('.delete-btn');
 
-                // Vérifier si input n'existe pas déjà
                 if (!reductionCell.querySelector('input') && !amountCell.querySelector('input')) {
-                    const currentReduction = reductionText.textContent.replace(' %', '').trim() !== '—' ? reductionText.textContent.replace(' %', '').trim() : '';
-                    const currentAmount = amountText.textContent.replace(' Ar', '').replace(/\s/g, '').trim() !== '—' ? amountText.textContent.replace(' Ar', '').replace(/\s/g, '').trim() : '';
-
+                    const currentReduction = reductionText.textContent.replace(' %', '').trim() !== '—'
+                        ? reductionText.textContent.replace(' %', '').trim()
+                        : '';
+                    const currentAmount = amountText.textContent.trim() !== '—'
+                        ? amountText.textContent.replace(' Ar', '').replace(/\s/g, '').replace(',', '.').trim()
+                        : '';
                     reductionCell.innerHTML = `<input type="number" class="form-control form-control-sm reduction-input" value="${currentReduction}" min="0" max="100" step="0.1">`;
                     amountCell.innerHTML = `<input type="number" class="form-control form-control-sm amount-input" value="${currentAmount}" min="0" step="100">`;
 
-                    // Boutons de sauvegarde et annulation
-                    const actionsCell = row.querySelector('td.text-center');
-                    actionsCell.innerHTML += `
-                        <button class="btn btn-sm btn-success save-btn" title="Enregistrer">✓</button>
-                        <button class="btn btn-sm btn-secondary cancel-btn" title="Annuler">✗</button>
-                    `;
+                    // Masquer edit/delete
+                    editBtn.style.display = 'none';
+                    deleteBtn.style.display = 'none';
+
+                    // Créer les boutons save et cancel
+                    const saveBtn = document.createElement('button');
+                    saveBtn.className = 'btn btn-sm btn-success save-btn';
+                    saveBtn.title = 'Enregistrer';
+                    saveBtn.textContent = '✓';
+
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.className = 'btn btn-sm btn-secondary cancel-btn';
+                    cancelBtn.title = 'Annuler';
+                    cancelBtn.textContent = '✗';
+
+                    actionsCell.appendChild(saveBtn);
+                    actionsCell.appendChild(cancelBtn);
 
                     const reductionInput = reductionCell.querySelector('.reduction-input');
                     const amountInput = amountCell.querySelector('.amount-input');
-                    const saveBtn = actionsCell.querySelector('.save-btn');
-                    const cancelBtn = actionsCell.querySelector('.cancel-btn');
 
-                    // Mutually exclusive
+                    // Mutuellement exclusif
                     reductionInput.addEventListener('input', () => {
-                        if(reductionInput.value) {
+                        if (reductionInput.value) {
                             amountInput.disabled = true;
                             amountInput.value = '';
                         } else {
@@ -414,7 +440,7 @@
                     });
 
                     amountInput.addEventListener('input', () => {
-                        if(amountInput.value) {
+                        if (amountInput.value) {
                             reductionInput.disabled = true;
                             reductionInput.value = '';
                         } else {
@@ -422,27 +448,30 @@
                         }
                     });
 
-                    // Sauvegarde via AJAX
+                    // Sauvegarde
                     saveBtn.addEventListener('click', () => {
                         const newReduction = reductionInput.value;
                         const newAmount = amountInput.value;
                         const carteId = row.getAttribute('data-id');
 
-                        fetch(`/cartecadeauservicedb/update/${carteId}`, {
+                        fetch(`/cartecadeauservice/update/${carteId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') || ''
                             },
                             body: JSON.stringify({ reduction_percent: newReduction, amount: newAmount })
                         })
                         .then(res => res.json())
                         .then(data => {
-                            if(data.success) {
+                            if(data.success){
                                 reductionCell.innerHTML = `<span class="reduction-text">${newReduction ? newReduction + ' %' : '—'}</span>`;
                                 amountCell.innerHTML = `<span class="amount-text">${newAmount ? parseFloat(newAmount).toLocaleString('fr-FR', {minimumFractionDigits:2}) + ' Ar' : '—'}</span>`;
                                 saveBtn.remove();
                                 cancelBtn.remove();
+                                editBtn.style.display = 'inline-block';
+                                deleteBtn.style.display = 'inline-block';
+                                row.classList.remove('updating');
                             } else {
                                 alert('Erreur lors de la mise à jour');
                             }
@@ -456,10 +485,14 @@
                         amountCell.innerHTML = `<span class="amount-text">${amountText.textContent}</span>`;
                         saveBtn.remove();
                         cancelBtn.remove();
+                        editBtn.style.display = 'inline-block';
+                        deleteBtn.style.display = 'inline-block';
+                        row.classList.remove('updating');
                     });
                 }
             });
         });
+
     });
 
 

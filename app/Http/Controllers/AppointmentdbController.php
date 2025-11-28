@@ -47,6 +47,8 @@ class AppointmentdbController extends Controller
         if ($prestataireUser) {
             $param['prestataire'] = $prestataireUser->id;
         }
+        
+        $carte_cadeau_client = (isset($param['carte_cadeau_code']) && !isset($param['reset'])) ? $param['carte_cadeau_code'] : null;
         $phone = (isset($param['phone']) && !isset($param['reset'])) ? $param['phone'] : null;
         $email = (isset($param['email']) && !isset($param['reset'])) ? $param['email'] : null;
         $name  = (isset($param['name']) && !isset($param['reset']))  ? $param['name']  : null;
@@ -102,6 +104,9 @@ class AppointmentdbController extends Controller
         }
         if($prestataire){
             $query->where('ap.employee_id',$prestataire);
+        }
+        if($carte_cadeau_client) {
+            $query->where('ap.carte_cadeau_code',$carte_cadeau_client);
         }
 
         $now = Carbon::now()->format('dmY_H\hi');
@@ -400,6 +405,7 @@ class AppointmentdbController extends Controller
             'client_id'       => $appointment->client_id,
             'total_amount'    => $request->total_amount,
             'deposit'         => $request->total_amount,
+            'code_carte_cadeau_client' =>null,
             'method'          => $request->method,
             'status'          => 'paid',
             'paid_at'         => Carbon::now(),
@@ -431,7 +437,8 @@ class AppointmentdbController extends Controller
      */
     public function show($id)
     {
-        $appointment = appointments::with(['service.serviceCategory', 'employee'])->findOrFail($id);
+        $appointment = appointments::with(['service.serviceCategory', 'employee','cartecadeauclient'])->findOrFail($id);
+        dd($appointment);
 
         return view('appointment.show', compact('appointment'));
     }

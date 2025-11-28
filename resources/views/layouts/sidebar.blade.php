@@ -1,7 +1,13 @@
     <body class="sb-nav-fixed">
         @php
-                $user = auth()->user();
+            $user = auth()->user();
         @endphp
+
+        @if(!$user)
+            @php
+                abort(404);
+            @endphp
+        @endif
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
             @if($user->role === 'prestataire')
@@ -52,10 +58,10 @@
                                     <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
                                     Calendrier rendez-vous
                                 </a>
-                                <!--a class="nav-link" href="{{ route('calendar.prestataire') }}">
+                                <a class="nav-link" href="{{ route('calendar.prestataire') }}">
                                     <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
                                     Calendrier prestataires
-                                </a-->
+                                </a>
                                 <a class="nav-link" href="{{ route('paymentdb') }}">
                                     <div class="sb-nav-link-icon"><i class="bi bi-credit-card"></i></div>
                                     Suivi des  paiements
@@ -149,17 +155,17 @@
                                 </nav>
                             </div>
 
-                            <!--a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapscarte" aria-expanded="false" aria-controls="collapseLayouts">
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapscarte" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                                 Carte cadeau
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse @if(isset($activeccs)) show @else @endif" id="collapscarte" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse @if(isset($activemenuccs)) show @else @endif" id="collapscarte" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="{{ route('cartecadeauclientdb') }}">Liste des cartes cadeaux</a>
                                     <a class="nav-link" href="{{ route('cartecadeauservicedb') }}">Liste prestations en carte cadeau</a>       
                                 </nav>
-                            </div-->
+                            </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseutilisateur" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                                 Utilisateur Backoffice
@@ -171,7 +177,7 @@
                                 </nav>
                             </div>
 
-                            <!--a class="nav-link" href="{{ route('stat') }}">
+                            <a class="nav-link" href="{{ route('stat') }}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
                                  Statistiques des rendez-vous
                             </a>
@@ -179,7 +185,7 @@
                             <a class="nav-link" href="{{ route('testimonialdb') }}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
                                  Temoignage client
-                            </a -->
+                            </a>
                              @elseif($user->role === 'prestataire')
                                 <a class="nav-link" href="{{ route('dashboard.prestataire') }}">
                                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>

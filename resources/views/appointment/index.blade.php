@@ -161,7 +161,8 @@
                                                 @if($appointment->status == 'pending')         
                                                     <span class="badge bg-warning bg-opacity-15 text-warning" style="color:black!important;">
                                                         <i class="fas fa-clock me-1"></i> En attente
-                                                    </span>         
+                                                    </span>  
+                                                           
                                                 @elseif($appointment->status == 'confirmed')
                                                     <span class="badge bg-success bg-opacity-15 text-success" style="color:black!important;">
                                                         <i class="fas fa-check-circle me-1"></i> Confirmé
@@ -179,7 +180,7 @@
                                             </td>
                                             @if($showActions)
                                             <td class="text-end">
-                                                <div>
+                                                
                                                     <form class="btn-group btn-group-sm" role="group" action="{{ route('appointmentsdb.changestate',$appointment->idrdv) }}" method="POST">
                                                         @csrf
                                                         <button class="btn btn-outline-success" type="submit" name="valider" value="1" onclick="return confirm('Voulez vous valider ce rendez vous ?')" title="Valider rendez-vous">
@@ -192,7 +193,7 @@
                                                             <i class="fas fa-times-circle"></i>
                                                         </button>
                                                     </form>
-                                                </div>
+                                                
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-warning" title="Reporter la date de rdv"
@@ -302,71 +303,72 @@
             </div>
         </div>
     </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    $('#start_date').on('change', function() {
-        let startDate = $(this).val();
-        let endDateInput = $('#end_date');
-        endDateInput.attr('min', startDate);
-        if (!endDateInput.val() || endDateInput.val() < startDate) {
-            endDateInput.val(startDate);
-        }
-        // endDateInput.focus();
-    });
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#start_date').on('change', function() {
+            let startDate = $(this).val();
+            let endDateInput = $('#end_date');
+            endDateInput.attr('min', startDate);
+            if (!endDateInput.val() || endDateInput.val() < startDate) {
+                endDateInput.val(startDate);
+            }
+            // endDateInput.focus();
+        });
 
-    $('.postpone-modal').on('shown.bs.modal', function() {
-        var modal = $(this);
-        var serviceId = modal.data('service-id');
-        var dateInput = modal.find('.new-date');
-        var employeeSelect = modal.find('.employee-select');
-        var creneauxDiv = modal.find('.creneau-buttons');
-        var hiddenInput = modal.find('input[name="new_creneau"]');
+        $('.postpone-modal').on('shown.bs.modal', function() {
+            var modal = $(this);
+            var serviceId = modal.data('service-id');
+            var dateInput = modal.find('.new-date');
+            var employeeSelect = modal.find('.employee-select');
+            var creneauxDiv = modal.find('.creneau-buttons');
+            var hiddenInput = modal.find('input[name="new_creneau"]');
 
-        function loadPrestataires() {
-            $.get('/service/' + serviceId + '/prestataires', function(data) {
-                employeeSelect.empty().append('<option value="" selected disabled>-- Choisir prestataire --</option>');
-                data.forEach(function(prest) {
-                    employeeSelect.append('<option value="'+prest.id+'">'+prest.name+'</option>');
+            function loadPrestataires() {
+                $.get('/service/' + serviceId + '/prestataires', function(data) {
+                    employeeSelect.empty().append('<option value="" selected disabled>-- Choisir prestataire --</option>');
+                    data.forEach(function(prest) {
+                        employeeSelect.append('<option value="'+prest.id+'">'+prest.name+'</option>');
+                    });
                 });
-            });
-        }
+            }
 
-        function loadCreneaux() {
-            var employeeId = employeeSelect.val();
-            var date = dateInput.val();
-            if (!employeeId || !date) return;
+            function loadCreneaux() {
+                var employeeId = employeeSelect.val();
+                var date = dateInput.val();
+                if (!employeeId || !date) return;
 
-            $.get('/employee/' + employeeId + '/creneaux-disponibles', { date: date }, function(data) {
-                creneauxDiv.empty();
-                data.forEach(function(creneau) {
-                    if (!creneau.is_taken) {
-                        var btn = $('<button type="button" class="btn btn-outline-primary btn-sm"></button>');
-                        btn.text(creneau.time).data('creneau-id', creneau.id);
-                        btn.on('click', function() {
-                            hiddenInput.val($(this).data('creneau-id'));
-                            $(this).addClass('btn-primary').removeClass('btn-outline-primary')
-                                   .siblings().removeClass('btn-primary').addClass('btn-outline-primary');
-                        });
-                        creneauxDiv.append(btn);
-                    }
+                $.get('/employee/' + employeeId + '/creneaux-disponibles', { date: date }, function(data) {
+                    creneauxDiv.empty();
+                    data.forEach(function(creneau) {
+                        if (!creneau.is_taken) {
+                            var btn = $('<button type="button" class="btn btn-outline-primary btn-sm"></button>');
+                            btn.text(creneau.time).data('creneau-id', creneau.id);
+                            btn.on('click', function() {
+                                hiddenInput.val($(this).data('creneau-id'));
+                                $(this).addClass('btn-primary').removeClass('btn-outline-primary')
+                                    .siblings().removeClass('btn-primary').addClass('btn-outline-primary');
+                            });
+                            creneauxDiv.append(btn);
+                        }
+                    });
                 });
-            });
-        }
+            }
 
-        loadPrestataires();
-        dateInput.add(employeeSelect).on('change', loadCreneaux);
+            loadPrestataires();
+            dateInput.add(employeeSelect).on('change', loadCreneaux);
+        });
+
+        $('.postpone-modal').on('hidden.bs.modal', function() {
+            var modal = $(this);
+                modal.find('.creneau-buttons').empty(); 
+                modal.find('input[name="new_creneau"]').val('');
+                modal.find('.employee-select').val(''); 
+                modal.find('.new-date').val('');
+        });
+
     });
-
-    $('.postpone-modal').on('hidden.bs.modal', function() {
-        var modal = $(this);
-            modal.find('.creneau-buttons').empty(); 
-            modal.find('input[name="new_creneau"]').val('');
-            modal.find('.employee-select').val(''); 
-            modal.find('.new-date').val('');
-    });
-
-});
-</script>
+    </script>
 
 @endsection
