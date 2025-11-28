@@ -21,9 +21,7 @@ class appointments extends Model
      *
      * @var array
      */
-    protected $fillable = ['client_id', 'employee_id', 'service_id', 'start_times', 'end_times', 'status', 'subscription_id', 'comment','assistant_comment','promotion_id','final_price'];
-
-
+    protected $fillable = ['client_id', 'employee_id', 'service_id', 'start_times', 'end_times', 'status', 'subscription_id', 'comment','assistant_comment','promotion_id','final_price','carte_cadeau_code'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -39,6 +37,11 @@ class appointments extends Model
     public function employee()
     {
         return $this->belongsTo(\App\Models\Employees::class, 'employee_id', 'id');
+    }
+
+    public function cartecadeauclient()
+    {
+        return $this->belongsTo(\App\Models\CarteCadeauClient::class, 'code', 'carte_cadeau_code');
     }
     
     /**
@@ -124,6 +127,8 @@ class appointments extends Model
             'end_times'       => $end_times,
             'status'          => 'pending',
             'comment'         => $param['comment'],
+            'is_paid'         => $param['gift_code'] != null ? 1 : 0,
+            'carte_cadeau_code'=> $param['gift_code'],
         ]);
 
         $calendarService = app(\App\Services\GoogleCalendarService::class);
@@ -179,7 +184,7 @@ class appointments extends Model
             ->join('employees as ep', 'ep.id', '=', 'ap.employee_id')
             ->join('services as s', 's.id', '=', 'ap.service_id')
             ->join('service_category as sc', 'sc.id', '=', 's.service_category_id')
-            ->orderByDesc('ap.id');
+            ->orderBy('ap.start_times', 'desc');
     }
     
     public function getAppointmentBetweenTwoDate(DateTime $debut, DateTime $fin)

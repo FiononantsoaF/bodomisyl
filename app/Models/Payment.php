@@ -10,6 +10,7 @@ class Payment extends Model
         'reference',
         'appointment_id',
         'subscription_id',
+        'code_carte_cadeau_client',
         'client_id',
         'total_amount',
         'deposit',
@@ -42,9 +43,14 @@ class Payment extends Model
         return $this->belongsTo(Subscription::class);
     }
 
+    public function carteCadeauClient()
+    {
+        return $this->belongsTo(CarteCadeauClient::class, 'code_carte_cadeau', 'code');
+    }
+
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Clients::class);
     }
 
     public function mvolaTransaction()

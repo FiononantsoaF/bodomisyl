@@ -19,6 +19,7 @@ use Response;
 use DateTime;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AdminAppointmentNotificationMail;
+use App\Models\CarteCadeauClient;
 
 
 class AppointmentsController extends Controller
@@ -55,7 +56,8 @@ class AppointmentsController extends Controller
      *             @OA\Property(property="end_times", type="string", format="date-time"),
      *             @OA\Property(property="status", type="string"),
      *             @OA\Property(property="comment", type="string"),
-     *              @OA\Property(property="from_subscription", type="boolean")
+     *              @OA\Property(property="from_subscription", type="boolean"),
+     *              @OA\Property(property="gift_code", type="string")
      *      
      *         )
      *     ),
@@ -125,6 +127,7 @@ class AppointmentsController extends Controller
                 return $this->apiResponse(true, "🎉 Félicitations ! Votre rendez-vous pour la prestation « {$service->title} » le {$formattedDate} a été confirmé avec succès.", [
                     'appointment_id'  => $appointment->id,
                     'subscription_id' => $appointment->subscription_id,
+                    'client_id'       => $appointment->client_id,
                     'price'           => $service->price ?? $appointment->prixservice ?? null,
                     'price_promo'     => isset($promotion['price_promo']) 
                             ? number_format($promotion['price_promo']): null,
@@ -180,6 +183,7 @@ class AppointmentsController extends Controller
                 return $this->apiResponse(true, "🎉 Félicitations ! Votre rendez-vous pour la prestation « {$service->title} » le {$formattedDate} a été confirmé avec succès. Il vous reste désormais " . ($remainingSessions - 1) . " séance" . (($remainingSessions - 1) > 1 ? 's' : '') . " sur votre abonnement.", [
                     'appointment_id'  => $appointment->id,
                     'subscription_id' => $appointment->subscription_id,
+                    'client_id'       => $appointment->client_id,
                     'remaining_sessions' => $remainingSessions - 1,
                     'price'           => 0, 
                     'price_promo'     => isset($promotion['price_promo']) ? number_format($promotion['price_promo']) : null,
@@ -189,6 +193,7 @@ class AppointmentsController extends Controller
 
             }
         }
+
         $newSubscription = Subscription::createSubscription($param, $existingClient, $service);
         if ($newSubscription) {
             $subscription_id = $newSubscription->id;
@@ -212,22 +217,33 @@ class AppointmentsController extends Controller
         $appoint->subscription_id = $subscription_id;
         $appoint->status = 'pending';
         $appoint->comment = $param['comment'] ?? "";
+        $appoint->carte_cadeau_code = $param['gift_code'];
+        $appoint->is_paid = $param['gift_code'] != null ? 1 : 0;
         $appoint->save();
 
         $calendarService = app(\App\Services\GoogleCalendarService::class);
         $calendarService->syncAppointment($appoint);
 
+        if ($param['gift_code'] != null) {
+            $carteCadeauClient = CarteCadeauClient::where('code', $param['gift_code'])->first();
+            if ($carteCadeauClient) {
+                $carteCadeauClient->changeActive();
+                $carteCadeauClient->update(['benef_client_id' => $existingClient->id]);
+            }
+        }
+        
         // Mail::to('contact@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appoint));
         Mail::to('fy.rakotojaona@groupe-syl.com')->send(new AdminAppointmentNotificationMail($appoint));
         
         return $this->apiResponse(true, "Félicitations ! Votre réservation a été effectuée avec succès.", [
             'appointment_id'  => $appoint->id,
             'subscription_id' => $appoint->subscription_id,
+            'client_id'       => $appoint->client_id,
             'price'           => $service->price ?? $appoint->prixservice ?? null,
             'price_promo'     => isset($promotion['price_promo']) 
                             ? number_format($promotion['price_promo']): null,
             'client_phone'    => $clientInfo['phone'] ?? null,
-            'already_paid'    => $isFromSubscription
+            'already_paid'    => $param['gift_code'] != null ? true : $isFromSubscription
         ], 200);
     }
 

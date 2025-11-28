@@ -38,7 +38,7 @@ class Subscription extends Model
      *
      * @var array
      */
-    protected $fillable = ['client_id', 'services_id', 'status', 'total_session', 'used_session', 'period_start', 'period_end','promotion_id','final_price'];
+    protected $fillable = ['client_id', 'services_id', 'status', 'total_session', 'used_session', 'period_start', 'period_end','promotion_id','final_price','carte_cadeau_code'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -85,6 +85,10 @@ class Subscription extends Model
             $subscription->status = 'active';
             $subscription->total_session = $total;
             $subscription->used_session = 1;
+
+            if($param['gift_code'] !=null){
+                $subscription->is_paid= 1;
+            }
             $subscription->save();
 
             return $subscription;

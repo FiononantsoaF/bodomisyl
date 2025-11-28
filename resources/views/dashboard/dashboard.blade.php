@@ -62,6 +62,7 @@
                                         @endif
                                     </span>
                                 </td>
+
                                 <td class="text-end">
                                     <div >
                                         <form  class="btn-group btn-group-sm" role="group" action="{{ route('dashboard.changestate',$rdv->idrdv) }}" method="POST">
@@ -113,6 +114,7 @@
                             <th>Formule</th>
                             <th>Prestataire</th>
                             <th>Date</th>
+                            <th>État</th>
                             <th>Statut</th>
                         </tr>
                     </thead>
@@ -127,6 +129,13 @@
                                 <td >{{ $rdv->nomservice }}</td>
                                 <td>{{ $rdv->nomprestataire }}</td>
                                 <td style="white-space: nowrap;">{{ $rdv->date_reserver }}</td>
+                                <td>
+                                    @if (strtotime($rdv->date_reserver) < time())
+                                        <span class="badge bg-secondary">Terminé</span>
+                                    @else
+                                        <span class="badge bg-success">À venir</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <span class="badge 
                                         @if ($rdv->status == 'pending') bg-warning

@@ -252,19 +252,32 @@ class CarteCadeauServicedbController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CarteCadeauServiceRequest $request, CarteCadeauService $carteCadeauService)
+    public function update(Request $request, $id)
     {
-        $carteCadeauService->update($request->validated());
+        $validatedData = $request->validate([
+            'reduction_percent' => 'nullable|numeric|min:0|max:100',
+            'amount' => 'nullable|numeric|min:0',
+        ]);
 
-        return redirect()->route('carte-cadeau-services.index')
-            ->with('success', 'CarteCadeauService updated successfully');
+        $carteCadeauService = CarteCadeauService::findOrFail($id);
+        $carteCadeauService->update($validatedData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Mise à jour réussie',
+            'data' => $carteCadeauService
+        ]);
     }
+
+
 
     public function destroy($id)
     {
-        CarteCadeauService::find($id)->delete();
+        $carte = CarteCadeauService::findOrFail($id);
+        $carte->delete();
 
-        return redirect()->route('carte-cadeau-services.index')
-            ->with('success', 'CarteCadeauService deleted successfully');
+        return redirect()->route('cartecadeauservicedb')
+            ->with('success', 'Carte cadeau supprimée avec succès');
     }
+
 }

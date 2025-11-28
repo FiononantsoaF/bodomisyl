@@ -67,6 +67,9 @@ Route::post('/password-reset-request', [AuthController::class, 'sendResetEmail']
 Route::post('/change-password', [ClientsController::class, 'changepassword']);
 
 Route::post('/user/update',[ClientsController::class, 'update']);
+Route::get('/check-email', [ClientsController::class, 'checkEmail']);
+Route::get('/getClientById', [ClientsController::class, 'getClientById']);
+Route::post('/check-password', [ClientsController::class, 'checkPassword']);
 
 // paiement mvola 
 Route::post('/mvola', [MvolaController::class, 'payIn']);
@@ -83,8 +86,11 @@ Route::get('/clientsfiles/{client_id}', [ClientsFilesApiController::class, 'show
 
 Route::get('/temoignage', [TestimonialController::class, 'index']);
 Route::get('/cartecadeauservice',[CarteCadeauServiceApiController::class, 'index']);
-Route::post('/cartecadeauservice/create',[CarteCadeauServiceApiController::class, 'create']);
+Route::post('/cartecadeauservice/create',[CarteCadeauServiceApiController::class, 'save']);
 
+
+Route::get('/cartecadeaubycode', [CarteCadeauServiceApiController::class, 'getCartecadeauByCode']);
+Route::get('/cartecadeaubyclient', [CarteCadeauServiceApiController::class, 'getCartecadeauByClient']);
 
 
 

@@ -153,6 +153,105 @@ class ClientsController extends Controller
         return $this->apiResponse(true, "Informations mises à jour avec succès", $client, 200);
     }
 
+
+    /**
+     * @OA\Get(
+     *     path="/api/check-email/",
+     *     summary="Vérification email saisi ",
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         required=true,
+     *         description="email à vérifier",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(response="200", description="Success"),
+     * )
+     */
+    public function checkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+        $email = $request->query('email');
+        $exists = \App\Models\Clients::where('email', $email)->exists();
+        return response()->json([
+            'exists' => $exists
+        ]);
+    }
+
+    
+    /**
+     * @OA\Get(
+     *     path="/api/getClientById",
+     *     summary="Récupérer un client par son ID",
+     *     @OA\Parameter(
+     *         name="client_id",
+     *         in="query",
+     *         required=true,
+     *         description="ID du client à récupérer",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response="200", description="Client trouvé"),
+     *     @OA\Response(response="404", description="Client non trouvé")
+     * )
+     */
+    public function getClientById(Request $request)
+    {
+        $request->validate([
+            'client_id' => 'required|integer|exists:clients,id',
+        ]);
+        $id = $request->query('client_id');
+        $client = \App\Models\Clients::find($id);
+        if ($client) {
+            return $this->apiResponse(true, "Client trouvé", $client, 200);
+        }
+        return $this->apiResponse(false, "Pas de client", null, 404);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/check-password",
+     *     summary="Vérifie si un mot de passe correspond à celui du client",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", example="email@gmail.com"),
+     *             @OA\Property(property="password", type="string", example="Secret123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mot de passe correct",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Client non trouvé"),
+     *     @OA\Response(response=401, description="Mot de passe incorrect")
+     * )
+     */
+    public function checkPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string'
+        ]);
+
+        $client = \App\Models\Clients::where("email",$request->email)->first();
+        if (!$client) {
+            return $this->apiResponse(true, "nouveau client", null, 200);
+        }
+        if (!\Illuminate\Support\Facades\Hash::check($request->password, $client->password)) {
+            return $this->apiResponse(false, "Mot de passe incorrect", false, 401);
+        }
+
+        return $this->apiResponse(true, "Mot de passe valide", true, 200);
+    }
+
     private function apiResponse($success, $message, $data = null, $status = 200) {
         return response()->json([
             'success' => $success,

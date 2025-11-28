@@ -42,6 +42,7 @@ Route::get('/', function () {
     return view('auth.login');
 })->name('auth');
 
+
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -209,6 +210,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cartecadeauservice/create', [CarteCadeauServicedbController::class, 'create'])->name('cartecadeauservicedb.create');
     Route::post('/cartecadeauservice/store', [CarteCadeauServicedbController::class, 'store'])
         ->name('cartecadeauservicedb.store');
+    Route::post('/cartecadeauservice/update/{id}', [CarteCadeauServicedbController::class, 'update'])
+        ->name('cartecadeauservicedb.update');
+    Route::delete('/cartecadeauservice/{id}', [CarteCadeauServicedbController::class, 'destroy'])
+        ->name('cartecadeauservicedb.destroy');
+
 
     Route::get('/cartecadeauservice/edit/{id}',[CarteCadeauServicedbController::class, 'edit'])
         ->name('cartecadeauservicedb.edit');
@@ -218,15 +224,16 @@ Route::middleware(['auth'])->group(function () {
         
     Route::get('/cartecadeauservice/search', [CarteCadeauServicedbController::class, 'search'])
         ->name('cartecadeauservicedb.search');
-
-
     Route::get('/cartecadeauclient', [CarteCadeauClientdbController::class, 'index'])->name('cartecadeauclientdb');
-
-
     Route::get('/success', function () {
         return view('mvola/success');
     });
+    Route::post('/payercadeau', [CarteCadeauClientdbController::class, 'payercadeau'])->name('payercadeau');
+    Route::get('/cartecadeauservice/pdf-carte/{id}', [CarteCadeauClientdbController::class, 'pdf_carte'])
+        ->name('cartecadeauservicedb.pdf');
 
+    Route::get('/cartecadeauservice/{id}/download-pdf', [CarteCadeauClientdbController::class, 'downloadPdf'])
+    ->name('cartecadeauservicedb.download-pdf');
 
 
 });
@@ -235,5 +242,10 @@ Route::middleware(['auth', 'prestataire.backoffice'])->group(function () {
     Route::get('/dashboardprestataire', [AppointmentdbController::class, 'index'])->name('dashboard.prestataire');
     Route::get('/calendarprestataire', [GoogleCalendarController::class, 'index'])->name('calendar.prestataire');
 });
+
+Route::fallback(function () {
+    abort(404);
+});
+
 
 
