@@ -20,11 +20,19 @@ class CarteCadeauMail extends Mailable
 
     public function build()
     {
-        $pdf = Pdf::loadView('carte-cadeau-client.pdf', ['cadeau' => $this->cadeau])
-                  ->setPaper('a4', 'portrait');
+        // Générer le PDF
+        $pdf = Pdf::loadView('carte-cadeau-client.pdf', [
+                'cadeau' => $this->cadeau
+            ])
+            ->setPaper('a4', 'portrait');
 
+        // Construction de l'email en HTML classique
         return $this->subject('Votre bon cadeau Domisyl')
-                    ->view('emails.carte-cadeau-mail')
-                    ->attachData($pdf->output(), 'bon-cadeau-' . $this->cadeau->code . '.pdf');
+                    ->view('emails.carte-cadeau-mail')      
+                    ->with(['cadeau' => $this->cadeau])
+                    ->attachData(
+                        $pdf->output(),
+                        'bon-cadeau-' . $this->cadeau->code . '.pdf'
+                    );
     }
 }

@@ -48,7 +48,7 @@ use Illuminate\Database\Eloquent\Model;
 
         public function payments()
         {
-            return $this->hasMany(Payment::class, 'code_carte_cadeau', 'code');
+            return $this->hasMany(Payment::class, 'code_carte_cadeau_client', 'code');
         }
 
         public function clients()
@@ -62,9 +62,5 @@ use Illuminate\Database\Eloquent\Model;
             $this->save();
         }
 
-        
-
-
-
-
+    
     }

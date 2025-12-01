@@ -12,6 +12,8 @@ use App\Models\Payment;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Mail;
+use App\Mail\ValidateAppointment;
 
 class MvolaController extends Controller
 {
@@ -52,7 +54,7 @@ class MvolaController extends Controller
                 'price' => 'required|numeric',
                 'client_phone' => 'required|string|regex:/^0\d{9}$/',
                 'appointment_id' => 'nullable|numeric|exists:appointments,id',
-                'subscription_id' => 'nullable|numeric|exists:subscriptions,id',
+                'subscription_id' => 'nullable|numeric',
             ]);
             
             // Récupération de l'appointment
@@ -112,38 +114,73 @@ class MvolaController extends Controller
                 'phone' => $clientNumber
             ]);
             
-            $response = $this->mvolaService->payIn($token, $correlationId, $payload);
+            $response = $this->mvolaService->payIn($token, $correlationId, $payload,$validated['appointment_id'],0);
             
             if (!isset($response['serverCorrelationId'])) {
                 throw new Exception("Réponse MVola invalide : serverCorrelationId manquant");
             }
             
-            $mvolaTransaction = MvolaTransaction::create([
-                'reference' => $transactionReference,
-                'server_correlation_id' => $response['serverCorrelationId'],
-                'appointment_id' => $validated['appointment_id'] ?? null,
-                'subscription_id' => $validated['subscription_id'] ?? null,
-                'client_id' => $appointment ? $appointment->client_id : null,
-                'client_phone' => $clientNumber,
-                'amount' => $validated['amount'],
-                'price' => $validated['price'],
-                'status' => 'pending',
-                'data_post' => $response,
-            ]);
             
-            $payment = Payment::create([
-                'appointment_id' => $validated['appointment_id'] ?? null,
-                'subscription_id' => $validated['subscription_id'] ?? null,
-                'client_id' => $appointment ? $appointment->client_id : null,
-                'payment_method' => 'mvola',
-                'total_amount' => $validated['price'],
-                'amount' => $validated['amount'],
-                'reference' => $transactionReference,
-                'status' => 'pending',
-            ]);
-            
-            DB::commit();
-            
+            $payment = Payment::where("appointment_id", $validated['appointment_id'])->first();
+            $mvolaTransaction= Payment::where("appointment_id", $validated['appointment_id'])->first();
+            if($payment && $payment->appointment_id){
+ 
+           
+               DB::table('payments')
+                ->where('appointment_id', $validated['appointment_id'])->update([
+                    'appointment_id' => $validated['appointment_id'] ?? null,
+                    'subscription_id' => $validated['subscription_id'] ?? null,
+                    'client_id' => $appointment ? $appointment->client_id : null,
+                    'method' => 'mvola',
+                    'total_amount' => $validated['price'],
+                    'amount' => $validated['amount'],
+                    'reference' => $transactionReference,
+                    'status' => 'pending',
+                ]);
+
+                
+                  DB::table('mvola_transactions')
+                ->where('appointment_id', $validated['appointment_id'])
+                ->update([
+                    'reference' => $transactionReference,
+                    'server_correlation_id' => $response['serverCorrelationId'],
+                    'appointment_id' => $validated['appointment_id'] ?? null,
+                    'subscription_id' => $validated['subscription_id'] ?? null,
+                    'client_id' => $appointment ? $appointment->client_id : null,
+                    'client_phone' => $clientNumber,
+                    'amount' => $validated['amount'],
+                    'price' => $validated['price'],
+                    'status' => 'pending',
+                    'data_post' => $response,
+                ]);
+                DB::commit();
+            }else{
+                $mvolaTransaction = MvolaTransaction::create([
+                    'reference' => $transactionReference,
+                    'server_correlation_id' => $response['serverCorrelationId'],
+                    'appointment_id' => $validated['appointment_id'] ?? null,
+                    'subscription_id' => $validated['subscription_id'] ?? null,
+                    'client_id' => $appointment ? $appointment->client_id : null,
+                    'client_phone' => $clientNumber,
+                    'amount' => $validated['amount'],
+                    'price' => $validated['price'],
+                    'status' => 'pending',
+                    'data_post' => $response,
+                ]);
+                
+                $payment = Payment::create([
+                    'appointment_id' => $validated['appointment_id'] ?? null,
+                    'subscription_id' => $validated['subscription_id'] ?? null,
+                    'client_id' => $appointment ? $appointment->client_id : null,
+                    'method' => 'mvola',
+                    'total_amount' => $validated['price'],
+                    'amount' => $validated['amount'],
+                    'reference' => $transactionReference,
+                    'status' => 'pending',
+                ]);
+                
+                DB::commit();
+            }
             Log::info('Transaction MVola initiée avec succès', [
                 'transaction_id' => $mvolaTransaction->id,
                 'reference' => $transactionReference,
@@ -188,117 +225,28 @@ class MvolaController extends Controller
      */
     public function callback(Request $request)
     {
-        try {
-            $data = $request->all();
-            
-            Log::info('📥 Callback MVola reçu', [
-                'data' => $data,
-                'headers' => $request->headers->all()
-            ]);
-
-            // Validation des données reçues
-            if (!isset($data['serverCorrelationId']) && !isset($data['transactionReference'])) {
-                Log::warning('⚠️ Callback MVola sans identifiants', $data);
-                return response()->json(['message' => 'Données invalides'], 400);
-            }
-
-            // Recherche de la transaction
-            $transaction = MvolaTransaction::query()
-                ->when(isset($data['serverCorrelationId']), function ($query) use ($data) {
-                    $query->where('server_correlation_id', $data['serverCorrelationId']);
-                })
-                ->when(isset($data['transactionReference']), function ($query) use ($data) {
-                    $query->orWhere('reference', $data['transactionReference']);
-                })
-                ->first();
-
-            if (!$transaction) {
-                Log::error('❌ Transaction MVola introuvable', [
-                    'serverCorrelationId' => $data['serverCorrelationId'] ?? null,
-                    'transactionReference' => $data['transactionReference'] ?? null
-                ]);
-                return response()->json(['message' => 'Transaction non trouvée'], 404);
-            }
-
-            // Récupération du statut
-            $status = strtolower($data['transactionStatus'] ?? 'unknown');
-            
-            DB::beginTransaction();
-            
-            // Mise à jour de la transaction
-            $transaction->update([
-                'data_callback' => $data,
-                'status' => $status,
-            ]);
-
-            // Traitement selon le statut
-            if ($status === 'completed') {
-                
-                Log::info('✅ Paiement MVola confirmé', [
-                    'reference' => $transaction->reference,
-                    'amount' => $transaction->amount
-                ]);
-                
-                // Mise à jour du paiement
-                $payment = Payment::where('reference', $transaction->reference)->first();
-                if ($payment) {
-                    $payment->update([
-                        'status' => 'paid',
-                        'paid_at' => now()
-                    ]);
-                }
-
-                // Mise à jour de l'abonnement/appointment
-                if ($transaction->subscription_id || $transaction->appointment_id) {
-                    Subscription::changePaid(
-                        $transaction->subscription_id, 
-                        $transaction->appointment_id
-                    );
-                }
-                
-            } elseif ($status === 'failed') {
-                
-                Log::warning('⚠️ Paiement MVola échoué', [
-                    'reference' => $transaction->reference,
-                    'reason' => $data['errorDescription'] ?? 'Non spécifié'
-                ]);
-                
-                // Mise à jour du paiement en échec
-                Payment::where('reference', $transaction->reference)
-                    ->update(['status' => 'failed']);
-                    
-            } else {
-                Log::info('ℹ️ Statut MVola en attente', [
-                    'reference' => $transaction->reference,
-                    'status' => $status
-                ]);
-            }
-            
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Callback traité avec succès',
-                'status' => $status
-            ], 200);
-            
-        } catch (\Exception $e) {
-            DB::rollBack();
-            
-            Log::error('❌ Erreur callback MVola', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'data' => $request->all()
-            ]);
-            
-            return response()->json([
-                'message' => 'Erreur lors du traitement du callback'
-            ], 500);
+        $data = $request->all();
+        $appointementID = $request->query('idapoint');
+        if($data['transactionStatus'] == "failed"){
+            $status = "failed";
+        }elseif($data['transactionStatus'] == "completed"){
+            $status = "paid";
         }
+        DB::table('payments')
+        ->where('appointment_id', $appointementID)
+        ->update(['status' => $status,'transaction_data'=>json_encode($data)]);
+        
+        DB::table('mvola_transactions')
+        ->where('appointment_id', $appointementID)
+        ->update(['data_callback'=>json_encode($data)]);
     }
 
-    /**
-     * Vérifier le statut d'une transaction (polling)
+   /**
+     * @OA\Get(
+     *     path="/api/mvola/status/{reference}",
+     *     summary="detail paiement mvola",
+     *     @OA\Response(response="200", description="Success"),
+     * )
      */
     public function checkStatus($reference)
     {
@@ -313,19 +261,28 @@ class MvolaController extends Controller
             }
             
             // Si toujours en pending, on peut interroger l'API MVola
-            if ($transaction->isPending()) {
+            //if ($transaction->isPending()) {
                 $token = $this->mvolaService->getToken();
                 $statusResponse = $this->mvolaService->getStatus(
                     $transaction->server_correlation_id, 
                     $token
                 );
-                
-                $transaction->update([
+                // return response()->json([
+                //     'success' => ($statusResponse['status']=='completed'?true:false),
+                //     'data' => $statusResponse
+                // ]);
+                /*$transaction->update([
                     'data_status' => json_encode($statusResponse)
-                ]);
-            }
+                ]);*/
+                return $this->apiResponse(($statusResponse['status']=='completed'?true:false), 'Statut.', [
+                    'status' => $statusResponse['status'],
+                    'serverCorrelationId' => $transaction->server_correlation_id,
+                    'notificationMethod' => 'callback',
+                    'objectReference' => $reference
+                ], 200);
+            //}
             
-            return response()->json([
+            /*return response()->json([
                 'success' => true,
                 'data' => [
                     'reference' => $transaction->reference,
@@ -334,7 +291,7 @@ class MvolaController extends Controller
                     'created_at' => $transaction->created_at,
                     'updated_at' => $transaction->updated_at
                 ]
-            ]);
+            ]);*/
             
         } catch (\Exception $e) {
             Log::error('Erreur vérification statut MVola', [

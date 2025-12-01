@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->string('benef_name');  
+            $table->string('benef_email'); 
             $table->unsignedBigInteger('carte_cadeau_service_id');              
             $table->string('benef_contact')->nullable(false); 
             $table->unsignedBigInteger('client_id');     
