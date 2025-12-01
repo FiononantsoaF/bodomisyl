@@ -73,14 +73,15 @@ Route::post('/check-password', [ClientsController::class, 'checkPassword']);
 
 // paiement mvola 
 Route::post('/mvola', [MvolaController::class, 'payIn']);
-Route::post('/mvola/callback', [MvolaController::class, 'callback']);
-
+Route::put('/mvola/callback', [MvolaController::class, 'callback']);
+Route::get('/mvola/status/{reference}', [MvolaController::class, 'checkStatus']);
 
 Route::post('/stripe/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
 Route::post('/payments/confirm-stripe', [StripeController::class, 'storeStripe']);
 
 Route::post('/orangemoney/uuid', [OrangeMoneyController::class, 'uuid']);
-Route::post('/orangemoney/pocess-payement', [OrangeMoneyController::class, 'processPayement']);
+Route::post('/orangemoney/pocess-payment', [OrangeMoneyController::class, 'processPayement']);
+Route::post('/orangemoney/status', [OrangeMoneyController::class, 'statuspaiement']);
 
 Route::get('/clientsfiles/{client_id}', [ClientsFilesApiController::class, 'show']);
 
@@ -91,7 +92,6 @@ Route::post('/cartecadeauservice/create',[CarteCadeauServiceApiController::class
 
 Route::get('/cartecadeaubycode', [CarteCadeauServiceApiController::class, 'getCartecadeauByCode']);
 Route::get('/cartecadeaubyclient', [CarteCadeauServiceApiController::class, 'getCartecadeauByClient']);
-
 
 
 // Chatbot 

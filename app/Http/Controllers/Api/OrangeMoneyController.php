@@ -42,8 +42,8 @@ class OrangeMoneyController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/orangemoney/pocess-payement",
+     * @OA\Post( 
+     *     path="/api/orangemoney/pocess-payment",
      *     summary="Payer",
      *     @OA\RequestBody(
      *         required=true,

@@ -54,7 +54,7 @@ class MvolaService
         return $response->json()['access_token'] ?? throw new Exception("Token manquant dans la réponse.");
     }
 
-    public function payIn(string $access_token, string $correlationId, array $payload): array
+    public function payIn(string $access_token, string $correlationId, array $payload,int $appointmentid,int $isreset = 0): array
     {
         if (empty($access_token)) {
             throw new Exception("Token d'accès manquant.");
@@ -68,7 +68,7 @@ class MvolaService
                 "UserAccountIdentifier" => "msisdn;{$this->merchant_number}",
                 "partnerName" => $this->partner_name,
                 "Content-Type" => "application/json",
-                "X-Callback-URL" => "http://localhost:8000/success",
+                "X-Callback-URL" => "https://bodomisyl.groupe-syl.com/api/mvola/callback?idapoint=".$appointmentid,
                 "Cache-Control" => "no-cache",
                 "X-XSS-Protection" => "0",
                 "X-Content-Type-Options" => "nosniff",

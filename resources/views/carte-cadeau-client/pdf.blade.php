@@ -223,7 +223,7 @@
             <div style="position: absolute; left: 30px; top: 30px;">
                 <img src="data:image/png;base64,{{ $logoData }}" 
                     alt="Domisyl" 
-                    style=" max-width: 100%; height: auto;" />
+                    style=" max-width: 50%; height: auto;" />
             </div>
             <h1 style="margin: 0; color: #1e1c1c; font-size: 32px; font-weight: bold;">
                  Bon Cadeau
@@ -252,73 +252,73 @@
             <p class="recipient-label">
                 {{ $cadeau->carteCadeauService->service->serviceCategory->name }}
             </p>
- <div class="prestation-box">
-        <table width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-                <td style="padding: 5px; background: linear-gradient(135deg, #f9fafb, #ffffff);
-                           border-radius: 10px; text-align: center;">
+        <div class="prestation-box">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td style="padding: 5px; background: linear-gradient(135deg, #f9fafb, #ffffff);
+                                border-radius: 10px; text-align: center;">
 
-                    <div style="display: inline-flex; align-items: center; gap: 25px;">
+                            <div style="display: inline-flex; align-items: center; gap: 25px;">
 
-                        <!-- SERVICE TITLE (centered) -->
-                        <span style="font-size: 25px; font-weight: bold; color: #f18f34;">
-                            {{ $cadeau->carteCadeauService->service->title }}
-                        </span>
-                        <!-- SERVICE CATEGORY (badge) -->
-                        <!-- <span style="background-color: #f3f4f6; padding: 6px 14px; 
-                                     border-radius: 9999px; color: #6b7280; font-size: 20px; 
-                                     font-weight: 600;">
-                            
-                        </span> -->
-                    </div>
+                                <!-- SERVICE TITLE (centered) -->
+                                <span style="font-size: 25px; font-weight: bold; color: #f18f34;">
+                                    {{ $cadeau->carteCadeauService->service->title }}
+                                </span>
+                                <!-- SERVICE CATEGORY (badge) -->
+                                <!-- <span style="background-color: #f3f4f6; padding: 6px 14px; 
+                                            border-radius: 9999px; color: #6b7280; font-size: 20px; 
+                                            font-weight: 600;">
+                                    
+                                </span> -->
+                            </div>
 
-                    <p style="margin-top: 5px; color: #4b5563; font-size: 20px;">
-                        {{ $cadeau->carteCadeauService->service->serviceCategory->description }}
+                            <p style="margin-top: 5px; color: #4b5563; font-size: 20px;">
+                                {{ $cadeau->carteCadeauService->service->serviceCategory->description }}
+                            </p>
+
+                        </td>
+                    </tr>
+                </table>
+                </div>
+
+                <div class="prest-divider"></div>
+                    <p class="recipient-label">
+                        Code du bon cadeau
                     </p>
+                    <p class="code">
+                        {{ $cadeau->code }}
+                    </p>
+                </div>
 
-                </td>
-            </tr>
-        </table>
+                <!-- INSTRUCTIONS -->
+                <div class="instructions">
+                    <p class="label"> Comment utiliser votre bon cadeau :</p>
+                    <ol>
+                        <li>Aller sur <strong><a href="https://domisyl.groupe-syl.com"></a>https://domisyl.groupe-syl.com</strong></li>
+                        <li>Cliquez sur « Prendre rendez-vous via carte cadeau »</li>
+                        <li>Saisir le code reçu</li>
+                        <li>Choisir une date et un horaire</li>
+                        <li>Profiter de la prestation</li>
+                    </ol>
+                </div>
+
+                <!-- DATE -->
+                <p style="text-align:center; margin-top:15px; font-size:22px;">
+                    <strong>Valable jusqu'au :</strong> {{ \Carbon\Carbon::parse($cadeau->end_date)->locale('fr')->translatedFormat('d F Y') }}
+
+                </p>
+
+                <!-- FOOTER -->
+                <div class="footer">
+                    <img src="data:image/png;base64,{{ $logoData }}" alt="Domisyl Logo">
+                    <p>Domisyl</p>
+                    <p><strong>038 93 684 05 | contact@groupe-syl.com</strong></p>
+                    <p>Ce bon cadeau est personnel et non remboursable.</p>
+                </div>
+
+            </div>
+
         </div>
-
-        <div class="prest-divider"></div>
-            <p class="recipient-label">
-                Code du bon cadeau
-            </p>
-            <p class="code">
-                {{ $cadeau->code }}
-            </p>
-        </div>
-
-        <!-- INSTRUCTIONS -->
-        <div class="instructions">
-            <p class="label"> Comment utiliser votre bon cadeau :</p>
-            <ol>
-                <li>Aller sur <strong><a href="https://domisyl.groupe-syl.com"></a>https://domisyl.groupe-syl.com</strong></li>
-                <li>Cliquez sur « Prendre rendez-vous via carte cadeau »</li>
-                <li>Saisir le code reçu</li>
-                <li>Choisir une date et un horaire</li>
-                <li>Profiter de la prestation</li>
-            </ol>
-        </div>
-
-        <!-- DATE -->
-        <p style="text-align:center; margin-top:15px; font-size:22px;">
-            <strong>Valable jusqu'au :</strong> {{ \Carbon\Carbon::parse($cadeau->end_date)->locale('fr')->translatedFormat('d F Y') }}
-
-        </p>
-
-        <!-- FOOTER -->
-        <div class="footer">
-            <img src="data:image/png;base64,{{ $logoData }}" alt="Domisyl Logo">
-            <p>Domisyl</p>
-            <p><strong>038 93 684 05 | contact@groupe-syl.com</strong></p>
-            <p>Ce bon cadeau est personnel et non remboursable.</p>
-        </div>
-
-    </div>
-
-</div>
 
 </body>
 </html>

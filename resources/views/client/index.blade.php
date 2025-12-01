@@ -175,7 +175,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Adresse</label>
-                                                        <input type="text" name="address" id="address" class="form-control" value="{{ $client->address }}" required>
+                                                        <input type="text" name="adress" id="adress" class="form-control" value="{{ $client->address }}" required>
                                                         <p id="addressError" class="text-danger small d-none"></p>
                                                     </div>
                                                 </div>
@@ -201,7 +201,7 @@
 </div>
 
 <script>
-document.querySelectorAll('#address').forEach((input) => {
+document.querySelectorAll('#adress').forEach((input) => {
     const error = document.getElementById('addressError');
     input.addEventListener('input', () => {
         const value = input.value.trim();

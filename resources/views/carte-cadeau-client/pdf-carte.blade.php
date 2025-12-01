@@ -253,7 +253,7 @@
             <div style="position: absolute; left: 30px; top: 10px;">
                 <img src="data:image/png;base64,{{ $logoData }}" 
                     alt="Domisyl" 
-                    style="max-width: 200px; height: auto;" />
+                    style="max-width: 100px; height: auto;" />
             </div>
             <h1 style="margin: 0; color: #1e1c1c; font-size: 32px; font-weight: bold;">
                  Bon Cadeau
